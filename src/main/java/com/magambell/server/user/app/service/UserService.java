@@ -1,5 +1,7 @@
 package com.magambell.server.user.app.service;
 
+import static com.magambell.server.user.domain.enums.VerificationStatus.REGISTER;
+
 import com.magambell.server.common.enums.ErrorCode;
 import com.magambell.server.common.exception.DuplicateException;
 import com.magambell.server.common.exception.InvalidRequestException;
@@ -35,7 +37,7 @@ public class UserService implements UserUseCase {
     }
 
     private void validateEmailAndAuthCode(final String email, final String authCode) {
-        UserEmailDTO userEmailDTO = userEmailQueryPort.findRegisterUserEmail(email)
+        UserEmailDTO userEmailDTO = userEmailQueryPort.findRegisterUserEmail(email, REGISTER)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.USER_EMAIL_NOT_FOUND));
 
         if (!userEmailDTO.authCode().equals(authCode)) {

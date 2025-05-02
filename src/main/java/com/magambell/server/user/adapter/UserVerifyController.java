@@ -2,6 +2,7 @@ package com.magambell.server.user.adapter;
 
 import com.magambell.server.common.Response;
 import com.magambell.server.common.swagger.BaseResponse;
+import com.magambell.server.user.adapter.in.web.VerifyEmailAuthCodeSignupRequest;
 import com.magambell.server.user.adapter.in.web.VerifyEmailSignupRequest;
 import com.magambell.server.user.app.port.in.UserVerifyUseCase;
 import io.swagger.v3.oas.annotations.Operation;
@@ -28,7 +29,16 @@ public class UserVerifyController {
     @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(implementation = BaseResponse.class))})
     @PostMapping("/email/signup")
     public Response<BaseResponse> emailSignupDuplicate(@RequestBody @Validated final VerifyEmailSignupRequest request) {
-        userVerifyUseCase.emailSignupDuplicate(request.toServiceRequest());
+        userVerifyUseCase.emailRegisterDuplicate(request.toServiceRequest());
+        return new Response<>();
+    }
+
+    @Operation(summary = "회원가입시 이메일 인증번호 검증")
+    @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(implementation = BaseResponse.class))})
+    @PostMapping("/email/signup/authCode")
+    public Response<BaseResponse> emailSignupAuthCodeCheck(
+            @RequestBody @Validated final VerifyEmailAuthCodeSignupRequest request) {
+        userVerifyUseCase.emailRegisterAuthCodeCheck(request.toServiceRequest());
         return new Response<>();
     }
 }
