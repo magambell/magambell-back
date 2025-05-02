@@ -7,7 +7,7 @@ import lombok.RequiredArgsConstructor;
 @RequiredArgsConstructor
 public enum ErrorCode {
 
-    DUPLICATE_EMAIL("중복된 전화번호입니다."),
+    DUPLICATE_EMAIL("중복된 이메일입니다."),
 
     USER_VALID_PASSWORD("비밀번호는 8~16자리의 영문 대문자와 소문자, 특수문자 숫자의 조합이어야 합니다."),
     USER_VALID_EMAIL("유효한 이메일 주소가 아닙니다."),
