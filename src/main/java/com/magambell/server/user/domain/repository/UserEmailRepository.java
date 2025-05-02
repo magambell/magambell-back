@@ -11,4 +11,7 @@ public interface UserEmailRepository extends JpaRepository<UserEmail, Long> {
     void deleteByEmail(String email);
 
     Optional<UserEmailDTO> findByEmailAndVerificationStatus(String email, VerificationStatus verificationStatus);
+
+    boolean existsByEmailAndAuthCodeAndVerificationStatus(String email, String authCode,
+                                                          VerificationStatus verificationStatus);
 }
