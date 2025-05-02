@@ -28,6 +28,7 @@ public class SecurityConfig {
         String[] permitAllWhiteList = {
                 "/h2-console/**",
                 "/swagger-ui/**",
+                "/v3/api-docs/**",
                 "/api/v1/user/signup",
                 "/api/login",
                 "/api/token-refresh",
