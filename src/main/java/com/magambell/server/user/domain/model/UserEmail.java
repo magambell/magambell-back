@@ -3,6 +3,7 @@ package com.magambell.server.user.domain.model;
 import com.magambell.server.common.BaseTimeEntity;
 import com.magambell.server.user.app.port.in.dto.UserEmailDTO;
 import com.magambell.server.user.domain.enums.VerificationStatus;
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
@@ -21,6 +22,7 @@ public class UserEmail extends BaseTimeEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "user_email_id")
     private Long id;
 
     private String email;

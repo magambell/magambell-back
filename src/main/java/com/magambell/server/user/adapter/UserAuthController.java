@@ -26,7 +26,7 @@ public class UserAuthController {
 
     @Operation(summary = "일반 회원가입")
     @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(implementation = BaseResponse.class))})
-    @PostMapping("/signup")
+    @PostMapping("/register")
     public Response<BaseResponse> register(@RequestBody @Validated final UserRegisterRequest request) {
         userUseCase.register(request.toServiceRequest());
         return new Response<>();
