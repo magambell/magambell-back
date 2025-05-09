@@ -44,7 +44,7 @@ class UserAuthControllerTest {
 
         // when // then
         mockMvc.perform(
-                        post("/api/v1/user/signup")
+                        post("/api/v1/user/register")
                                 .content(objectMapper.writeValueAsString(request))
                                 .contentType(MediaType.APPLICATION_JSON)
                 )

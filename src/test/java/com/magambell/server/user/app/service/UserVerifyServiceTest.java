@@ -1,8 +1,10 @@
 package com.magambell.server.user.app.service;
 
+import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
+import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import com.magambell.server.common.enums.ErrorCode;
 import com.magambell.server.common.exception.DuplicateException;
 import com.magambell.server.common.exception.NotEqualException;
@@ -10,9 +12,11 @@ import com.magambell.server.common.exception.NotFoundException;
 import com.magambell.server.user.app.port.in.dto.UserDTO;
 import com.magambell.server.user.app.port.in.dto.UserEmailDTO;
 import com.magambell.server.user.app.port.in.request.VerifyEmailAuthCodeServiceRequest;
-import com.magambell.server.user.app.port.in.request.VerifyEmailServiceRequest;
+import com.magambell.server.user.app.port.in.request.VerifyEmailDuplicateServiceRequest;
+import com.magambell.server.user.app.port.in.request.VerifyEmailSendServiceRequest;
 import com.magambell.server.user.domain.enums.UserRole;
 import com.magambell.server.user.domain.enums.VerificationStatus;
+import com.magambell.server.user.domain.model.UserEmail;
 import com.magambell.server.user.domain.repository.UserEmailRepository;
 import com.magambell.server.user.domain.repository.UserRepository;
 import org.junit.jupiter.api.AfterEach;
@@ -20,7 +24,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.test.context.ActiveProfiles;
 
+@ActiveProfiles("test")
 @SpringBootTest
 class UserVerifyServiceTest {
 
@@ -33,6 +40,9 @@ class UserVerifyServiceTest {
     @Autowired
     private UserEmailRepository userEmailRepository;
 
+    @MockBean
+    private AmazonSimpleEmailService amazonSimpleEmailService;
+
     @AfterEach
     public void tearDown() {
         userRepository.deleteAllInBatch();
@@ -43,10 +53,10 @@ class UserVerifyServiceTest {
     @Test
     void emailRegisterDuplicate() {
         // given
-        VerifyEmailServiceRequest request = new VerifyEmailServiceRequest("test@test.com");
+        VerifyEmailDuplicateServiceRequest request = new VerifyEmailDuplicateServiceRequest("test@test.com");
 
         // when // then
-        assertDoesNotThrow(() -> userVerifyService.emailRegisterDuplicate(request));
+        assertThatNoException().isThrownBy(() -> userVerifyService.emailRegisterDuplicate(request));
     }
 
     @DisplayName("회원가입시 이메일이 중복일때 오류가 발생한다.")
@@ -57,7 +67,7 @@ class UserVerifyServiceTest {
         UserDTO userDTO = new UserDTO(email, "qwer1234", "test", "01012341234", UserRole.CUSTOMER);
         userRepository.save(userDTO.toUser());
 
-        VerifyEmailServiceRequest request = new VerifyEmailServiceRequest(email);
+        VerifyEmailDuplicateServiceRequest request = new VerifyEmailDuplicateServiceRequest(email);
 
         // when // then
         assertThatThrownBy(() -> userVerifyService.emailRegisterDuplicate(request))
@@ -77,7 +87,7 @@ class UserVerifyServiceTest {
         VerifyEmailAuthCodeServiceRequest request = new VerifyEmailAuthCodeServiceRequest(email, authCode);
 
         // when // then
-        assertDoesNotThrow(() -> userVerifyService.emailRegisterAuthCodeCheck(request));
+        assertThatNoException().isThrownBy(() -> userVerifyService.emailRegisterAuthCodeCheck(request));
     }
 
     @DisplayName("회원가입시 인증번호가 다르면 예외가 발생한다.")
@@ -109,5 +119,20 @@ class UserVerifyServiceTest {
         assertThatThrownBy(() -> userVerifyService.emailRegisterAuthCodeCheck(request))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessage(ErrorCode.USER_EMAIL_NOT_FOUND.getMessage());
+    }
+
+    @DisplayName("회원가입시 인증 이메일 전송")
+    @Test
+    void emailRegisterSend() {
+        // given
+        String authCode = "testCode";
+        String email = "test@test.com";
+        VerifyEmailSendServiceRequest request = new VerifyEmailSendServiceRequest(email);
+
+        // when // then
+        assertThatNoException().isThrownBy(() -> userVerifyService.emailRegisterSend(request));
+
+        UserEmail userEmail = userEmailRepository.findAll().get(0);
+        assertThat(userEmail.getEmail()).isEqualTo("test@test.com");
     }
 }

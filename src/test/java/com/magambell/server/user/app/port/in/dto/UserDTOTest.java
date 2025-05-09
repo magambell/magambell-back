@@ -1,7 +1,7 @@
 package com.magambell.server.user.app.port.in.dto;
 
+import static org.assertj.core.api.Assertions.assertThatNoException;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.jupiter.api.Assertions.assertDoesNotThrow;
 
 import com.magambell.server.common.enums.ErrorCode;
 import com.magambell.server.common.exception.InvalidRequestException;
@@ -15,9 +15,8 @@ class UserDTOTest {
     @Test
     @DisplayName("이메일 형식이 올바르면 예외가 발생하지 않는다")
     void validEmail() {
-        assertDoesNotThrow(() ->
-                new UserDTO("valid@test.com", "Password123!", "홍길동", "01012345678", UserRole.CUSTOMER)
-        );
+        assertThatNoException().isThrownBy(
+                () -> new UserDTO("valid@test.com", "Password123!", "홍길동", "01012345678", UserRole.CUSTOMER));
     }
 
     @Test

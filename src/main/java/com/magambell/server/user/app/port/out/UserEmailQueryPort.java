@@ -10,5 +10,5 @@ public interface UserEmailQueryPort {
 
     Optional<UserEmailDTO> findRegisterUserEmail(String email, VerificationStatus verificationStatus);
 
-    boolean checkEmailAuthCode(String email, String authCode, VerificationStatus verificationStatus);
+    Long saveUserEmail(String email, String authCode, VerificationStatus verificationStatus);
 }

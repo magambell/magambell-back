@@ -2,8 +2,9 @@ package com.magambell.server.user.adapter;
 
 import com.magambell.server.common.Response;
 import com.magambell.server.common.swagger.BaseResponse;
-import com.magambell.server.user.adapter.in.web.VerifyEmailAuthCodeSignupRequest;
-import com.magambell.server.user.adapter.in.web.VerifyEmailSignupRequest;
+import com.magambell.server.user.adapter.in.web.VerifyEmailAuthCodeRegisterRequest;
+import com.magambell.server.user.adapter.in.web.VerifyEmailDuplicateRegisterRequest;
+import com.magambell.server.user.adapter.in.web.VerifyEmailSendRegisterRequest;
 import com.magambell.server.user.app.port.in.UserVerifyUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -27,17 +28,27 @@ public class UserVerifyController {
 
     @Operation(summary = "회원가입시 이메일 중복 검사")
     @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(implementation = BaseResponse.class))})
-    @PostMapping("/email/signup")
-    public Response<BaseResponse> emailSignupDuplicate(@RequestBody @Validated final VerifyEmailSignupRequest request) {
+    @PostMapping("/email/register")
+    public Response<BaseResponse> emailRegisterDuplicate(
+            @RequestBody @Validated final VerifyEmailDuplicateRegisterRequest request) {
         userVerifyUseCase.emailRegisterDuplicate(request.toServiceRequest());
+        return new Response<>();
+    }
+
+    @Operation(summary = "회원가입시 이메일 인증번호 발송")
+    @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(implementation = BaseResponse.class))})
+    @PostMapping("/email/register/send")
+    public Response<BaseResponse> emailRegisterSend(
+            @RequestBody @Validated final VerifyEmailSendRegisterRequest request) {
+        userVerifyUseCase.emailRegisterSend(request.toServiceRequest());
         return new Response<>();
     }
 
     @Operation(summary = "회원가입시 이메일 인증번호 검증")
     @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(implementation = BaseResponse.class))})
-    @PostMapping("/email/signup/authCode")
-    public Response<BaseResponse> emailSignupAuthCodeCheck(
-            @RequestBody @Validated final VerifyEmailAuthCodeSignupRequest request) {
+    @PostMapping("/email/register/authCode")
+    public Response<BaseResponse> emailRegisterAuthCodeCheck(
+            @RequestBody @Validated final VerifyEmailAuthCodeRegisterRequest request) {
         userVerifyUseCase.emailRegisterAuthCodeCheck(request.toServiceRequest());
         return new Response<>();
     }

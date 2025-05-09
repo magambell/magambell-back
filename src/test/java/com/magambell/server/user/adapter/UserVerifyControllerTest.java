@@ -5,7 +5,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.magambell.server.user.adapter.in.web.VerifyEmailSignupRequest;
+import com.magambell.server.user.adapter.in.web.VerifyEmailDuplicateRegisterRequest;
 import com.magambell.server.user.app.port.in.UserVerifyUseCase;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -33,11 +33,11 @@ class UserVerifyControllerTest {
     @Test
     void emailSignupDuplicate() throws Exception {
         // given
-        VerifyEmailSignupRequest request = new VerifyEmailSignupRequest("test@test.com");
+        VerifyEmailDuplicateRegisterRequest request = new VerifyEmailDuplicateRegisterRequest("test@test.com");
 
         // when // then
         mockMvc.perform(
-                        post("/api/v1/verify/email/signup")
+                        post("/api/v1/verify/email/register")
                                 .content(objectMapper.writeValueAsString(request))
                                 .contentType(MediaType.APPLICATION_JSON)
                 )

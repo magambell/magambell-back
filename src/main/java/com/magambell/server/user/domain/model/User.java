@@ -23,7 +23,7 @@ public class User extends BaseTimeEntity {
 
     @Id
     @Tsid
-    @Column(name = "user_id")  // DB 컬럼명 명확하게 지정
+    @Column(name = "user_id")
     private Long id;
 
     private String email;

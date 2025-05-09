@@ -26,8 +26,9 @@ public class UserEmailQueryAdapter implements UserEmailQueryPort {
     }
 
     @Override
-    public boolean checkEmailAuthCode(final String email, final String authCode,
-                                      final VerificationStatus verificationStatus) {
-        return userEmailRepository.existsByEmailAndAuthCodeAndVerificationStatus(email, authCode, verificationStatus);
+    public Long saveUserEmail(final String email, final String authCode, final VerificationStatus verificationStatus) {
+        UserEmailDTO userEmailDTO = new UserEmailDTO(email, authCode, verificationStatus);
+        return userEmailRepository.save(userEmailDTO.toUserEmail())
+                .getId();
     }
 }
