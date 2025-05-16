@@ -55,3 +55,8 @@ spring:
     username: ${MARIA_USERNAME}
     password: ${MARIA_PASSWORD}
 
+  jpa:
+    database-platform: org.hibernate.dialect.MariaDBDialect
+    hibernate:
+      ddl-auto: none
+
