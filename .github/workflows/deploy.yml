@@ -79,5 +79,5 @@ jobs:
             export AWS_ECR_ACCESS_KEY=${{ secrets.AWS_ECR_ACCESS_KEY }}
             export AWS_ECR_SECRET_KEY=${{ secrets.AWS_ECR_SECRET_KEY }}
             export SPRING_PROFILES_ACTIVE=prod
-            sudo sh /home/ubuntu/deploy.sh
+            sudo -E bash /home/ubuntu/deploy.sh
 
