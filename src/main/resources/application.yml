@@ -1,6 +1,6 @@
 spring:
   profiles:
-    default: prod
+    active: ${SPRING_PROFILES_ACTIVE:local}
   application:
     name: magambell
   jpa:

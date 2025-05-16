@@ -56,8 +56,9 @@ jobs:
             --build-arg MARIA_PASSWORD=${{ secrets.MARIA_PASSWORD }} \
             --build-arg MARIA_USERNAME=${{ secrets.MARIA_USERNAME }} \
             --build-arg SERVER_HOST=${{ secrets.SERVER_HOST }} \
-            --build-arg AWS_ACCESS_KEY=${{ secrets.AWS_ECR_ACCESS_KEY }} \
-            --build-arg AWS_SECRET_KEY=${{ secrets.AWS_ECR_SECRET_KEY }} \
+            --build-arg AWS_ECR_ACCESS_KEY=${{ secrets.AWS_ECR_ACCESS_KEY }} \
+            --build-arg AWS_ECR_SECRET_KEY=${{ secrets.AWS_ECR_SECRET_KEY }} \
+            --build-arg SPRING_PROFILES_ACTIVE=prod \
             .
           
           echo "ECR REGISTRY: $ECR_REGISTRY"
