@@ -1,0 +1,76 @@
+name: Build and Push to ECR
+
+on:
+  push:
+    branches:
+      - dev # 또는 원하는 브랜치명
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v3
+        with:
+          java-version: '17'
+          distribution: 'temurin'
+
+      - name: Give execute permission to gradlew
+        run: chmod +x ./gradlew  # gradlew에 실행 권한 부여
+
+      - name: Build with Gradle
+        run: ./gradlew build
+
+      - name: Log in to Amazon ECR
+        uses: aws-actions/configure-aws-credentials@v2
+        with:
+          aws-access-key-id: ${{ secrets.AWS_ECR_ACCESS_KEY }}
+          aws-secret-access-key: ${{ secrets.AWS_ECR_SECRET_KEY }}
+          aws-region: ap-northeast-2  # 사용할 리전 설정
+
+      - name: Login to Amazon ECR
+        id: login-ecr
+        uses: aws-actions/amazon-ecr-login@v2
+
+      - name: Check and create ECR repository
+        run: |
+          if ! aws ecr describe-repositories --repository-names ${{ secrets.ECR_REPOSITORY }} &>/dev/null; then
+            echo "Creating ECR repository: ${{ secrets.ECR_REPOSITORY }}"
+              aws ecr create-repository --repository-name ${{ secrets.ECR_REPOSITORY }}
+            else
+              echo "ECR repository already exists: ${{ secrets.ECR_REPOSITORY }}"
+          fi
+
+      - name: Build, tag, and push image to Amazon ECR
+        env:
+          ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
+          ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY }}
+          IMAGE_TAG: latest
+        run: |
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
+            --build-arg JAR_FILE=build/libs/*.jar \
+            --build-arg MARIA_PASSWORD=${{ secrets.MARIA_PASSWORD }} \
+            --build-arg MARIA_USERNAME=${{ secrets.MARIA_USERNAME }} \
+            --build-arg SERVER_HOST=${{ secrets.SERVER_HOST }} \
+            --build-arg AWS_ACCESS_KEY=${{ secrets.AWS_ECR_ACCESS_KEY }} \
+            --build-arg AWS_SECRET_KEY=${{ secrets.AWS_ECR_SECRET_KEY }} \
+            .
+          
+          echo "ECR REGISTRY: $ECR_REGISTRY"
+          echo "ECR_REPOSITORY: $ECR_REPOSITORY"
+          
+          docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
+
+      - name: Deploy to Dev
+        uses: appleboy/ssh-action@master
+        with:
+          username: ubuntu
+          host: ${{ secrets.EC2_HOST }}
+          key: ${{ secrets.EC2_PRIVATE_KEY }}
+          script: |
+            sudo sh /home/ubuntu/deploy.sh
+
