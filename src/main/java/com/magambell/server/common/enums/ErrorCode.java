@@ -16,6 +16,7 @@ public enum ErrorCode {
     USER_EMAIL_AUTH_CODE_NOT_EQUALS("인증번호가 일치하지 않습니다."),
 
     USER_EMAIL_NOT_FOUND("인증을 하지 않았습니다."),
+    USER_NOT_FOUND("계정이 존재하지 않았습니다."),
     ;
     private final String message;
 }
