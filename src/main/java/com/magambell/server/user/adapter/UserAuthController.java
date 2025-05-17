@@ -2,6 +2,7 @@ package com.magambell.server.user.adapter;
 
 import com.magambell.server.common.Response;
 import com.magambell.server.common.swagger.BaseResponse;
+import com.magambell.server.user.adapter.in.web.UserLoginRequest;
 import com.magambell.server.user.adapter.in.web.UserRegisterRequest;
 import com.magambell.server.user.app.port.in.UserUseCase;
 import io.swagger.v3.oas.annotations.Operation;
@@ -29,6 +30,14 @@ public class UserAuthController {
     @PostMapping("/register")
     public Response<BaseResponse> register(@RequestBody @Validated final UserRegisterRequest request) {
         userUseCase.register(request.toServiceRequest());
+        return new Response<>();
+    }
+
+    @Operation(summary = "로그인")
+    @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(implementation = BaseResponse.class))})
+    @PostMapping("/login")
+    public Response<BaseResponse> login(@RequestBody @Validated final UserLoginRequest request) {
+        userUseCase.login(request.toServiceRequest());
         return new Response<>();
     }
 }
