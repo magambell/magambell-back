@@ -17,6 +17,9 @@ public enum ErrorCode {
 
     USER_EMAIL_NOT_FOUND("인증을 하지 않았습니다."),
     USER_NOT_FOUND("계정이 존재하지 않았습니다."),
+
+    JWT_VERIFY_EXPIRED("인증정보가 만료 됐습니다."),
+    JWT_VALIDATE_ERROR("유효한 인증정보가 아닙니다."),
     ;
     private final String message;
 }

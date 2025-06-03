@@ -11,6 +11,11 @@ spring:
       access-key: ${AWS_SES_ACCESS_KEY}
       secret-key: ${AWS_SES_SECRET_KEY}
 
+jwt:
+  secret-key: ${JWT_SECRET_KEY}
+  access-expire-time: 3600
+  refresh-expire-time: 86400
+
 ---
 spring:
   config:
@@ -29,8 +34,15 @@ spring:
     properties:
       hibernate:
         format_sql: true
+
+jwt:
+  secret-key: testtesttesttesttesttesttesttesttesttesttest
+
 ---
 spring:
+  config:
+    activate:
+      on-profile: test
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
@@ -43,6 +55,9 @@ spring:
     ses:
       access-key: test
       secret-key: test
+
+jwt:
+  secret-key: testtesttesttesttesttesttesttesttesttesttest
 
 ---
 spring:
