@@ -1,12 +1,13 @@
 package com.magambell.server.user.adapter.out.persistence;
 
+import com.magambell.server.auth.domain.ProviderType;
 import com.magambell.server.common.annotation.Adapter;
 import com.magambell.server.common.enums.ErrorCode;
 import com.magambell.server.common.exception.NotFoundException;
-import com.magambell.server.user.app.port.in.dto.UserDTO;
 import com.magambell.server.user.app.port.out.UserQueryPort;
 import com.magambell.server.user.domain.model.User;
 import com.magambell.server.user.domain.repository.UserRepository;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -21,13 +22,13 @@ public class UserQueryAdapter implements UserQueryPort {
     }
 
     @Override
-    public void register(final UserDTO userDTO) {
-        userRepository.save(userDTO.toUser());
-    }
-
-    @Override
     public User getUser(final String email, final String password) {
         return userRepository.findByEmailAndPassword(email, password)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
+    }
+
+    @Override
+    public Optional<User> findUserBySocial(final ProviderType providerType, final String providerId) {
+        return userRepository.findUserBySocial(providerType, providerId);
     }
 }
