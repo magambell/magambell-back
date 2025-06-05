@@ -58,6 +58,8 @@ jobs:
             --build-arg SERVER_HOST=${{ secrets.SERVER_HOST }} \
             --build-arg AWS_ECR_ACCESS_KEY=${{ secrets.AWS_ECR_ACCESS_KEY }} \
             --build-arg AWS_ECR_SECRET_KEY=${{ secrets.AWS_ECR_SECRET_KEY }} \
+            --build-arg AWS_SES_ACCESS_KEY=${{ secrets.AWS_SES_ACCESS_KEY }} \
+            --build-arg AWS_SES_SECRET_KEY=${{ secrets.AWS_SES_SECRET_KEY }} \
             --build-arg JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} \
             --build-arg SPRING_PROFILES_ACTIVE=prod \
             .
@@ -79,6 +81,8 @@ jobs:
             export MARIA_PASSWORD=${{ secrets.MARIA_PASSWORD }}
             export AWS_ECR_ACCESS_KEY=${{ secrets.AWS_ECR_ACCESS_KEY }}
             export AWS_ECR_SECRET_KEY=${{ secrets.AWS_ECR_SECRET_KEY }}
+            export AWS_SES_ACCESS_KEY=${{ secrets.AWS_SES_ACCESS_KEY }}
+            export AWS_SES_SECRET_KEY=${{ secrets.AWS_SES_SECRET_KEY }}
             export JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}
             export SPRING_PROFILES_ACTIVE=prod
             sudo -E bash /home/ubuntu/deploy.sh
