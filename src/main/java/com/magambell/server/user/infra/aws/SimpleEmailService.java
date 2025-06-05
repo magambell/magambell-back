@@ -1,4 +1,4 @@
-package com.magambell.server.user.infra;
+package com.magambell.server.user.infra.aws;
 
 import com.amazonaws.services.simpleemail.AmazonSimpleEmailService;
 import com.amazonaws.services.simpleemail.model.Body;

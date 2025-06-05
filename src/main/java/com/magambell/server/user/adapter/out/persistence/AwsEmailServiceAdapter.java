@@ -3,7 +3,7 @@ package com.magambell.server.user.adapter.out.persistence;
 import com.magambell.server.common.annotation.Adapter;
 import com.magambell.server.user.app.port.in.AwsEmailServiceInputPort;
 import com.magambell.server.user.domain.enums.VerificationStatus;
-import com.magambell.server.user.infra.SimpleEmailService;
+import com.magambell.server.user.infra.aws.SimpleEmailService;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

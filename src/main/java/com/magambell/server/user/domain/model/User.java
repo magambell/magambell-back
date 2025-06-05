@@ -2,14 +2,19 @@ package com.magambell.server.user.domain.model;
 
 import com.magambell.server.common.BaseTimeEntity;
 import com.magambell.server.user.app.port.in.dto.UserDTO;
+import com.magambell.server.user.app.port.in.dto.UserSocialAccountDTO;
 import com.magambell.server.user.domain.enums.UserRole;
 import io.hypersistence.utils.hibernate.id.Tsid;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -37,6 +42,9 @@ public class User extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<UserSocialAccount> userSocialAccounts = new ArrayList<>();
+
     @Builder(access = AccessLevel.PRIVATE)
     private User(final String email, final String password, final String name, final String phoneNumber,
                  final UserRole userRole) {
@@ -45,6 +53,19 @@ public class User extends BaseTimeEntity {
         this.name = name;
         this.phoneNumber = phoneNumber;
         this.userRole = userRole;
+    }
+
+    public static User createBySocial(final UserSocialAccountDTO dto) {
+        return User.builder()
+                .email(dto.email())
+                .name(dto.name())
+                .userRole(dto.userRole())
+                .build();
+    }
+
+    public void addUserSocialAccount(final UserSocialAccount userSocialAccount) {
+        this.userSocialAccounts.add(userSocialAccount);
+        userSocialAccount.addUser(this);
     }
 
     public static User create(final UserDTO dto) {

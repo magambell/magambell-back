@@ -11,11 +11,11 @@ import com.magambell.server.user.app.port.in.UserUseCase;
 import com.magambell.server.user.app.port.in.dto.UserEmailDTO;
 import com.magambell.server.user.app.port.in.request.LoginServiceRequest;
 import com.magambell.server.user.app.port.in.request.RegisterServiceRequest;
+import com.magambell.server.user.app.port.out.UserCommandPort;
 import com.magambell.server.user.app.port.out.UserEmailQueryPort;
 import com.magambell.server.user.app.port.out.UserQueryPort;
 import com.magambell.server.user.domain.model.User;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -25,8 +25,8 @@ import org.springframework.transaction.annotation.Transactional;
 public class UserService implements UserUseCase {
 
     private final UserQueryPort userQueryPort;
+    private final UserCommandPort userCommandPort;
     private final UserEmailQueryPort userEmailQueryPort;
-    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
     @Transactional
     public void register(RegisterServiceRequest request) {
@@ -35,7 +35,7 @@ public class UserService implements UserUseCase {
 
         String password = SecurityUtility.encodePassword(request.password());
         userEmailQueryPort.deleteEmail(request.email());
-        userQueryPort.register(request.toCreateUserDTO(password));
+        userCommandPort.register(request.toCreateUserDTO(password));
     }
 
     @Override

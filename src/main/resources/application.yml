@@ -16,6 +16,9 @@ jwt:
   access-expire-time: 3600
   refresh-expire-time: 86400
 
+oauth:
+  kakao-uri: https://kapi.kakao.com/v2/user/me
+
 ---
 spring:
   config:

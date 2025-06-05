@@ -4,6 +4,7 @@ import com.magambell.server.user.domain.enums.UserRole;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -31,26 +32,29 @@ public class SecurityConfig {
                 "/v3/api-docs/**",
                 "/api/v1/user/register",
                 "/api/v1/verify/email/register/**",
-                "/api/login",
-                "/api/token-refresh",
+                "/api/v1/auth/**",
                 "/favicon.ico",
                 "/error"
         };
 
-        http.csrf(AbstractHttpConfigurer::disable);
-        http.formLogin(AbstractHttpConfigurer::disable);
-        http.httpBasic(AbstractHttpConfigurer::disable);
+        http
+                .csrf(AbstractHttpConfigurer::disable)
+                .formLogin(AbstractHttpConfigurer::disable)
+                .httpBasic(AbstractHttpConfigurer::disable)
+                .cors(Customizer.withDefaults())
 
-        http.authorizeHttpRequests(auth -> auth
-                .requestMatchers(permitAllWhiteList)
-                .permitAll()
-                .requestMatchers("/admin")
-                .hasRole(UserRole.ADMIN.name())
-                .anyRequest()
-                .authenticated());
+                .authorizeHttpRequests(auth -> auth
+                        .requestMatchers(permitAllWhiteList)
+                        .permitAll()
+                        .requestMatchers("/admin")
+                        .hasRole(UserRole.ADMIN.name())
+                        .anyRequest()
+                        .authenticated()
+                )
 
-        http.sessionManagement(session -> session
-                .sessionCreationPolicy(SessionCreationPolicy.STATELESS));
+                .sessionManagement(session -> session
+                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
+                );
 
         return http.build();
     }
