@@ -30,7 +30,7 @@ public class AuthService implements AuthUseCase {
     @Override
     public JwtToken loginOrSignUp(final SocialLoginServiceRequest request) {
         validateUserRole(request.userRole());
-        OAuthUserInfo userInfo = oAuthClient.getUserInfo(request.authCode());
+        OAuthUserInfo userInfo = oAuthClient.getUserInfo(request.authCode(), request.nickName());
 
         User user = userQueryPort.findUserBySocial(userInfo.providerType(),
                         userInfo.id())
@@ -48,6 +48,8 @@ public class AuthService implements AuthUseCase {
     private User oAuthSignUp(final OAuthUserInfo userInfo, final UserRole userRole) {
         UserSocialAccountDTO userSocialAccountDTO = new UserSocialAccountDTO(userInfo.email(),
                 userInfo.name(),
+                userInfo.nickName(),
+                userInfo.phoneNumber(),
                 userInfo.providerType(),
                 userInfo.id(),
                 userRole);

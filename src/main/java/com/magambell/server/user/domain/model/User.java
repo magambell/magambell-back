@@ -37,6 +37,8 @@ public class User extends BaseTimeEntity {
 
     private String name;
 
+    private String nickName;
+
     private String phoneNumber;
 
     @Enumerated(EnumType.STRING)
@@ -46,21 +48,15 @@ public class User extends BaseTimeEntity {
     private List<UserSocialAccount> userSocialAccounts = new ArrayList<>();
 
     @Builder(access = AccessLevel.PRIVATE)
-    private User(final String email, final String password, final String name, final String phoneNumber,
+    private User(final String email, final String password, final String name, final String nickName,
+                 final String phoneNumber,
                  final UserRole userRole) {
         this.email = email;
         this.password = password;
         this.name = name;
+        this.nickName = nickName;
         this.phoneNumber = phoneNumber;
         this.userRole = userRole;
-    }
-
-    public static User createBySocial(final UserSocialAccountDTO dto) {
-        return User.builder()
-                .email(dto.email())
-                .name(dto.name())
-                .userRole(dto.userRole())
-                .build();
     }
 
     public void addUserSocialAccount(final UserSocialAccount userSocialAccount) {
@@ -73,6 +69,16 @@ public class User extends BaseTimeEntity {
                 .email(dto.email())
                 .password(dto.password())
                 .name(dto.name())
+                .phoneNumber(dto.phoneNumber())
+                .userRole(dto.userRole())
+                .build();
+    }
+
+    public static User createBySocial(final UserSocialAccountDTO dto) {
+        return User.builder()
+                .email(dto.email())
+                .name(dto.name())
+                .nickName(dto.nickName())
                 .phoneNumber(dto.phoneNumber())
                 .userRole(dto.userRole())
                 .build();

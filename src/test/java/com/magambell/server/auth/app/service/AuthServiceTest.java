@@ -44,11 +44,12 @@ class AuthServiceTest {
     void kakaoSignUp() {
         // given
         SocialLoginServiceRequest socialLoginServiceRequest = new SocialLoginServiceRequest(ProviderType.KAKAO, "test",
-                UserRole.CUSTOMER);
-        OAuthUserInfo userInfo = new OAuthUserInfo("testId", "test@test.com", "테스트이름", ProviderType.KAKAO);
+                "닉네임", UserRole.CUSTOMER);
+        OAuthUserInfo userInfo = new OAuthUserInfo("testId", "test@test.com", "테스트이름", "닉네임", "01012341234",
+                ProviderType.KAKAO);
 
         // when
-        when(oAuthClient.getUserInfo(anyString())).thenReturn(userInfo);
+        when(oAuthClient.getUserInfo(anyString(), anyString())).thenReturn(userInfo);
         authService.loginOrSignUp(socialLoginServiceRequest);
 
         // then
@@ -63,18 +64,20 @@ class AuthServiceTest {
     @Test
     void kakaoLogin() {
         // given
-        UserSocialAccountDTO userSocialAccountDTO = new UserSocialAccountDTO("test@test.com", "테스트이름",
+        UserSocialAccountDTO userSocialAccountDTO = new UserSocialAccountDTO("test@test.com", "테스트이름", "닉네임",
+                "01012341234",
                 ProviderType.KAKAO,
                 "testId", UserRole.CUSTOMER);
         userRepository.save(userSocialAccountDTO.toUser());
         userSocialAccountRepository.save(userSocialAccountDTO.toUserSocialAccount());
 
         SocialLoginServiceRequest socialLoginServiceRequest = new SocialLoginServiceRequest(ProviderType.KAKAO, "test",
-                UserRole.CUSTOMER);
-        OAuthUserInfo userInfo = new OAuthUserInfo("testId", "test@test.com", "테스트이름", ProviderType.KAKAO);
+                "닉네임", UserRole.CUSTOMER);
+        OAuthUserInfo userInfo = new OAuthUserInfo("testId", "test@test.com", "테스트이름", "닉네임", "01012341234",
+                ProviderType.KAKAO);
 
         // when
-        when(oAuthClient.getUserInfo(anyString())).thenReturn(userInfo);
+        when(oAuthClient.getUserInfo(anyString(), anyString())).thenReturn(userInfo);
         JwtToken jwtToken = authService.loginOrSignUp(socialLoginServiceRequest);
 
         // then

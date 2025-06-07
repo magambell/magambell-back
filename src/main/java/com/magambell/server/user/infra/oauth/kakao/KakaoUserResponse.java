@@ -20,7 +20,22 @@ public record KakaoUserResponse(
 
     public record KakaoAccount(
             String email,
-            String name
+            String name,
+            @JsonProperty("phone_number")
+            String phoneNumber
     ) {
+        public KakaoAccount(final String email, final String name, final String phoneNumber) {
+            this.email = email;
+            this.name = name;
+            this.phoneNumber = toDomesticFormat(phoneNumber);
+        }
+
+        private String toDomesticFormat(String phone) {
+            String digits = phone.replaceAll("[^0-9]", "");
+            if (digits.startsWith("82") && digits.length() > 10) {
+                return "0" + digits.substring(2);
+            }
+            return digits;
+        }
     }
 }
