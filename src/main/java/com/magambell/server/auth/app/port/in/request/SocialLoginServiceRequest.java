@@ -6,6 +6,7 @@ import com.magambell.server.user.domain.enums.UserRole;
 public record SocialLoginServiceRequest(
         ProviderType providerType,
         String authCode,
+        String nickName,
         UserRole userRole
 ) {
 }

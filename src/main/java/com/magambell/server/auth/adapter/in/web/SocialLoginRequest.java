@@ -13,10 +13,13 @@ public record SocialLoginRequest(
         @NotBlank(message = "인증번호를 입력해 주세요.")
         String authCode,
 
+        @NotBlank(message = "닉네임을 입력해 주세요.")
+        String nickName,
+
         @NotNull(message = "사용자 유형을 선택해 주세요.")
         UserRole userRole
 ) {
     public SocialLoginServiceRequest toServiceRequest() {
-        return new SocialLoginServiceRequest(providerType, authCode, userRole);
+        return new SocialLoginServiceRequest(providerType, authCode, nickName, userRole);
     }
 }

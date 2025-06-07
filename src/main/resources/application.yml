@@ -24,6 +24,10 @@ spring:
   config:
     activate:
       on-profile: local
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
   datasource:
     url: jdbc:h2:mem:~/magambell
     username: sa
