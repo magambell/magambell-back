@@ -5,6 +5,7 @@ import com.magambell.server.store.app.port.in.S3InputPort;
 import com.magambell.server.store.app.port.in.dto.RegisterStoreDTO;
 import com.magambell.server.store.app.port.in.dto.TransformedImageDTO;
 import com.magambell.server.store.app.port.out.StoreCommandPort;
+import com.magambell.server.store.app.port.out.response.PreSignedUrlImage;
 import com.magambell.server.store.domain.model.Store;
 import com.magambell.server.store.domain.model.StoreImage;
 import com.magambell.server.store.domain.repository.StoreImageRepository;
@@ -22,17 +23,23 @@ public class StoreCommandAdapter implements StoreCommandPort {
     private final S3InputPort s3InputPort;
 
     @Override
-    public void registerStore(final RegisterStoreDTO dto, final User user) {
+    public List<PreSignedUrlImage> registerStore(final RegisterStoreDTO dto, final User user) {
         Store store = Store.create(dto);
         List<TransformedImageDTO> transformedImageDTOS = s3InputPort.saveImages(dto.storeImagesRegisters(), user);
-        addImages(transformedImageDTOS, store);
+        List<PreSignedUrlImage> preSignedUrlImages = addImagesAndGetPreSignedUrlImage(transformedImageDTOS, store);
 
         storeRepository.save(store);
+
+        return preSignedUrlImages;
     }
 
-    private void addImages(final List<TransformedImageDTO> imageDTOList, final Store store) {
-        imageDTOList.forEach(imageDTO -> {
-            store.addStoreImage(StoreImage.create(imageDTO.getUrl(), imageDTO.id()));
-        });
+    private List<PreSignedUrlImage> addImagesAndGetPreSignedUrlImage(final List<TransformedImageDTO> imageDTOList,
+                                                                     final Store store) {
+        return imageDTOList.stream()
+                .map(imageDTO -> {
+                    store.addStoreImage(StoreImage.create(imageDTO.getUrl(), imageDTO.id()));
+                    return new PreSignedUrlImage(imageDTO.id(), imageDTO.putUrl());
+                })
+                .toList();
     }
 }

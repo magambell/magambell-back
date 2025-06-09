@@ -2,8 +2,8 @@ package com.magambell.server.store.adapter;
 
 import com.magambell.server.common.Response;
 import com.magambell.server.common.security.CustomUserDetails;
-import com.magambell.server.common.swagger.BaseResponse;
 import com.magambell.server.store.adapter.in.web.RegisterStoreRequest;
+import com.magambell.server.store.adapter.out.persistence.StoreImagesResponse;
 import com.magambell.server.store.app.port.in.StoreUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -29,13 +29,13 @@ public class StoreController {
 
     @PreAuthorize("hasRole('OWNER')")
     @Operation(summary = "매장등록")
-    @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(implementation = BaseResponse.class))})
+    @ApiResponse(responseCode = "200", content = {
+            @Content(schema = @Schema(implementation = StoreImagesResponse.class))})
     @PostMapping("")
-    public Response<BaseResponse> registerStore(
+    public Response<StoreImagesResponse> registerStore(
             @RequestBody @Validated final RegisterStoreRequest request,
             @AuthenticationPrincipal final CustomUserDetails customUserDetails
     ) {
-        storeUseCase.registerStore(request.toServiceRequest(), customUserDetails.userId());
-        return new Response<>();
+        return new Response<>(storeUseCase.registerStore(request.toServiceRequest(), customUserDetails.userId()));
     }
 }
