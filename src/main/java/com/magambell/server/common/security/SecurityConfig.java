@@ -1,4 +1,4 @@
-package com.magambell.server.common.config;
+package com.magambell.server.common.security;
 
 import com.magambell.server.user.domain.enums.UserRole;
 import lombok.RequiredArgsConstructor;
@@ -12,11 +12,14 @@ import org.springframework.security.config.annotation.web.configurers.HeadersCon
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.web.SecurityFilterChain;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
 @RequiredArgsConstructor
 public class SecurityConfig {
+
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -54,7 +57,8 @@ public class SecurityConfig {
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
-                .headers(headers -> headers.frameOptions(FrameOptionsConfig::sameOrigin));
+                .headers(headers -> headers.frameOptions(FrameOptionsConfig::sameOrigin))
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }

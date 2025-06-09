@@ -25,7 +25,7 @@ public record UserSocialAccountDTO(
         this.email = validateEmail(email);
         this.name = name;
         this.nickName = nickName;
-        this.phoneNumber = phoneNumber;
+        this.phoneNumber = validatePhone(phoneNumber);
         this.providerType = providerType;
         this.providerId = providerId;
         this.userRole = userRole;
@@ -36,6 +36,13 @@ public record UserSocialAccountDTO(
             throw new InvalidRequestException(ErrorCode.USER_VALID_EMAIL);
         }
         return email;
+    }
+
+    private String validatePhone(final String phoneNumber) {
+        if (!phoneNumber.matches("^(?!.*-)[0-9]{10,11}$")) {
+            throw new InvalidRequestException(ErrorCode.USER_VALID_PHONE);
+        }
+        return phoneNumber;
     }
 
     public User toUser() {

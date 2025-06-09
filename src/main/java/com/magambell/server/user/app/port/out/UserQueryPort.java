@@ -11,4 +11,8 @@ public interface UserQueryPort {
     User getUser(String email, String password);
 
     Optional<User> findUserBySocial(ProviderType providerType, String providerId);
+
+    UserInfoDTO getUserInfo(Long userId);
+
+    User findById(Long userId);
 }

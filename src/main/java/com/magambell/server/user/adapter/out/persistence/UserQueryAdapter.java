@@ -4,6 +4,7 @@ import com.magambell.server.auth.domain.ProviderType;
 import com.magambell.server.common.annotation.Adapter;
 import com.magambell.server.common.enums.ErrorCode;
 import com.magambell.server.common.exception.NotFoundException;
+import com.magambell.server.user.app.port.out.UserInfoDTO;
 import com.magambell.server.user.app.port.out.UserQueryPort;
 import com.magambell.server.user.domain.model.User;
 import com.magambell.server.user.domain.repository.UserRepository;
@@ -30,5 +31,16 @@ public class UserQueryAdapter implements UserQueryPort {
     @Override
     public Optional<User> findUserBySocial(final ProviderType providerType, final String providerId) {
         return userRepository.findUserBySocial(providerType, providerId);
+    }
+
+    @Override
+    public UserInfoDTO getUserInfo(final Long userId) {
+        return userRepository.getUserInfo(userId);
+    }
+
+    @Override
+    public User findById(final Long userId) {
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
     }
 }

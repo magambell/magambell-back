@@ -60,6 +60,8 @@ jobs:
             --build-arg AWS_ECR_SECRET_KEY=${{ secrets.AWS_ECR_SECRET_KEY }} \
             --build-arg AWS_SES_ACCESS_KEY=${{ secrets.AWS_SES_ACCESS_KEY }} \
             --build-arg AWS_SES_SECRET_KEY=${{ secrets.AWS_SES_SECRET_KEY }} \
+            --build-arg AWS_CF_DISTRIBUTION=${{ secrets.AWS_CF_DISTRIBUTION }} \
+            --build-arg AWS_S3_BUCKET=${{ secrets.AWS_S3_BUCKET }} \
             --build-arg JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} \
             --build-arg SPRING_PROFILES_ACTIVE=prod \
             .
@@ -83,6 +85,8 @@ jobs:
             export AWS_ECR_SECRET_KEY=${{ secrets.AWS_ECR_SECRET_KEY }}
             export AWS_SES_ACCESS_KEY=${{ secrets.AWS_SES_ACCESS_KEY }}
             export AWS_SES_SECRET_KEY=${{ secrets.AWS_SES_SECRET_KEY }}
+            export AWS_CF_DISTRIBUTION=${{ secrets.AWS_CF_DISTRIBUTION }}
+            export AWS_S3_BUCKET=${{ secrets.AWS_S3_BUCKET }}
             export JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}
             export SPRING_PROFILES_ACTIVE=prod
             sudo -E bash /home/ubuntu/deploy.sh
