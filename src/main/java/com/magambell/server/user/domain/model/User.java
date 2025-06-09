@@ -1,6 +1,7 @@
 package com.magambell.server.user.domain.model;
 
 import com.magambell.server.common.BaseTimeEntity;
+import com.magambell.server.store.domain.model.Store;
 import com.magambell.server.user.app.port.in.dto.UserDTO;
 import com.magambell.server.user.app.port.in.dto.UserSocialAccountDTO;
 import com.magambell.server.user.domain.enums.UserRole;
@@ -12,6 +13,7 @@ import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.util.ArrayList;
 import java.util.List;
@@ -47,6 +49,9 @@ public class User extends BaseTimeEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<UserSocialAccount> userSocialAccounts = new ArrayList<>();
 
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private Store store;
+
     @Builder(access = AccessLevel.PRIVATE)
     private User(final String email, final String password, final String name, final String nickName,
                  final String phoneNumber,
@@ -57,11 +62,6 @@ public class User extends BaseTimeEntity {
         this.nickName = nickName;
         this.phoneNumber = phoneNumber;
         this.userRole = userRole;
-    }
-
-    public void addUserSocialAccount(final UserSocialAccount userSocialAccount) {
-        this.userSocialAccounts.add(userSocialAccount);
-        userSocialAccount.addUser(this);
     }
 
     public static User create(final UserDTO dto) {
@@ -83,4 +83,10 @@ public class User extends BaseTimeEntity {
                 .userRole(dto.userRole())
                 .build();
     }
+
+    public void addUserSocialAccount(final UserSocialAccount userSocialAccount) {
+        this.userSocialAccounts.add(userSocialAccount);
+        userSocialAccount.addUser(this);
+    }
+
 }

@@ -5,6 +5,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.magambell.server.auth.app.service.JwtService;
 import com.magambell.server.user.adapter.in.web.VerifyEmailAuthCodeRegisterRequest;
 import com.magambell.server.user.adapter.in.web.VerifyEmailDuplicateRegisterRequest;
 import com.magambell.server.user.adapter.in.web.VerifyEmailSendRegisterRequest;
@@ -30,6 +31,9 @@ class UserVerifyControllerTest {
 
     @MockBean
     private UserVerifyUseCase userVerifyUseCase;
+    
+    @MockBean
+    private JwtService jwtService;
 
     @DisplayName("회원가입시 이메일 중복이 아닐시 성공한다.")
     @Test

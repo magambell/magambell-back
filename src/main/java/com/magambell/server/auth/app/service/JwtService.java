@@ -28,6 +28,19 @@ public class JwtService {
         return Long.valueOf(jwt.getBody().getSubject());
     }
 
+    public UserRole getJwtUserRole(final String token) {
+        String tokenWithoutBearer = getTokenWithoutBearer(token);
+        Jws<Claims> jwt = getJwt(tokenWithoutBearer);
+        return UserRole.valueOf(jwt.getBody().get("userRole", String.class));
+    }
+
+    public boolean isValidJwtToken(final String token) {
+        String tokenWithoutBearer = getTokenWithoutBearer(token);
+        Jws<Claims> jwt = getJwt(tokenWithoutBearer);
+
+        return jwt.getBody().getSubject() != null;
+    }
+
     private Jws<Claims> getJwt(final String token) {
         return jwtTokenProvider.getTokenClaims(token);
     }
