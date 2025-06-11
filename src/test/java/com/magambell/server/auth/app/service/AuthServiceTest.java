@@ -44,7 +44,7 @@ class AuthServiceTest {
     void kakaoSignUp() {
         // given
         SocialLoginServiceRequest socialLoginServiceRequest = new SocialLoginServiceRequest(ProviderType.KAKAO, "test",
-                "닉네임", UserRole.CUSTOMER);
+                "닉네임", "01012341234", UserRole.CUSTOMER);
         OAuthUserInfo userInfo = new OAuthUserInfo("testId", "test@test.com", "테스트이름", "01012341234",
                 ProviderType.KAKAO);
 
@@ -72,7 +72,7 @@ class AuthServiceTest {
         userSocialAccountRepository.save(userSocialAccountDTO.toUserSocialAccount());
 
         SocialLoginServiceRequest socialLoginServiceRequest = new SocialLoginServiceRequest(ProviderType.KAKAO, "test",
-                "닉네임", UserRole.CUSTOMER);
+                "닉네임", "01012341234", UserRole.CUSTOMER);
         OAuthUserInfo userInfo = new OAuthUserInfo("testId", "test@test.com", "테스트이름", "01012341234",
                 ProviderType.KAKAO);
 

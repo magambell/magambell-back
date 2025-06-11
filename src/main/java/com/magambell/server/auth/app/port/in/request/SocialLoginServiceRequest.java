@@ -7,6 +7,7 @@ public record SocialLoginServiceRequest(
         ProviderType providerType,
         String authCode,
         String nickName,
+        String phoneNumber,
         UserRole userRole
 ) {
 }
