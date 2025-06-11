@@ -1,10 +1,10 @@
-package com.magambell.server.store.adapter;
+package com.magambell.server.goods.adapter;
 
 import com.magambell.server.common.Response;
 import com.magambell.server.common.security.CustomUserDetails;
-import com.magambell.server.store.adapter.in.web.RegisterStoreRequest;
-import com.magambell.server.store.adapter.out.persistence.StoreImagesResponse;
-import com.magambell.server.store.app.port.in.StoreUseCase;
+import com.magambell.server.common.swagger.BaseResponse;
+import com.magambell.server.goods.adapter.in.web.RegisterGoodsRequest;
+import com.magambell.server.goods.app.port.in.GoodsUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -19,23 +19,25 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-@Tag(name = "Store", description = "Store API")
+@Tag(name = "Goods", description = "Goods API")
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/store")
+@RequestMapping("/api/v1/goods")
 @RestController
-public class StoreController {
+public class GoodsController {
 
-    private final StoreUseCase storeUseCase;
+    private final GoodsUseCase goodsUseCase;
 
     @PreAuthorize("hasRole('OWNER')")
-    @Operation(summary = "매장 등록")
+    @Operation(summary = "마감백 등록")
     @ApiResponse(responseCode = "200", content = {
-            @Content(schema = @Schema(implementation = StoreImagesResponse.class))})
+            @Content(schema = @Schema(implementation = BaseResponse.class))})
     @PostMapping("")
-    public Response<StoreImagesResponse> registerStore(
-            @RequestBody @Validated final RegisterStoreRequest request,
+    public Response<BaseResponse> registerStore(
+            @RequestBody @Validated final RegisterGoodsRequest request,
             @AuthenticationPrincipal final CustomUserDetails customUserDetails
     ) {
-        return new Response<>(storeUseCase.registerStore(request.toServiceRequest(), customUserDetails.userId()));
+
+        goodsUseCase.registerGoods(request.toService(), customUserDetails.userId());
+        return new Response<>();
     }
 }

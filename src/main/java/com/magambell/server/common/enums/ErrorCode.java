@@ -16,6 +16,7 @@ public enum ErrorCode {
     USER_ROLE_NOT_ASSIGNABLE("해당 역할은 사용자에게 할당할 수 없습니다."),
     STORE_VALID_IMAGE("이미지를 등록해 주세요."),
     INVALID_ONLY_NUMBER("숫자만 입력해 주세요."),
+    TIME_VALID("판매 시작 시간은 종료 시간보다 빨라야합니다."),
 
     USER_CUSTOMER_NO_ACCESS("사장님만 접근되는 메뉴입니다."),
 

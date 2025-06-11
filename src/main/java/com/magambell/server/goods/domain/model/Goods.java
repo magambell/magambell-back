@@ -1,6 +1,7 @@
 package com.magambell.server.goods.domain.model;
 
 import com.magambell.server.common.BaseTimeEntity;
+import com.magambell.server.goods.app.port.in.dto.RegisterGoodsDTO;
 import com.magambell.server.stock.domain.model.Stock;
 import com.magambell.server.store.domain.model.Store;
 import io.hypersistence.utils.hibernate.id.Tsid;
@@ -26,7 +27,6 @@ public class Goods extends BaseTimeEntity {
     @Tsid
     @Id
     private Long id;
-
     private String name;
     private LocalTime startTime;
     private LocalTime endTime;
@@ -53,5 +53,26 @@ public class Goods extends BaseTimeEntity {
         this.discount = discount;
         this.salePrice = salePrice;
         this.description = description;
+    }
+
+    public static Goods create(RegisterGoodsDTO dto) {
+        return Goods.builder()
+                .name(dto.name())
+                .startTime(dto.startTime())
+                .endTime(dto.endTime())
+                .originalPrice(dto.originalPrice())
+                .discount(dto.discount())
+                .salePrice(dto.salePrice())
+                .description(dto.description())
+                .build();
+    }
+
+    public void addStore(final Store store) {
+        this.store = store;
+    }
+
+    public void addStock(final Stock stock) {
+        this.stock = stock;
+        stock.addGoods(this);
     }
 }
