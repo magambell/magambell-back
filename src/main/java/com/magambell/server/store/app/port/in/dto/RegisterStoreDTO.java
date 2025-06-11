@@ -4,6 +4,7 @@ import com.magambell.server.store.adapter.in.web.StoreImagesRegister;
 import com.magambell.server.store.domain.enums.Approved;
 import com.magambell.server.store.domain.enums.Bank;
 import com.magambell.server.store.domain.model.Store;
+import com.magambell.server.user.domain.model.User;
 import java.util.List;
 
 public record RegisterStoreDTO(
@@ -17,7 +18,8 @@ public record RegisterStoreDTO(
         Bank bankName,
         String bankAccount,
         List<StoreImagesRegister> storeImagesRegisters,
-        Approved approved
+        Approved approved,
+        User user
 ) {
     public Store toEntity() {
         return Store.create(this);

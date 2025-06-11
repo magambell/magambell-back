@@ -23,7 +23,8 @@ public class StoreCommandAdapter implements StoreCommandPort {
     private final S3InputPort s3InputPort;
 
     @Override
-    public List<PreSignedUrlImage> registerStore(final RegisterStoreDTO dto, final User user) {
+    public List<PreSignedUrlImage> registerStore(final RegisterStoreDTO dto) {
+        User user = dto.user();
         Store store = dto.toEntity();
         user.addStore(store);
         List<TransformedImageDTO> transformedImageDTOS = s3InputPort.saveImages(dto.storeImagesRegisters(), user);

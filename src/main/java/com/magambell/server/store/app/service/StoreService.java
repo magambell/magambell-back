@@ -31,7 +31,7 @@ public class StoreService implements StoreUseCase {
         User user = userQueryPort.findById(userId);
         checkDuplicateStore(user);
         List<PreSignedUrlImage> preSignedUrlImages = storeCommandPort.registerStore(
-                request.toStoreDTO(Approved.WAITING), user);
+                request.toStoreDTO(Approved.WAITING, user));
 
         return new StoreImagesResponse(preSignedUrlImages);
     }

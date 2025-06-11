@@ -6,6 +6,7 @@ import com.magambell.server.store.adapter.in.web.StoreImagesRegister;
 import com.magambell.server.store.app.port.in.dto.RegisterStoreDTO;
 import com.magambell.server.store.domain.enums.Approved;
 import com.magambell.server.store.domain.enums.Bank;
+import com.magambell.server.user.domain.model.User;
 import java.util.List;
 
 public record RegisterStoreServiceRequest(
@@ -58,8 +59,8 @@ public record RegisterStoreServiceRequest(
         return value;
     }
 
-    public RegisterStoreDTO toStoreDTO(Approved approved) {
+    public RegisterStoreDTO toStoreDTO(final Approved approved, final User user) {
         return new RegisterStoreDTO(name, address, latitude, longitude, ownerName, ownerPhone, businessNumber, bankName,
-                bankAccount, storeImagesRegisters, approved);
+                bankAccount, storeImagesRegisters, approved, user);
     }
 }
