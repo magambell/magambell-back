@@ -17,6 +17,8 @@ public enum ErrorCode {
     STORE_VALID_IMAGE("이미지를 등록해 주세요."),
     INVALID_ONLY_NUMBER("숫자만 입력해 주세요."),
     TIME_VALID("판매 시작 시간은 종료 시간보다 빨라야합니다."),
+    INVALID_NICK_NAME("닉네임을 입력해 주세요."),
+    INVALID_USER_ROLE("사용자 유형을 선택해 주세요."),
 
     USER_CUSTOMER_NO_ACCESS("사장님만 접근되는 메뉴입니다."),
 

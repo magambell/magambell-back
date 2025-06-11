@@ -6,7 +6,6 @@ public record OAuthUserInfo(
         String id,
         String email,
         String name,
-        String nickName,
         String phoneNumber,
         ProviderType providerType
 ) {

@@ -25,7 +25,7 @@ public class KakaoOAuthClient implements OAuthClient {
     private String KAKAO_URI;
 
     @Override
-    public OAuthUserInfo getUserInfo(final String accessToken, final String nickName) {
+    public OAuthUserInfo getUserInfo(final String accessToken) {
         KakaoUserResponse response = fetchKakaoUserResponse(accessToken);
 
         validateKakaoResponse(response);
@@ -34,8 +34,7 @@ public class KakaoOAuthClient implements OAuthClient {
                 String.valueOf(response.id()),
                 response.kakaoAccount().email(),
                 response.kakaoAccount().name(),
-                nickName,
-                response.kakaoAccount().phoneNumber(),
+                toDomesticFormat(response.kakaoAccount().phoneNumber()),
                 ProviderType.KAKAO
         );
     }
@@ -68,5 +67,13 @@ public class KakaoOAuthClient implements OAuthClient {
                 || response.kakaoAccount().phoneNumber() == null) {
             throw new NotFoundException(ErrorCode.OAUTH_KAKAO_USER_NOT_FOUND);
         }
+    }
+
+    private String toDomesticFormat(String phone) {
+        String digits = phone.replaceAll("[^0-9]", "");
+        if (digits.startsWith("82") && digits.length() > 10) {
+            return "0" + digits.substring(2);
+        }
+        return digits;
     }
 }
