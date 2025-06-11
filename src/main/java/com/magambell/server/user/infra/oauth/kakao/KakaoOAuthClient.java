@@ -34,7 +34,7 @@ public class KakaoOAuthClient implements OAuthClient {
                 String.valueOf(response.id()),
                 response.kakaoAccount().email(),
                 response.kakaoAccount().name(),
-                toDomesticFormat(response.kakaoAccount().phoneNumber()),
+                response.kakaoAccount().phoneNumber(),
                 ProviderType.KAKAO
         );
     }
@@ -63,17 +63,8 @@ public class KakaoOAuthClient implements OAuthClient {
         }
         if (response.kakaoAccount() == null
                 || response.kakaoAccount().email() == null
-                || response.kakaoAccount().name() == null
-                || response.kakaoAccount().phoneNumber() == null) {
+                || response.kakaoAccount().name() == null) {
             throw new NotFoundException(ErrorCode.OAUTH_KAKAO_USER_NOT_FOUND);
         }
-    }
-
-    private String toDomesticFormat(String phone) {
-        String digits = phone.replaceAll("[^0-9]", "");
-        if (digits.startsWith("82") && digits.length() > 10) {
-            return "0" + digits.substring(2);
-        }
-        return digits;
     }
 }

@@ -15,9 +15,11 @@ public record SocialLoginRequest(
 
         String nickName,
 
+        String phoneNumber,
+
         UserRole userRole
 ) {
     public SocialLoginServiceRequest toServiceRequest() {
-        return new SocialLoginServiceRequest(providerType, authCode, nickName, userRole);
+        return new SocialLoginServiceRequest(providerType, authCode, nickName, phoneNumber, userRole);
     }
 }
