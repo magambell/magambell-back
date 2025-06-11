@@ -95,4 +95,9 @@ public class Store extends BaseTimeEntity {
         this.storeImages.add(storeImage);
         storeImage.addStore(this);
     }
+
+    public void addGoods(final Goods goods) {
+        this.goods = goods;
+        goods.addStore(this);
+    }
 }

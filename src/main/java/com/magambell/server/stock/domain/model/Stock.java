@@ -34,4 +34,14 @@ public class Stock extends BaseTimeEntity {
     private Stock(final Integer quantity) {
         this.quantity = quantity;
     }
+
+    public static Stock create(Integer quantity) {
+        return Stock.builder()
+                .quantity(quantity)
+                .build();
+    }
+
+    public void addGoods(final Goods goods) {
+        this.goods = goods;
+    }
 }
