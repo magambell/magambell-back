@@ -5,6 +5,7 @@ import com.magambell.server.store.adapter.in.web.StoreImagesRegister;
 import com.magambell.server.store.app.port.in.request.RegisterStoreServiceRequest;
 import com.magambell.server.store.domain.enums.Bank;
 import com.magambell.server.store.domain.model.Store;
+import com.magambell.server.store.domain.repository.StoreImageRepository;
 import com.magambell.server.store.domain.repository.StoreRepository;
 import com.magambell.server.user.app.port.in.dto.UserSocialAccountDTO;
 import com.magambell.server.user.domain.enums.UserRole;
@@ -13,6 +14,7 @@ import com.magambell.server.user.domain.repository.UserRepository;
 import com.magambell.server.user.domain.repository.UserSocialAccountRepository;
 import java.util.List;
 import org.assertj.core.api.Assertions;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -36,6 +38,9 @@ class StoreServiceTest {
     @Autowired
     private StoreRepository storeRepository;
 
+    @Autowired
+    private StoreImageRepository storeImageRepository;
+
     private User user;
 
     @BeforeEach
@@ -43,9 +48,18 @@ class StoreServiceTest {
         UserSocialAccountDTO userSocialAccountDTO = new UserSocialAccountDTO("test@test.com", "테스트이름", "닉네임",
                 "01012341234",
                 ProviderType.KAKAO,
-                "testId", UserRole.CUSTOMER);
-        user = userRepository.save(userSocialAccountDTO.toUser());
-        userSocialAccountRepository.save(userSocialAccountDTO.toUserSocialAccount());
+                "testId", UserRole.OWNER);
+        user = userSocialAccountDTO.toUser();
+        user.addUserSocialAccount(userSocialAccountDTO.toUserSocialAccount());
+        userRepository.save(user);
+    }
+
+    @AfterEach
+    void tearDown() {
+        storeImageRepository.deleteAllInBatch();
+        storeRepository.deleteAllInBatch();
+        userSocialAccountRepository.deleteAllInBatch();
+        userRepository.deleteAllInBatch();
     }
 
     @DisplayName("매장을 등록한다.")
