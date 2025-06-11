@@ -29,31 +29,42 @@ public class AuthService implements AuthUseCase {
     @Transactional
     @Override
     public JwtToken loginOrSignUp(final SocialLoginServiceRequest request) {
-        validateUserRole(request.userRole());
-        OAuthUserInfo userInfo = oAuthClient.getUserInfo(request.authCode(), request.nickName());
+        OAuthUserInfo userInfo = oAuthClient.getUserInfo(request.authCode());
 
         User user = userQueryPort.findUserBySocial(userInfo.providerType(),
                         userInfo.id())
-                .orElseGet(() -> oAuthSignUp(userInfo, request.userRole()));
+                .orElseGet(() -> oAuthSignUp(userInfo, request.userRole(), request.nickName()));
 
         return jwtService.createJwtToken(user.getId(), user.getUserRole());
     }
 
-    private void validateUserRole(final UserRole userRole) {
-        if (!userRole.isUserAssignable()) {
-            throw new InvalidRequestException(ErrorCode.USER_ROLE_NOT_ASSIGNABLE);
-        }
-    }
+    private User oAuthSignUp(final OAuthUserInfo userInfo, final UserRole userRole, final String nickName) {
+        validateSignUpFields(nickName, userRole);
+        validateUserRole(userRole);
 
-    private User oAuthSignUp(final OAuthUserInfo userInfo, final UserRole userRole) {
         UserSocialAccountDTO userSocialAccountDTO = new UserSocialAccountDTO(userInfo.email(),
                 userInfo.name(),
-                userInfo.nickName(),
+                nickName,
                 userInfo.phoneNumber(),
                 userInfo.providerType(),
                 userInfo.id(),
                 userRole);
 
         return userCommandPort.registerBySocial(userSocialAccountDTO);
+    }
+
+    private void validateSignUpFields(final String nickName, final UserRole userRole) {
+        if (nickName == null || nickName.isBlank()) {
+            throw new InvalidRequestException(ErrorCode.INVALID_NICK_NAME);
+        }
+        if (userRole == null) {
+            throw new InvalidRequestException(ErrorCode.INVALID_USER_ROLE);
+        }
+    }
+
+    private void validateUserRole(final UserRole userRole) {
+        if (!userRole.isUserAssignable()) {
+            throw new InvalidRequestException(ErrorCode.USER_ROLE_NOT_ASSIGNABLE);
+        }
     }
 }

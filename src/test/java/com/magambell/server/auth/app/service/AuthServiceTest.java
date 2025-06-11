@@ -45,11 +45,11 @@ class AuthServiceTest {
         // given
         SocialLoginServiceRequest socialLoginServiceRequest = new SocialLoginServiceRequest(ProviderType.KAKAO, "test",
                 "닉네임", UserRole.CUSTOMER);
-        OAuthUserInfo userInfo = new OAuthUserInfo("testId", "test@test.com", "테스트이름", "닉네임", "01012341234",
+        OAuthUserInfo userInfo = new OAuthUserInfo("testId", "test@test.com", "테스트이름", "01012341234",
                 ProviderType.KAKAO);
 
         // when
-        when(oAuthClient.getUserInfo(anyString(), anyString())).thenReturn(userInfo);
+        when(oAuthClient.getUserInfo(anyString())).thenReturn(userInfo);
         authService.loginOrSignUp(socialLoginServiceRequest);
 
         // then
@@ -73,11 +73,11 @@ class AuthServiceTest {
 
         SocialLoginServiceRequest socialLoginServiceRequest = new SocialLoginServiceRequest(ProviderType.KAKAO, "test",
                 "닉네임", UserRole.CUSTOMER);
-        OAuthUserInfo userInfo = new OAuthUserInfo("testId", "test@test.com", "테스트이름", "닉네임", "01012341234",
+        OAuthUserInfo userInfo = new OAuthUserInfo("testId", "test@test.com", "테스트이름", "01012341234",
                 ProviderType.KAKAO);
 
         // when
-        when(oAuthClient.getUserInfo(anyString(), anyString())).thenReturn(userInfo);
+        when(oAuthClient.getUserInfo(anyString())).thenReturn(userInfo);
         JwtToken jwtToken = authService.loginOrSignUp(socialLoginServiceRequest);
 
         // then
