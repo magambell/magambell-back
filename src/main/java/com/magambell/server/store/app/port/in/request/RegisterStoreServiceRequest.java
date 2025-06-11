@@ -52,7 +52,7 @@ public record RegisterStoreServiceRequest(
     }
 
     private List<StoreImagesRegister> validateImages(final List<StoreImagesRegister> value) {
-        if (!value.isEmpty()) {
+        if (value.isEmpty()) {
             throw new InvalidRequestException(ErrorCode.STORE_VALID_IMAGE);
         }
         return value;
