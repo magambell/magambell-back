@@ -89,4 +89,8 @@ public class User extends BaseTimeEntity {
         userSocialAccount.addUser(this);
     }
 
+    public void addStore(final Store store) {
+        this.store = store;
+        store.addUser(this);
+    }
 }

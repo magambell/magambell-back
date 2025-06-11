@@ -33,7 +33,6 @@ public class Store extends BaseTimeEntity {
     @Tsid
     @Id
     private Long id;
-
     private String name;
     private String address;
     private String latitude;
@@ -94,6 +93,10 @@ public class Store extends BaseTimeEntity {
     public void addStoreImage(final StoreImage storeImage) {
         this.storeImages.add(storeImage);
         storeImage.addStore(this);
+    }
+
+    public void addUser(final User user) {
+        this.user = user;
     }
 
     public void addGoods(final Goods goods) {
