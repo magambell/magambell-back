@@ -10,8 +10,8 @@ import java.util.List;
 public record RegisterStoreDTO(
         String name,
         String address,
-        String latitude,
-        String longitude,
+        Double latitude,
+        Double longitude,
         String ownerName,
         String ownerPhone,
         String businessNumber,

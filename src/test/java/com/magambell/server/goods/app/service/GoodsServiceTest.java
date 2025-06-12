@@ -64,8 +64,8 @@ class GoodsServiceTest {
         RegisterStoreDTO registerStoreDTO = new RegisterStoreDTO(
                 "테스트 매장",
                 "서울 강서구 테스트 211",
-                "1238.123213",
-                "5457.123213",
+                1238.123213,
+                5457.123213,
                 "대표이름",
                 "01012345678",
                 "123491923",

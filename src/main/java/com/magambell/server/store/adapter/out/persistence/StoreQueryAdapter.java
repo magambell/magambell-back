@@ -1,10 +1,13 @@
 package com.magambell.server.store.adapter.out.persistence;
 
 import com.magambell.server.common.annotation.Adapter;
+import com.magambell.server.store.adapter.in.web.SearchStoreListServiceRequest;
 import com.magambell.server.store.app.port.out.StoreQueryPort;
+import com.magambell.server.store.app.port.out.response.StoreListDTOResponse;
 import com.magambell.server.store.domain.model.Store;
 import com.magambell.server.store.domain.repository.StoreRepository;
 import com.magambell.server.user.domain.model.User;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 
@@ -22,5 +25,10 @@ public class StoreQueryAdapter implements StoreQueryPort {
     @Override
     public Optional<Store> getStoreByUser(final User user) {
         return storeRepository.findByUser(user);
+    }
+
+    @Override
+    public List<StoreListDTOResponse> getStoreList(final SearchStoreListServiceRequest request) {
+        return storeRepository.getStoreList(request);
     }
 }
