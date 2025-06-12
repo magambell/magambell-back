@@ -45,4 +45,16 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
                 .where(user.id.eq(userId))
                 .fetchOne();
     }
+
+    @Override
+    public boolean existsUserBySocial(final ProviderType providerType, final String providerId) {
+        Integer result = queryFactory
+                .selectOne()
+                .from(user)
+                .join(user.userSocialAccounts, userSocialAccount)
+                .where(userSocialAccount.providerType.eq(providerType),
+                        userSocialAccount.providerId.eq(providerId))
+                .fetchFirst();
+        return result != null;
+    }
 }

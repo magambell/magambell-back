@@ -43,4 +43,14 @@ public class UserQueryAdapter implements UserQueryPort {
         return userRepository.findById(userId)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
     }
+
+    @Override
+    public boolean existsUserBySocial(final ProviderType providerType, final String providerId) {
+        return userRepository.existsUserBySocial(providerType, providerId);
+    }
+
+    @Override
+    public boolean existsByNickName(final String nickName) {
+        return userRepository.existsByNickName(nickName);
+    }
 }

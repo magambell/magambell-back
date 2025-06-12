@@ -9,4 +9,6 @@ public interface UserRepositoryCustom {
     Optional<User> findUserBySocial(final ProviderType providerType, final String providerId);
 
     UserInfoDTO getUserInfo(Long userId);
+
+    boolean existsUserBySocial(ProviderType providerType, String providerId);
 }

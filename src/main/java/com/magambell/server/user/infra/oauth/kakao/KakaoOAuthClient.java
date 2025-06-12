@@ -25,6 +25,11 @@ public class KakaoOAuthClient implements OAuthClient {
     private String KAKAO_URI;
 
     @Override
+    public ProviderType getProviderType() {
+        return ProviderType.KAKAO;
+    }
+
+    @Override
     public OAuthUserInfo getUserInfo(final String accessToken) {
         KakaoUserResponse response = fetchKakaoUserResponse(accessToken);
 

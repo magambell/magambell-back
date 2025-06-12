@@ -2,6 +2,7 @@ package com.magambell.server.auth.app.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import com.magambell.server.auth.app.port.in.request.SocialLoginServiceRequest;
@@ -10,17 +11,21 @@ import com.magambell.server.auth.domain.model.JwtToken;
 import com.magambell.server.user.app.dto.OAuthUserInfo;
 import com.magambell.server.user.app.port.in.dto.UserSocialAccountDTO;
 import com.magambell.server.user.app.port.out.OAuthClient;
+import com.magambell.server.user.app.port.out.UserCommandPort;
+import com.magambell.server.user.app.port.out.UserQueryPort;
 import com.magambell.server.user.domain.enums.UserRole;
 import com.magambell.server.user.domain.model.User;
 import com.magambell.server.user.domain.repository.UserRepository;
 import com.magambell.server.user.domain.repository.UserSocialAccountRepository;
+import java.util.Collections;
+import java.util.List;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles("test")
@@ -28,10 +33,6 @@ import org.springframework.test.context.ActiveProfiles;
 @SpringBootTest
 class AuthServiceTest {
 
-    @MockBean
-    private OAuthClient oAuthClient;
-    @Autowired
-    private AuthService authService;
     @Autowired
     private UserRepository userRepository;
     @Autowired
@@ -39,18 +40,39 @@ class AuthServiceTest {
     @Autowired
     private JwtService jwtService;
 
+    @Autowired
+    private UserQueryPort userQueryPort;
+
+    @Autowired
+    private UserCommandPort userCommandPort;
+    private AuthService testService;
+
+    @BeforeEach
+    void setUp() {
+        OAuthClient kakaoOAuthClient = mock(OAuthClient.class);
+        OAuthUserInfo userInfo = new OAuthUserInfo("testId", "test@test.com", "테스트이름", "01012341234",
+                ProviderType.KAKAO);
+        when(kakaoOAuthClient.getProviderType()).thenReturn(ProviderType.KAKAO);
+        when(kakaoOAuthClient.getUserInfo(anyString())).thenReturn(userInfo);
+
+        List<OAuthClient> kakaoOAuthClients = Collections.singletonList(kakaoOAuthClient);
+        testService = new AuthService(
+                kakaoOAuthClients,
+                userQueryPort,
+                userCommandPort,
+                jwtService
+        );
+    }
+
     @DisplayName("계정이 없으면 회원가입 처리한다.")
     @Test
     void kakaoSignUp() {
         // given
         SocialLoginServiceRequest socialLoginServiceRequest = new SocialLoginServiceRequest(ProviderType.KAKAO, "test",
                 "닉네임", "01012341234", UserRole.CUSTOMER);
-        OAuthUserInfo userInfo = new OAuthUserInfo("testId", "test@test.com", "테스트이름", "01012341234",
-                ProviderType.KAKAO);
 
         // when
-        when(oAuthClient.getUserInfo(anyString())).thenReturn(userInfo);
-        authService.loginOrSignUp(socialLoginServiceRequest);
+        testService.loginOrSignUp(socialLoginServiceRequest);
 
         // then
         User user = userRepository.findAll().get(0);
@@ -73,12 +95,9 @@ class AuthServiceTest {
 
         SocialLoginServiceRequest socialLoginServiceRequest = new SocialLoginServiceRequest(ProviderType.KAKAO, "test",
                 "닉네임", "01012341234", UserRole.CUSTOMER);
-        OAuthUserInfo userInfo = new OAuthUserInfo("testId", "test@test.com", "테스트이름", "01012341234",
-                ProviderType.KAKAO);
 
         // when
-        when(oAuthClient.getUserInfo(anyString())).thenReturn(userInfo);
-        JwtToken jwtToken = authService.loginOrSignUp(socialLoginServiceRequest);
+        JwtToken jwtToken = testService.loginOrSignUp(socialLoginServiceRequest);
 
         // then
         Long userId = jwtService.getJwtUserId(jwtToken.accessToken());
