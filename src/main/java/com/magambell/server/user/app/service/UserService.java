@@ -7,6 +7,7 @@ import com.magambell.server.common.enums.ErrorCode;
 import com.magambell.server.common.exception.DuplicateException;
 import com.magambell.server.common.exception.NotEqualException;
 import com.magambell.server.common.exception.NotFoundException;
+import com.magambell.server.common.security.CustomUserDetails;
 import com.magambell.server.common.utility.SecurityUtility;
 import com.magambell.server.store.domain.enums.Approved;
 import com.magambell.server.user.adapter.out.persistence.UserInfoResponse;
@@ -52,9 +53,8 @@ public class UserService implements UserUseCase {
     }
 
     @Override
-    public UserInfoResponse getUserInfo(final String token) {
-        Long userId = jwtService.getJwtUserId(token);
-        UserInfoDTO userInfoDTO = userQueryPort.getUserInfo(userId);
+    public UserInfoResponse getUserInfo(final CustomUserDetails customUserDetails) {
+        UserInfoDTO userInfoDTO = userQueryPort.getUserInfo(customUserDetails.userId());
         validateOwner(userInfoDTO.userRole(), userInfoDTO.approved());
         return userInfoDTO.toResponse();
     }
