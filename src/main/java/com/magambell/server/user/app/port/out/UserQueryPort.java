@@ -15,4 +15,8 @@ public interface UserQueryPort {
     UserInfoDTO getUserInfo(Long userId);
 
     User findById(Long userId);
+
+    boolean existsUserBySocial(ProviderType providerType, String providerId);
+
+    boolean existsByNickName(String nickName);
 }

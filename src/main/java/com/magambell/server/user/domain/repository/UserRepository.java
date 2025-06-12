@@ -8,9 +8,11 @@ import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserRepository extends JpaRepository<User, Long>, UserRepositoryCustom {
 
-    boolean existsByEmail(String username);
+    boolean existsByEmail(String email);
 
     Optional<User> findByEmailAndPassword(String email, String password);
 
     List<User> findByIdAndUserRole(Long id, UserRole userRole);
+
+    boolean existsByNickName(String nickName);
 }

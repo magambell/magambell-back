@@ -31,7 +31,7 @@ public class JwtService {
     public UserRole getJwtUserRole(final String token) {
         String tokenWithoutBearer = getTokenWithoutBearer(token);
         Jws<Claims> jwt = getJwt(tokenWithoutBearer);
-        return UserRole.valueOf(jwt.getBody().get("userRole", String.class));
+        return UserRole.valueOf(jwt.getBody().get("UserRole", String.class));
     }
 
     public boolean isValidJwtToken(final String token) {

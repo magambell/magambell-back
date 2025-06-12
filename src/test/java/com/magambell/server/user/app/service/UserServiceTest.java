@@ -20,7 +20,7 @@ import com.magambell.server.user.domain.model.User;
 import com.magambell.server.user.domain.repository.UserEmailRepository;
 import com.magambell.server.user.domain.repository.UserRepository;
 import com.magambell.server.user.domain.repository.UserSocialAccountRepository;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -48,10 +48,11 @@ class UserServiceTest {
     @Autowired
     private JwtService jwtService;
 
-    @AfterEach
-    public void tearDown() {
-        userRepository.deleteAllInBatch();
+    @BeforeEach
+    public void setUp() {
+        userSocialAccountRepository.deleteAllInBatch();
         userEmailRepository.deleteAllInBatch();
+        userRepository.deleteAllInBatch();
     }
 
     @DisplayName("회원가입")

@@ -2,6 +2,7 @@ package com.magambell.server.user.adapter;
 
 import com.magambell.server.common.Response;
 import com.magambell.server.common.swagger.BaseResponse;
+import com.magambell.server.user.adapter.in.web.UserSocialVerifyRequest;
 import com.magambell.server.user.adapter.in.web.VerifyEmailAuthCodeRegisterRequest;
 import com.magambell.server.user.adapter.in.web.VerifyEmailDuplicateRegisterRequest;
 import com.magambell.server.user.adapter.in.web.VerifyEmailSendRegisterRequest;
@@ -51,5 +52,12 @@ public class UserVerifyController {
             @RequestBody @Validated final VerifyEmailAuthCodeRegisterRequest request) {
         userVerifyUseCase.emailRegisterAuthCodeCheck(request.toServiceRequest());
         return new Response<>();
+    }
+
+    @Operation(summary = "기존 유저인지 아닌지 검증")
+    @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(implementation = Boolean.class))})
+    @PostMapping("/social")
+    public Response<Boolean> verifySocialUser(@RequestBody @Validated final UserSocialVerifyRequest request) {
+        return new Response<>(userVerifyUseCase.verifySocialUser(request.toServiceRequest()));
     }
 }

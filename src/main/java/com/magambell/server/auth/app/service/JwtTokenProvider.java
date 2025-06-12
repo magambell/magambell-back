@@ -59,6 +59,7 @@ public class JwtTokenProvider {
         } catch (ExpiredJwtException ex) {
             throw new TokenExpiredException(ErrorCode.JWT_VERIFY_EXPIRED);
         } catch (JwtException ex) {
+            System.out.println("JWT 파싱 에러: " + ex.getMessage());
             throw new TokenExpiredException(ErrorCode.JWT_VALIDATE_ERROR);
         }
     }
