@@ -5,11 +5,11 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.magambell.server.auth.app.service.JwtService;
 import com.magambell.server.auth.domain.ProviderType;
-import com.magambell.server.auth.domain.model.JwtToken;
 import com.magambell.server.common.enums.ErrorCode;
 import com.magambell.server.common.exception.InvalidRequestException;
 import com.magambell.server.common.exception.NotEqualException;
 import com.magambell.server.common.exception.NotFoundException;
+import com.magambell.server.common.security.CustomUserDetails;
 import com.magambell.server.user.adapter.out.persistence.UserInfoResponse;
 import com.magambell.server.user.app.port.in.dto.UserEmailDTO;
 import com.magambell.server.user.app.port.in.dto.UserSocialAccountDTO;
@@ -155,11 +155,10 @@ class UserServiceTest {
         );
         User saveUser = userRepository.save(userSocialAccountDTO.toUser());
         userSocialAccountRepository.save(userSocialAccountDTO.toUserSocialAccount());
-
-        JwtToken jwtToken = jwtService.createJwtToken(saveUser.getId(), saveUser.getUserRole());
+        CustomUserDetails customUserDetails = new CustomUserDetails(saveUser.getId(), saveUser.getUserRole());
 
         // when
-        UserInfoResponse userInfo = userService.getUserInfo(jwtToken.accessToken());
+        UserInfoResponse userInfo = userService.getUserInfo(customUserDetails);
 
         // then
         assertThat(userInfo).isNotNull();
@@ -182,10 +181,10 @@ class UserServiceTest {
         User saveUser = userRepository.save(userSocialAccountDTO.toUser());
         userSocialAccountRepository.save(userSocialAccountDTO.toUserSocialAccount());
 
-        JwtToken jwtToken = jwtService.createJwtToken(saveUser.getId(), saveUser.getUserRole());
+        CustomUserDetails customUserDetails = new CustomUserDetails(saveUser.getId(), saveUser.getUserRole());
 
         // when // then
-        assertThatThrownBy(() -> userService.getUserInfo(jwtToken.accessToken()))
+        assertThatThrownBy(() -> userService.getUserInfo(customUserDetails))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessage(ErrorCode.OWNER_NOT_FOUND_STORE.getMessage());
     }

@@ -1,5 +1,6 @@
 package com.magambell.server.user.app.port.in;
 
+import com.magambell.server.common.security.CustomUserDetails;
 import com.magambell.server.user.adapter.out.persistence.UserInfoResponse;
 import com.magambell.server.user.app.port.in.request.LoginServiceRequest;
 import com.magambell.server.user.app.port.in.request.RegisterServiceRequest;
@@ -10,5 +11,5 @@ public interface UserUseCase {
 
     void login(LoginServiceRequest request);
 
-    UserInfoResponse getUserInfo(String token);
+    UserInfoResponse getUserInfo(CustomUserDetails customUserDetails);
 }
