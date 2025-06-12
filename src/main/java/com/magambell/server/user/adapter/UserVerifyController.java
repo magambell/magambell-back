@@ -59,5 +59,6 @@ public class UserVerifyController {
     @PostMapping("/social")
     public Response<Boolean> verifySocialUser(@RequestBody @Validated final UserSocialVerifyRequest request) {
         return new Response<>(userVerifyUseCase.verifySocialUser(request.toServiceRequest()));
+
     }
 }
