@@ -25,7 +25,7 @@ public class JwtTokenProvider {
 
     public static final String ACCESS_PREFIX_STRING = "Bearer ";
     public static final String REFRESH_PREFIX_STRING = "RefreshToken ";
-    private static final String CLAIMS_USER_ROLE = "UserRole";
+    public static final String CLAIMS_USER_ROLE = "UserRole";
     private static final Long VALIDITY_TIME = 1000L;
 
     private final SecretKey secretKey;
@@ -59,7 +59,6 @@ public class JwtTokenProvider {
         } catch (ExpiredJwtException ex) {
             throw new TokenExpiredException(ErrorCode.JWT_VERIFY_EXPIRED);
         } catch (JwtException ex) {
-            System.out.println("JWT 파싱 에러: " + ex.getMessage());
             throw new TokenExpiredException(ErrorCode.JWT_VALIDATE_ERROR);
         }
     }

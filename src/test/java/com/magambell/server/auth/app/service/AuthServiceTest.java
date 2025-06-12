@@ -49,6 +49,10 @@ class AuthServiceTest {
 
     @BeforeEach
     void setUp() {
+
+        userSocialAccountRepository.deleteAllInBatch();
+        userRepository.deleteAllInBatch();
+
         OAuthClient kakaoOAuthClient = mock(OAuthClient.class);
         OAuthUserInfo userInfo = new OAuthUserInfo("testId", "test@test.com", "테스트이름", "01012341234",
                 ProviderType.KAKAO);
@@ -90,8 +94,9 @@ class AuthServiceTest {
                 "01012341234",
                 ProviderType.KAKAO,
                 "testId", UserRole.CUSTOMER);
-        userRepository.save(userSocialAccountDTO.toUser());
-        userSocialAccountRepository.save(userSocialAccountDTO.toUserSocialAccount());
+        User saveUser = userSocialAccountDTO.toUser();
+        saveUser.addUserSocialAccount(userSocialAccountDTO.toUserSocialAccount());
+        userRepository.save(saveUser);
 
         SocialLoginServiceRequest socialLoginServiceRequest = new SocialLoginServiceRequest(ProviderType.KAKAO, "test",
                 "닉네임", "01012341234", UserRole.CUSTOMER);

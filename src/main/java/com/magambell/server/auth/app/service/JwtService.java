@@ -1,6 +1,7 @@
 package com.magambell.server.auth.app.service;
 
 import static com.magambell.server.auth.app.service.JwtTokenProvider.ACCESS_PREFIX_STRING;
+import static com.magambell.server.auth.app.service.JwtTokenProvider.CLAIMS_USER_ROLE;
 
 import com.magambell.server.auth.domain.model.JwtToken;
 import com.magambell.server.user.domain.enums.UserRole;
@@ -31,7 +32,7 @@ public class JwtService {
     public UserRole getJwtUserRole(final String token) {
         String tokenWithoutBearer = getTokenWithoutBearer(token);
         Jws<Claims> jwt = getJwt(tokenWithoutBearer);
-        return UserRole.valueOf(jwt.getBody().get("UserRole", String.class));
+        return UserRole.valueOf(jwt.getBody().get(CLAIMS_USER_ROLE, String.class));
     }
 
     public boolean isValidJwtToken(final String token) {
