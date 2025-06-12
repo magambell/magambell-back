@@ -11,14 +11,14 @@ public record RegisterStoreRequest(
         @NotBlank(message = "이름을 입력해 주세요.")
         String name,
 
-        @NotBlank(message = "주소을 입력해 주세요.")
+        @NotBlank(message = "주소를 입력해 주세요.")
         String address,
 
-        @NotBlank(message = "위도를 입력해 주세요.")
-        String latitude,
+        @NotNull(message = "위도를 입력해 주세요.")
+        Double latitude,
 
-        @NotBlank(message = "경도를 입력해 주세요.")
-        String longitude,
+        @NotNull(message = "경도를 입력해 주세요.")
+        Double longitude,
 
         @NotBlank(message = "대표님 성명을 입력해 주세요.")
         String ownerName,

@@ -2,7 +2,9 @@ package com.magambell.server.store.app.service;
 
 import com.magambell.server.common.enums.ErrorCode;
 import com.magambell.server.common.exception.DuplicateException;
+import com.magambell.server.store.adapter.in.web.SearchStoreListServiceRequest;
 import com.magambell.server.store.adapter.out.persistence.StoreImagesResponse;
+import com.magambell.server.store.adapter.out.persistence.StoreListResponse;
 import com.magambell.server.store.app.port.in.StoreUseCase;
 import com.magambell.server.store.app.port.in.request.RegisterStoreServiceRequest;
 import com.magambell.server.store.app.port.out.StoreCommandPort;
@@ -34,6 +36,11 @@ public class StoreService implements StoreUseCase {
                 request.toStoreDTO(Approved.WAITING, user));
 
         return new StoreImagesResponse(preSignedUrlImages);
+    }
+
+    @Override
+    public StoreListResponse getStoreList(final SearchStoreListServiceRequest request) {
+        return new StoreListResponse(storeQueryPort.getStoreList(request));
     }
 
     private void checkDuplicateStore(final User user) {

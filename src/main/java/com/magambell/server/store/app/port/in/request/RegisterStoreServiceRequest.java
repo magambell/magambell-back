@@ -12,8 +12,8 @@ import java.util.List;
 public record RegisterStoreServiceRequest(
         String name,
         String address,
-        String latitude,
-        String longitude,
+        Double latitude,
+        Double longitude,
         String ownerName,
         String ownerPhone,
         String businessNumber,
@@ -21,8 +21,8 @@ public record RegisterStoreServiceRequest(
         String bankAccount,
         List<StoreImagesRegister> storeImagesRegisters
 ) {
-    public RegisterStoreServiceRequest(final String name, final String address, final String latitude,
-                                       final String longitude, final String ownerName,
+    public RegisterStoreServiceRequest(final String name, final String address, final Double latitude,
+                                       final Double longitude, final String ownerName,
                                        final String ownerPhone, final String businessNumber, final Bank bankName,
                                        final String bankAccount,
                                        final List<StoreImagesRegister> storeImagesRegisters) {

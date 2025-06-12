@@ -35,8 +35,8 @@ public class Store extends BaseTimeEntity {
     private Long id;
     private String name;
     private String address;
-    private String latitude;
-    private String longitude;
+    private Double latitude;
+    private Double longitude;
     private String ownerName;
     private String ownerPhone;
     private String businessNumber;
@@ -60,7 +60,7 @@ public class Store extends BaseTimeEntity {
     private List<StoreImage> storeImages = new ArrayList<>();
 
     @Builder(access = AccessLevel.PRIVATE)
-    private Store(final String name, final String address, final String latitude, final String longitude,
+    private Store(final String name, final String address, final Double latitude, final Double longitude,
                   final String ownerName, final String ownerPhone,
                   final String businessNumber, final Bank bankName, final String bankAccount, final Approved approved) {
         this.name = name;

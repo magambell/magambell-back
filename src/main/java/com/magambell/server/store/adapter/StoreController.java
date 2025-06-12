@@ -3,7 +3,9 @@ package com.magambell.server.store.adapter;
 import com.magambell.server.common.Response;
 import com.magambell.server.common.security.CustomUserDetails;
 import com.magambell.server.store.adapter.in.web.RegisterStoreRequest;
+import com.magambell.server.store.adapter.in.web.SearchStoreListRequest;
 import com.magambell.server.store.adapter.out.persistence.StoreImagesResponse;
+import com.magambell.server.store.adapter.out.persistence.StoreListResponse;
 import com.magambell.server.store.app.port.in.StoreUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -14,6 +16,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -37,5 +40,15 @@ public class StoreController {
             @AuthenticationPrincipal final CustomUserDetails customUserDetails
     ) {
         return new Response<>(storeUseCase.registerStore(request.toServiceRequest(), customUserDetails.userId()));
+    }
+
+    @Operation(summary = "매장 리스트")
+    @ApiResponse(responseCode = "200", content = {
+            @Content(schema = @Schema(implementation = StoreListResponse.class))})
+    @GetMapping("")
+    public Response<StoreListResponse> getStoreList(
+            @RequestBody @Validated final SearchStoreListRequest request
+    ) {
+        return new Response<>(storeUseCase.getStoreList(request.toService()));
     }
 }
