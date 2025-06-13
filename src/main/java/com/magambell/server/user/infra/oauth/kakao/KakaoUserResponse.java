@@ -19,10 +19,7 @@ public record KakaoUserResponse(
     }
 
     public record KakaoAccount(
-            String email,
-            String name,
-            @JsonProperty("phone_number")
-            String phoneNumber
+            String email
     ) {
     }
 }

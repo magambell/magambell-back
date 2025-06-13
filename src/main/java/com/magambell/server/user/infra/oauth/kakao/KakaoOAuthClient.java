@@ -19,7 +19,7 @@ import reactor.core.publisher.Mono;
 @Component
 public class KakaoOAuthClient implements OAuthClient {
 
-    private final WebClient.Builder webClientBuilder;
+    private final WebClient webClient;
 
     @Value("${oauth.kakao-uri}")
     private String KAKAO_URI;
@@ -38,15 +38,11 @@ public class KakaoOAuthClient implements OAuthClient {
         return new OAuthUserInfo(
                 String.valueOf(response.id()),
                 response.kakaoAccount().email(),
-                response.kakaoAccount().name(),
-                response.kakaoAccount().phoneNumber(),
                 ProviderType.KAKAO
         );
     }
 
     private KakaoUserResponse fetchKakaoUserResponse(String accessToken) {
-        WebClient webClient = webClientBuilder.build();
-
         return webClient.get()
                 .uri(KAKAO_URI)
                 .header(HttpHeaders.AUTHORIZATION, ACCESS_PREFIX_STRING + accessToken)
@@ -66,9 +62,7 @@ public class KakaoOAuthClient implements OAuthClient {
         if (response.id() == null) {
             throw new NotFoundException(ErrorCode.OAUTH_KAKAO_USER_NOT_FOUND);
         }
-        if (response.kakaoAccount() == null
-                || response.kakaoAccount().email() == null
-                || response.kakaoAccount().name() == null) {
+        if (response.kakaoAccount() == null || response.kakaoAccount().email() == null) {
             throw new NotFoundException(ErrorCode.OAUTH_KAKAO_USER_NOT_FOUND);
         }
     }
