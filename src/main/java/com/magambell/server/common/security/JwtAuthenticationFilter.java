@@ -41,10 +41,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                     List.of(new SimpleGrantedAuthority("ROLE_" + role.name()))
             );
             SecurityContextHolder.getContext().setAuthentication(auth);
+
+            log.info("jwt success");
         }
 
         filterChain.doFilter(request, response);
-        log.info("jwt success");
     }
-    
+
 }

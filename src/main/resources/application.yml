@@ -20,6 +20,7 @@ jwt:
 
 oauth:
   kakao-uri: https://kapi.kakao.com/v2/user/me
+  google-uri: https://www.googleapis.com/oauth2/v3/userinfo
 
 ---
 spring:

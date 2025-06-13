@@ -48,41 +48,27 @@ public class AuthService implements AuthUseCase {
 
         User user = userQueryPort.findUserBySocial(userInfo.providerType(),
                         userInfo.id())
-                .orElseGet(() -> oAuthSignUp(userInfo, request.userRole(), request.nickName(), request.phoneNumber()));
+                .orElseGet(() -> oAuthSignUp(userInfo, request));
 
         return jwtService.createJwtToken(user.getId(), user.getUserRole());
     }
 
-    private User oAuthSignUp(final OAuthUserInfo userInfo, final UserRole userRole, final String nickName,
-                             final String phoneNumber) {
-        String finalPhoneNumber = validatePhoneNumber(userInfo, phoneNumber);
-
-        validateSignUpFields(nickName, userRole);
-        validateUserRole(userRole);
+    private User oAuthSignUp(final OAuthUserInfo userInfo, final SocialLoginServiceRequest request) {
+        validateSignUpFields(request.nickName(), request.userRole(), request.phoneNumber());
+        validateUserRole(request.userRole());
 
         UserSocialAccountDTO userSocialAccountDTO = new UserSocialAccountDTO(userInfo.email(),
-                userInfo.name(),
-                nickName,
-                finalPhoneNumber,
+                request.name(),
+                request.nickName(),
+                request.phoneNumber(),
                 userInfo.providerType(),
                 userInfo.id(),
-                userRole);
+                request.userRole());
 
         return userCommandPort.registerBySocial(userSocialAccountDTO);
     }
 
-    private String validatePhoneNumber(final OAuthUserInfo userInfo, final String phoneNumber) {
-        if (userInfo.phoneNumber() == null && phoneNumber == null) {
-            throw new InvalidRequestException(ErrorCode.INVALID_PHONE_NUMBER);
-        }
-
-        if (userInfo.phoneNumber() != null) {
-            return toDomesticFormat(userInfo.phoneNumber());
-        }
-        return validatePhonePattern(phoneNumber);
-    }
-
-    private void validateSignUpFields(final String nickName, final UserRole userRole) {
+    private void validateSignUpFields(final String nickName, final UserRole userRole, final String phoneNumber) {
         if (nickName == null || nickName.isBlank()) {
             throw new InvalidRequestException(ErrorCode.INVALID_NICK_NAME);
         }
@@ -92,26 +78,17 @@ public class AuthService implements AuthUseCase {
         if (userRole == null) {
             throw new InvalidRequestException(ErrorCode.INVALID_USER_ROLE);
         }
+        if (phoneNumber == null) {
+            throw new InvalidRequestException(ErrorCode.INVALID_PHONE_NUMBER);
+        }
+        if (!phoneNumber.matches("^(?!.*-)[0-9]{10,11}$")) {
+            throw new InvalidRequestException(ErrorCode.USER_VALID_PHONE);
+        }
     }
 
     private void validateUserRole(final UserRole userRole) {
         if (!userRole.isUserAssignable()) {
             throw new InvalidRequestException(ErrorCode.USER_ROLE_NOT_ASSIGNABLE);
         }
-    }
-
-    private String toDomesticFormat(String phone) {
-        String digits = phone.replaceAll("[^0-9]", "");
-        if (digits.startsWith("82") && digits.length() > 10) {
-            return "0" + digits.substring(2);
-        }
-        return digits;
-    }
-
-    private String validatePhonePattern(final String value) {
-        if (!value.matches("^(?!.*-)[0-9]{10,11}$")) {
-            throw new InvalidRequestException(ErrorCode.USER_VALID_PHONE);
-        }
-        return value;
     }
 }

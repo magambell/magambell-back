@@ -54,8 +54,7 @@ class AuthServiceTest {
         userRepository.deleteAllInBatch();
 
         OAuthClient kakaoOAuthClient = mock(OAuthClient.class);
-        OAuthUserInfo userInfo = new OAuthUserInfo("testId", "test@test.com", "테스트이름", "01012341234",
-                ProviderType.KAKAO);
+        OAuthUserInfo userInfo = new OAuthUserInfo("testId", "test@test.com", ProviderType.KAKAO);
         when(kakaoOAuthClient.getProviderType()).thenReturn(ProviderType.KAKAO);
         when(kakaoOAuthClient.getUserInfo(anyString())).thenReturn(userInfo);
 
@@ -73,7 +72,7 @@ class AuthServiceTest {
     void kakaoSignUp() {
         // given
         SocialLoginServiceRequest socialLoginServiceRequest = new SocialLoginServiceRequest(ProviderType.KAKAO, "test",
-                "닉네임", "01012341234", UserRole.CUSTOMER);
+                "이름", "닉네임", "01012341234", UserRole.CUSTOMER);
 
         // when
         testService.loginOrSignUp(socialLoginServiceRequest);
@@ -83,7 +82,7 @@ class AuthServiceTest {
         assertThat(user).extracting("email", "name")
                 .contains(
                         "test@test.com",
-                        "테스트이름");
+                        "이름");
     }
 
     @DisplayName("이미 계정이 있으면 로그인 처리한다.")
@@ -99,7 +98,7 @@ class AuthServiceTest {
         userRepository.save(saveUser);
 
         SocialLoginServiceRequest socialLoginServiceRequest = new SocialLoginServiceRequest(ProviderType.KAKAO, "test",
-                "닉네임", "01012341234", UserRole.CUSTOMER);
+                "이름", "닉네임", "01012341234", UserRole.CUSTOMER);
 
         // when
         JwtToken jwtToken = testService.loginOrSignUp(socialLoginServiceRequest);

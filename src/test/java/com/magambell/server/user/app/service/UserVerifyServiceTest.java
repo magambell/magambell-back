@@ -67,9 +67,6 @@ class UserVerifyServiceTest {
     @Autowired
     private AwsEmailServiceInputPort awsEmailServiceInputPort;
 
-    @MockBean
-    private OAuthClient oAuthClient;
-
     @AfterEach
     public void tearDown() {
         userRepository.deleteAllInBatch();
@@ -167,8 +164,7 @@ class UserVerifyServiceTest {
     @Test
     void verifySocialUser() {
         // given
-        OAuthUserInfo userInfo = new OAuthUserInfo("testId", "test@test.com", "테스트이름", "01012341234",
-                ProviderType.KAKAO);
+        OAuthUserInfo userInfo = new OAuthUserInfo("testId", "test@test.com", ProviderType.KAKAO);
         UserSocialVerifyServiceRequest request = new UserSocialVerifyServiceRequest(ProviderType.KAKAO, "testCode");
 
         // when
