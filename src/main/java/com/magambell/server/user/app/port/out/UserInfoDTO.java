@@ -7,11 +7,12 @@ import com.magambell.server.user.domain.enums.UserRole;
 
 public record UserInfoDTO(
         String email,
+        String nickName,
         UserRole userRole,
         ProviderType providerType,
         Approved approved
 ) {
     public UserInfoResponse toResponse() {
-        return new UserInfoResponse(email, userRole, providerType, approved);
+        return new UserInfoResponse(email, nickName, userRole, providerType, approved);
     }
 }

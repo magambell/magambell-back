@@ -6,6 +6,7 @@ import com.magambell.server.user.domain.enums.UserRole;
 
 public record UserInfoResponse(
         String email,
+        String nickName,
         UserRole userRole,
         ProviderType providerType,
         Approved approved
