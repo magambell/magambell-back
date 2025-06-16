@@ -53,8 +53,8 @@ public class Store extends BaseTimeEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
-    @OneToOne(mappedBy = "store", cascade = CascadeType.ALL)
-    private Goods goods;
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
+    private List<Goods> goods = new ArrayList<>();
 
     @OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
     private List<StoreImage> storeImages = new ArrayList<>();
@@ -100,7 +100,7 @@ public class Store extends BaseTimeEntity {
     }
 
     public void addGoods(final Goods goods) {
-        this.goods = goods;
+        this.goods.add(goods);
         goods.addStore(this);
     }
 }

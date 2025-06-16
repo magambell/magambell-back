@@ -1,7 +1,6 @@
 package com.magambell.server.store.domain.repository;
 
 import static com.magambell.server.goods.domain.model.QGoods.goods;
-import static com.magambell.server.stock.domain.model.QStock.stock;
 import static com.magambell.server.store.domain.enums.Approved.APPROVED;
 import static com.magambell.server.store.domain.model.QStore.store;
 import static com.magambell.server.store.domain.model.QStoreImage.storeImage;
@@ -9,6 +8,7 @@ import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.group.GroupBy.list;
 import static com.querydsl.core.types.dsl.Expressions.allOf;
 
+import com.magambell.server.goods.domain.enums.SaleStatus;
 import com.magambell.server.store.adapter.in.web.SearchStoreListServiceRequest;
 import com.magambell.server.store.app.port.out.response.StoreListDTOResponse;
 import com.magambell.server.store.domain.enums.SearchSortType;
@@ -38,11 +38,10 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                 store.longitude
         );
 
-        return queryFactory.select(store, storeImage, goods, stock)
+        return queryFactory.select(store, storeImage, goods)
                 .from(store)
                 .leftJoin(storeImage).on(storeImage.store.id.eq(store.id))
                 .leftJoin(goods).on(goods.store.id.eq(store.id))
-                .leftJoin(stock).on(stock.goods.id.eq(goods.id))
                 .where(
                         allOf(
                                 radiusCondition(request, distance),
@@ -50,6 +49,7 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                                 keywordCondition(request.keyword())
                         )
                                 .and(store.approved.eq(APPROVED))
+                                .and(goods.saleStatus.eq(SaleStatus.ON))
 
                 )
                 .orderBy(sortCondition(request.sortType(), distance))
@@ -65,7 +65,7 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                                         goods.originalPrice,
                                         goods.discount,
                                         goods.salePrice,
-                                        stock.quantity,
+                                        goods.quantity,
                                         distance
                                 ))
                 );
@@ -88,7 +88,7 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
 
     private BooleanExpression availableNowCondition(SearchStoreListServiceRequest request) {
         if (Boolean.TRUE.equals(request.onlyAvailable())) {
-            return stock.quantity.gt(0);
+            return goods.quantity.gt(0);
         }
         return null;
     }

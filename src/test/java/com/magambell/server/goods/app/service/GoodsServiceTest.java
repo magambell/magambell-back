@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.magambell.server.auth.domain.ProviderType;
 import com.magambell.server.goods.app.port.in.request.RegisterGoodsServiceRequest;
+import com.magambell.server.goods.domain.enums.SaleStatus;
 import com.magambell.server.goods.domain.model.Goods;
 import com.magambell.server.goods.domain.repository.GoodsRepository;
 import com.magambell.server.stock.domain.repository.StockRepository;
@@ -17,7 +18,7 @@ import com.magambell.server.user.domain.enums.UserRole;
 import com.magambell.server.user.domain.model.User;
 import com.magambell.server.user.domain.repository.UserRepository;
 import com.magambell.server.user.domain.repository.UserSocialAccountRepository;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -95,8 +96,8 @@ class GoodsServiceTest {
         // given
         RegisterGoodsServiceRequest req = new RegisterGoodsServiceRequest(
                 "상품명", "상품설명",
-                LocalTime.of(9, 0), LocalTime.of(18, 0),
-                3, 10000, 10, 9000
+                LocalDateTime.of(2025, 1, 1, 9, 0), LocalDateTime.of(2025, 1, 1, 18, 0),
+                3, 10000, 10, 9000, SaleStatus.ON
         );
 
         // when
