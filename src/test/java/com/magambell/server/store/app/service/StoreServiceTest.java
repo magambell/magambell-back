@@ -2,9 +2,10 @@ package com.magambell.server.store.app.service;
 
 import com.magambell.server.auth.domain.ProviderType;
 import com.magambell.server.goods.app.port.in.dto.RegisterGoodsDTO;
+import com.magambell.server.goods.domain.enums.SaleStatus;
 import com.magambell.server.goods.domain.model.Goods;
 import com.magambell.server.goods.domain.repository.GoodsRepository;
-import com.magambell.server.stock.domain.model.Stock;
+import com.magambell.server.stock.domain.model.StockHistory;
 import com.magambell.server.stock.domain.repository.StockRepository;
 import com.magambell.server.store.adapter.in.web.SearchStoreListServiceRequest;
 import com.magambell.server.store.adapter.in.web.StoreImagesRegister;
@@ -23,7 +24,7 @@ import com.magambell.server.user.domain.enums.UserRole;
 import com.magambell.server.user.domain.model.User;
 import com.magambell.server.user.domain.repository.UserRepository;
 import com.magambell.server.user.domain.repository.UserSocialAccountRepository;
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.IntStream;
 import org.assertj.core.api.Assertions;
@@ -137,8 +138,8 @@ class StoreServiceTest {
                 .contains(
                         "테스트 매장1",
                         "상품명1",
-                        LocalTime.of(9, 0),
-                        LocalTime.of(18, 0),
+                        LocalDateTime.of(2025, 1, 1, 9, 0),
+                        LocalDateTime.of(2025, 1, 1, 18, 0),
                         10000,
                         10,
                         9000,
@@ -173,15 +174,15 @@ class StoreServiceTest {
 
         RegisterGoodsDTO registerGoodsDTO = new RegisterGoodsDTO(
                 "상품명" + i,
-                LocalTime.of(9, 0), LocalTime.of(18, 0),
-                i, 10000, 10, 9000, "상품설명", store
+                LocalDateTime.of(2025, 1, 1, 9, 0), LocalDateTime.of(2025, 1, 1, 18, 0),
+                i, 10000, 10, 9000, "상품설명", store, SaleStatus.ON
         );
         user.addStore(store);
 
         Goods goods = registerGoodsDTO.toGoods();
-        Stock stock = registerGoodsDTO.toStock();
+        StockHistory stockHistory = registerGoodsDTO.toStock();
         store.addGoods(goods);
-        goods.addStock(stock);
+        goods.addStock(stockHistory);
 
         userRepository.save(user);
         return store;

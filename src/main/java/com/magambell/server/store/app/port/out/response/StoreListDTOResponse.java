@@ -1,6 +1,6 @@
 package com.magambell.server.store.app.port.out.response;
 
-import java.time.LocalTime;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public record StoreListDTOResponse(
@@ -8,8 +8,8 @@ public record StoreListDTOResponse(
         String storeName,
         List<String> ImageUrl,
         String goodsName,
-        LocalTime startTime,
-        LocalTime endTime,
+        LocalDateTime startTime,
+        LocalDateTime endTime,
         Integer originPrice,
         Integer discount,
         Integer salePrice,
