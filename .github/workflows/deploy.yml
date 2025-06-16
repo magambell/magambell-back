@@ -63,6 +63,8 @@ jobs:
             --build-arg AWS_CF_DISTRIBUTION=${{ secrets.AWS_CF_DISTRIBUTION }} \
             --build-arg AWS_S3_BUCKET=${{ secrets.AWS_S3_BUCKET }} \
             --build-arg JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} \
+            --build-arg NAVER_CLIENT_ID=${{ secrets.NAVER_CLIENT_ID }} \
+            --build-arg NAVER_CLIENT_SECRET=${{ secrets.NAVER_CLIENT_SECRET }} \
             --build-arg SPRING_PROFILES_ACTIVE=prod \
             .
           
@@ -88,6 +90,8 @@ jobs:
             export AWS_CF_DISTRIBUTION=${{ secrets.AWS_CF_DISTRIBUTION }}
             export AWS_S3_BUCKET=${{ secrets.AWS_S3_BUCKET }}
             export JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}
+            export NAVER_CLIENT_ID=${{ secrets.NAVER_CLIENT_ID }}
+            export NAVER_CLIENT_SECRET=${{ secrets.NAVER_CLIENT_SECRET }}
             export SPRING_PROFILES_ACTIVE=prod
             sudo -E bash /home/ubuntu/deploy.sh
             

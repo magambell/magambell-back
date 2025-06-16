@@ -1,5 +1,7 @@
 package com.magambell.server.user.adapter.out.persistence;
 
+import static com.magambell.server.user.domain.enums.UserStatus.ACTIVE;
+
 import com.magambell.server.auth.domain.ProviderType;
 import com.magambell.server.common.annotation.Adapter;
 import com.magambell.server.common.enums.ErrorCode;
@@ -19,12 +21,12 @@ public class UserQueryAdapter implements UserQueryPort {
 
     @Override
     public boolean existsByEmail(final String email) {
-        return userRepository.existsByEmail(email);
+        return userRepository.existsByEmailAndUserStatus(email, ACTIVE);
     }
 
     @Override
     public User getUser(final String email, final String password) {
-        return userRepository.findByEmailAndPassword(email, password)
+        return userRepository.findByEmailAndPasswordAndUserStatus(email, password, ACTIVE)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
     }
 
@@ -40,7 +42,7 @@ public class UserQueryAdapter implements UserQueryPort {
 
     @Override
     public User findById(final Long userId) {
-        return userRepository.findById(userId)
+        return userRepository.findByIdAndUserStatus(userId, ACTIVE)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
     }
 
@@ -51,6 +53,6 @@ public class UserQueryAdapter implements UserQueryPort {
 
     @Override
     public boolean existsByNickName(final String nickName) {
-        return userRepository.existsByNickName(nickName);
+        return userRepository.existsByNickNameAndUserStatus(nickName, ACTIVE);
     }
 }

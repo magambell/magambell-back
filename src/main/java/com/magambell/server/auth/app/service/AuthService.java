@@ -2,11 +2,13 @@ package com.magambell.server.auth.app.service;
 
 import com.magambell.server.auth.app.port.in.AuthUseCase;
 import com.magambell.server.auth.app.port.in.request.SocialLoginServiceRequest;
+import com.magambell.server.auth.app.port.in.request.SocialWithdrawServiceRequest;
 import com.magambell.server.auth.domain.ProviderType;
 import com.magambell.server.auth.domain.model.JwtToken;
 import com.magambell.server.common.enums.ErrorCode;
 import com.magambell.server.common.exception.DuplicateException;
 import com.magambell.server.common.exception.InvalidRequestException;
+import com.magambell.server.common.security.CustomUserDetails;
 import com.magambell.server.user.app.dto.OAuthUserInfo;
 import com.magambell.server.user.app.port.in.dto.UserSocialAccountDTO;
 import com.magambell.server.user.app.port.out.OAuthClient;
@@ -51,6 +53,17 @@ public class AuthService implements AuthUseCase {
                 .orElseGet(() -> oAuthSignUp(userInfo, request));
 
         return jwtService.createJwtToken(user.getId(), user.getUserRole());
+    }
+
+    @Transactional
+    @Override
+    public void withdrawUser(final SocialWithdrawServiceRequest request, final CustomUserDetails customUserDetails) {
+        OAuthClient oAuthClient = oAuthClientMap.get(request.providerType());
+        Long userId = customUserDetails.userId();
+        User user = userQueryPort.findById(userId);
+        oAuthClient.userWithdraw(request.authCode());
+
+        user.withdraw();
     }
 
     private User oAuthSignUp(final OAuthUserInfo userInfo, final SocialLoginServiceRequest request) {

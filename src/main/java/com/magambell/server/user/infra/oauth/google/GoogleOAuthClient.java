@@ -19,8 +19,11 @@ public class GoogleOAuthClient implements OAuthClient {
 
     private final WebClient webClient;
 
-    @Value("${oauth.google-uri}")
+    @Value("${oauth.google.uri}")
     private String GOOGLE_URI;
+
+    @Value("${oauth.google.revoke-uri}")
+    private String GOOGLE_REVOKE_URI;
 
     @Override
     public ProviderType getProviderType() {
@@ -37,6 +40,21 @@ public class GoogleOAuthClient implements OAuthClient {
                 response.email(),
                 ProviderType.GOOGLE
         );
+    }
+
+    @Override
+    public void userWithdraw(final String accessToken) {
+        webClient.post()
+                .uri(GOOGLE_REVOKE_URI)
+                .header(HttpHeaders.CONTENT_TYPE, "application/x-www-form-urlencoded")
+                .bodyValue("token=" + accessToken)
+                .retrieve()
+                .onStatus(HttpStatusCode::isError,
+                        clientResponse -> Mono.error(
+                                new NotFoundException(ErrorCode.OAUTH_GOOGLE_USER_NOT_FOUND))
+                )
+                .bodyToMono(Void.class)
+                .block();
     }
 
     private GoogleUserResponse fetchGoogleUserResponse(String accessToken) {

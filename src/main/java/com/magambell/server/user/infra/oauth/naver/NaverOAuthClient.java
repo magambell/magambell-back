@@ -19,8 +19,17 @@ public class NaverOAuthClient implements OAuthClient {
 
     private final WebClient webClient;
 
-    @Value("${oauth.naver-uri}")
+    @Value("${oauth.naver.uri}")
     private String NAVER_URI;
+
+    @Value("${oauth.naver.revoke-uri}")
+    private String NAVER_REVOKE_URI;
+
+    @Value("${oauth.naver.client_id}")
+    private String NAVER_CLIENT_ID;
+
+    @Value("${oauth.naver.client_secret}")
+    private String NAVER_CLIENT_SECRET;
 
     @Override
     public ProviderType getProviderType() {
@@ -39,6 +48,27 @@ public class NaverOAuthClient implements OAuthClient {
                 user.email(),
                 ProviderType.NAVER
         );
+    }
+
+    @Override
+    public void userWithdraw(final String accessToken) {
+        webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .scheme("https")
+                        .host("nid.naver.com")
+                        .path("/oauth2.0/token")
+                        .queryParam("grant_type", "delete")
+                        .queryParam("client_id", NAVER_CLIENT_ID)
+                        .queryParam("client_secret", NAVER_CLIENT_SECRET)
+                        .queryParam("access_token", accessToken)
+                        .queryParam("service_provider", "NAVER")
+                        .build())
+                .retrieve()
+                .onStatus(HttpStatusCode::isError, clientResponse ->
+                        Mono.error(new NotFoundException(ErrorCode.OAUTH_NAVER_USER_NOT_FOUND))
+                )
+                .bodyToMono(Void.class)
+                .block();
     }
 
     private NaverUserResponse fetchNaverUserResponse(String accessToken) {

@@ -1,18 +1,17 @@
 package com.magambell.server.user.domain.repository;
 
-import com.magambell.server.user.domain.enums.UserRole;
+import com.magambell.server.user.domain.enums.UserStatus;
 import com.magambell.server.user.domain.model.User;
-import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 public interface UserRepository extends JpaRepository<User, Long>, UserRepositoryCustom {
 
-    boolean existsByEmail(String email);
+    boolean existsByEmailAndUserStatus(String email, UserStatus userStatus);
 
-    Optional<User> findByEmailAndPassword(String email, String password);
+    Optional<User> findByEmailAndPasswordAndUserStatus(String email, String password, UserStatus userStatus);
 
-    List<User> findByIdAndUserRole(Long id, UserRole userRole);
+    boolean existsByNickNameAndUserStatus(String nickName, UserStatus userStatus);
 
-    boolean existsByNickName(String nickName);
+    Optional<User> findByIdAndUserStatus(Long userId, UserStatus userStatus);
 }

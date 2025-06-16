@@ -5,6 +5,7 @@ import com.magambell.server.store.domain.model.Store;
 import com.magambell.server.user.app.port.in.dto.UserDTO;
 import com.magambell.server.user.app.port.in.dto.UserSocialAccountDTO;
 import com.magambell.server.user.domain.enums.UserRole;
+import com.magambell.server.user.domain.enums.UserStatus;
 import io.hypersistence.utils.hibernate.id.Tsid;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -46,6 +47,9 @@ public class User extends BaseTimeEntity {
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
 
+    @Enumerated(EnumType.STRING)
+    private UserStatus userStatus;
+
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<UserSocialAccount> userSocialAccounts = new ArrayList<>();
 
@@ -55,13 +59,15 @@ public class User extends BaseTimeEntity {
     @Builder(access = AccessLevel.PRIVATE)
     private User(final String email, final String password, final String name, final String nickName,
                  final String phoneNumber,
-                 final UserRole userRole) {
+                 final UserRole userRole,
+                 final UserStatus userStatus) {
         this.email = email;
         this.password = password;
         this.name = name;
         this.nickName = nickName;
         this.phoneNumber = phoneNumber;
         this.userRole = userRole;
+        this.userStatus = userStatus;
     }
 
     public static User create(final UserDTO dto) {
@@ -71,6 +77,7 @@ public class User extends BaseTimeEntity {
                 .name(dto.name())
                 .phoneNumber(dto.phoneNumber())
                 .userRole(dto.userRole())
+                .userStatus(UserStatus.ACTIVE)
                 .build();
     }
 
@@ -81,6 +88,7 @@ public class User extends BaseTimeEntity {
                 .nickName(dto.nickName())
                 .phoneNumber(dto.phoneNumber())
                 .userRole(dto.userRole())
+                .userStatus(UserStatus.ACTIVE)
                 .build();
     }
 
@@ -92,5 +100,9 @@ public class User extends BaseTimeEntity {
     public void addStore(final Store store) {
         this.store = store;
         store.addUser(this);
+    }
+
+    public void withdraw() {
+        this.userStatus = UserStatus.WITHDRAWN;
     }
 }
