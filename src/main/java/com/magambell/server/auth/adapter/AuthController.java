@@ -42,7 +42,7 @@ public class AuthController {
         return new Response<>();
     }
 
-    @Operation(summary = "회원 탈퇴 (soft delete)")
+    @Operation(summary = "회원 탈퇴")
     @ApiResponse(responseCode = "204")
     @DeleteMapping("/withdraw")
     public void withdraw(@RequestBody @Validated final SocialWithdrawRequest request,
