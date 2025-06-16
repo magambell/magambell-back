@@ -6,6 +6,7 @@ import static com.magambell.server.user.domain.model.QUserSocialAccount.userSoci
 
 import com.magambell.server.auth.domain.ProviderType;
 import com.magambell.server.user.app.port.out.UserInfoDTO;
+import com.magambell.server.user.domain.enums.UserStatus;
 import com.magambell.server.user.domain.model.User;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -19,13 +20,15 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
 
     @Override
     public Optional<User> findUserBySocial(final ProviderType providerType, final String providerId) {
-
         return Optional.ofNullable(
                 queryFactory
                         .selectFrom(user)
                         .join(user.userSocialAccounts, userSocialAccount).fetchJoin()
-                        .where(userSocialAccount.providerType.eq(providerType),
-                                userSocialAccount.providerId.eq(providerId))
+                        .where(
+                                userSocialAccount.providerType.eq(providerType),
+                                userSocialAccount.providerId.eq(providerId),
+                                user.userStatus.eq(UserStatus.ACTIVE)
+                        )
                         .fetchOne()
         );
     }
@@ -43,7 +46,10 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
                 .from(user)
                 .leftJoin(user.userSocialAccounts, userSocialAccount)
                 .leftJoin(user.store, store)
-                .where(user.id.eq(userId))
+                .where(
+                        user.id.eq(userId),
+                        user.userStatus.eq(UserStatus.ACTIVE)
+                )
                 .fetchOne();
     }
 
@@ -53,8 +59,11 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
                 .selectOne()
                 .from(user)
                 .join(user.userSocialAccounts, userSocialAccount)
-                .where(userSocialAccount.providerType.eq(providerType),
-                        userSocialAccount.providerId.eq(providerId))
+                .where(
+                        userSocialAccount.providerType.eq(providerType),
+                        userSocialAccount.providerId.eq(providerId),
+                        user.userStatus.eq(UserStatus.ACTIVE)
+                )
                 .fetchFirst();
         return result != null;
     }

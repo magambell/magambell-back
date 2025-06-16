@@ -7,4 +7,6 @@ public interface OAuthClient {
     ProviderType getProviderType();
 
     OAuthUserInfo getUserInfo(String accessToken);
+
+    void userWithdraw(String accessToken);
 }

@@ -1,5 +1,6 @@
 package com.magambell.server.user.domain.repository;
 
+import static com.magambell.server.user.domain.enums.UserStatus.ACTIVE;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.magambell.server.user.app.port.in.dto.UserDTO;
@@ -29,7 +30,7 @@ class UserRepositoryTest {
 
     @DisplayName("이메일로 일반 회원이 존재할때")
     @Test
-    void existsByEmail() {
+    void existsByEmailAndUserStatus() {
 
         // given
         UserDTO userDTO = new UserDTO("test@test.com",
@@ -40,7 +41,7 @@ class UserRepositoryTest {
         userRepository.save(userDTO.toUser());
 
         // when
-        Boolean existsCheck = userRepository.existsByEmail("test@test.com");
+        Boolean existsCheck = userRepository.existsByEmailAndUserStatus("test@test.com", ACTIVE);
 
         // then
         assertThat(existsCheck).isTrue();
@@ -48,10 +49,10 @@ class UserRepositoryTest {
 
     @DisplayName("이메일로 일반 회원이 존재하지 않을때")
     @Test
-    void notExistsByEmail() {
+    void notExistsByEmailAndUserStatus() {
 
         // given / when
-        Boolean existsCheck = userRepository.existsByEmail("test@test.com");
+        Boolean existsCheck = userRepository.existsByEmailAndUserStatus("test@test.com", ACTIVE);
 
         // then
         assertThat(existsCheck).isFalse();

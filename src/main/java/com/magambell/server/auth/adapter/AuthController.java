@@ -1,9 +1,11 @@
 package com.magambell.server.auth.adapter;
 
 import com.magambell.server.auth.adapter.in.web.SocialLoginRequest;
+import com.magambell.server.auth.adapter.in.web.SocialWithdrawRequest;
 import com.magambell.server.auth.app.port.in.AuthUseCase;
 import com.magambell.server.auth.domain.model.JwtToken;
 import com.magambell.server.common.Response;
+import com.magambell.server.common.security.CustomUserDetails;
 import com.magambell.server.common.swagger.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -12,7 +14,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -36,5 +40,13 @@ public class AuthController {
         response.setHeader("Authorization", jwtToken.accessToken());
         response.setHeader("RefreshToken", jwtToken.refreshToken());
         return new Response<>();
+    }
+
+    @Operation(summary = "회원 탈퇴 (soft delete)")
+    @ApiResponse(responseCode = "204")
+    @DeleteMapping("/withdraw")
+    public void withdraw(@RequestBody @Validated final SocialWithdrawRequest request,
+                         @AuthenticationPrincipal final CustomUserDetails customUserDetails) {
+        authUseCase.withdrawUser(request.toService(), customUserDetails);
     }
 }
