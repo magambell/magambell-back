@@ -22,9 +22,6 @@ public class NaverOAuthClient implements OAuthClient {
     @Value("${oauth.naver.uri}")
     private String NAVER_URI;
 
-    @Value("${oauth.naver.revoke-uri}")
-    private String NAVER_REVOKE_URI;
-
     @Value("${oauth.naver.client_id}")
     private String NAVER_CLIENT_ID;
 
