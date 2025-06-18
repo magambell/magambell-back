@@ -27,7 +27,7 @@ public class S3Adapter implements S3InputPort {
 
                     return new TransformedImageDTO(
                             image.id(),
-                            getCloudFrontSignedUrl(image.key()),
+                            getCloudFrontSignedUrl(imagePrefix),
                             s3Client.getPreSignedUrl(imagePrefix)
                     );
                 })
