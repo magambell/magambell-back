@@ -6,8 +6,8 @@ import org.springframework.http.HttpStatus;
 @Getter
 public class Response<T> {
 
-    private HttpStatus status;
-    private T data;
+    private final HttpStatus status;
+    private final T data;
 
     public Response() {
         this.status = HttpStatus.OK;

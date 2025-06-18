@@ -7,13 +7,13 @@ import com.magambell.server.store.adapter.out.persistence.StoreImagesResponse;
 import com.magambell.server.store.adapter.out.persistence.StoreListResponse;
 import com.magambell.server.store.app.port.in.StoreUseCase;
 import com.magambell.server.store.app.port.in.request.RegisterStoreServiceRequest;
+import com.magambell.server.store.app.port.in.request.StoreApproveServiceRequest;
 import com.magambell.server.store.app.port.out.StoreCommandPort;
 import com.magambell.server.store.app.port.out.StoreQueryPort;
-import com.magambell.server.store.app.port.out.response.PreSignedUrlImage;
+import com.magambell.server.store.app.port.out.response.StoreRegisterResponseDTO;
 import com.magambell.server.store.domain.enums.Approved;
 import com.magambell.server.user.app.port.out.UserQueryPort;
 import com.magambell.server.user.domain.model.User;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -32,15 +32,20 @@ public class StoreService implements StoreUseCase {
     public StoreImagesResponse registerStore(final RegisterStoreServiceRequest request, final Long userId) {
         User user = userQueryPort.findById(userId);
         checkDuplicateStore(user);
-        List<PreSignedUrlImage> preSignedUrlImages = storeCommandPort.registerStore(
+        StoreRegisterResponseDTO storeRegisterResponseDTO = storeCommandPort.registerStore(
                 request.toStoreDTO(Approved.WAITING, user));
 
-        return new StoreImagesResponse(preSignedUrlImages);
+        return new StoreImagesResponse(storeRegisterResponseDTO.id(), storeRegisterResponseDTO.preSignedUrlImages());
     }
 
     @Override
     public StoreListResponse getStoreList(final SearchStoreListServiceRequest request) {
         return new StoreListResponse(storeQueryPort.getStoreList(request));
+    }
+
+    @Override
+    public void storeApprove(final StoreApproveServiceRequest request) {
+        storeCommandPort.storeApprove(request.id());
     }
 
     private void checkDuplicateStore(final User user) {

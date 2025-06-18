@@ -2,8 +2,10 @@ package com.magambell.server.store.adapter;
 
 import com.magambell.server.common.Response;
 import com.magambell.server.common.security.CustomUserDetails;
+import com.magambell.server.common.swagger.BaseResponse;
 import com.magambell.server.store.adapter.in.web.RegisterStoreRequest;
 import com.magambell.server.store.adapter.in.web.SearchStoreListRequest;
+import com.magambell.server.store.adapter.in.web.StoreApproveRequest;
 import com.magambell.server.store.adapter.out.persistence.StoreImagesResponse;
 import com.magambell.server.store.adapter.out.persistence.StoreListResponse;
 import com.magambell.server.store.app.port.in.StoreUseCase;
@@ -51,5 +53,17 @@ public class StoreController {
             @ModelAttribute @Validated final SearchStoreListRequest request
     ) {
         return new Response<>(storeUseCase.getStoreList(request.toService()));
+    }
+
+    @Operation(summary = "매장 승인")
+    @ApiResponse(responseCode = "200", content = {
+            @Content(schema = @Schema(implementation = BaseResponse.class))})
+    @PostMapping("/approve")
+    public Response<BaseResponse> storeApprove(
+            @RequestBody @Validated final StoreApproveRequest request
+    ) {
+        //todo 배포시 관리자만 가능하게 변경 예정
+        storeUseCase.storeApprove(request.toService());
+        return new Response<>();
     }
 }

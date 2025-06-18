@@ -32,7 +32,7 @@ public enum ErrorCode {
     OAUTH_GOOGLE_USER_NOT_FOUND("구글 사용자 정보를 찾을 수 없습니다."),
     OAUTH_NAVER_USER_NOT_FOUND("네이버 사용자 정보를 찾을 수 없습니다."),
     BANK_NOT_FOUND("은행정보를 찾을 수 없습니다."),
-    OWNER_NOT_FOUND_STORE("매장 정보를 찾을 수 없습니다."),
+    STORE_NOT_FOUND("매장 정보를 찾을 수 없습니다."),
 
     JWT_VERIFY_EXPIRED("인증정보가 만료 됐습니다."),
     JWT_VALIDATE_ERROR("유효한 인증정보가 아닙니다."),

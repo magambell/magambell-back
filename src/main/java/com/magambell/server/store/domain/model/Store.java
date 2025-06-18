@@ -103,4 +103,8 @@ public class Store extends BaseTimeEntity {
         this.goods.add(goods);
         goods.addStore(this);
     }
+
+    public void approve() {
+        this.approved = Approved.APPROVED;
+    }
 }

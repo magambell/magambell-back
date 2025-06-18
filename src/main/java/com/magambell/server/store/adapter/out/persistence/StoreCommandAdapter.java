@@ -1,11 +1,14 @@
 package com.magambell.server.store.adapter.out.persistence;
 
 import com.magambell.server.common.annotation.Adapter;
+import com.magambell.server.common.enums.ErrorCode;
+import com.magambell.server.common.exception.NotFoundException;
 import com.magambell.server.store.app.port.in.S3InputPort;
 import com.magambell.server.store.app.port.in.dto.RegisterStoreDTO;
 import com.magambell.server.store.app.port.in.dto.TransformedImageDTO;
 import com.magambell.server.store.app.port.out.StoreCommandPort;
 import com.magambell.server.store.app.port.out.response.PreSignedUrlImage;
+import com.magambell.server.store.app.port.out.response.StoreRegisterResponseDTO;
 import com.magambell.server.store.domain.model.Store;
 import com.magambell.server.store.domain.model.StoreImage;
 import com.magambell.server.store.domain.repository.StoreImageRepository;
@@ -23,7 +26,7 @@ public class StoreCommandAdapter implements StoreCommandPort {
     private final S3InputPort s3InputPort;
 
     @Override
-    public List<PreSignedUrlImage> registerStore(final RegisterStoreDTO dto) {
+    public StoreRegisterResponseDTO registerStore(final RegisterStoreDTO dto) {
         User user = dto.user();
         Store store = dto.toEntity();
         user.addStore(store);
@@ -32,7 +35,14 @@ public class StoreCommandAdapter implements StoreCommandPort {
 
         storeRepository.save(store);
 
-        return preSignedUrlImages;
+        return new StoreRegisterResponseDTO(store.getId(), preSignedUrlImages);
+    }
+
+    @Override
+    public void storeApprove(final Long storeId) {
+        Store store = storeRepository.findById(storeId)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.STORE_NOT_FOUND));
+        store.approve();
     }
 
     private List<PreSignedUrlImage> addImagesAndGetPreSignedUrlImage(final List<TransformedImageDTO> imageDTOList,

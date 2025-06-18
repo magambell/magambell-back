@@ -1,5 +1,6 @@
 package com.magambell.server.store.domain.model;
 
+import com.magambell.server.common.BaseTimeEntity;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -16,7 +17,7 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class StoreImage {
+public class StoreImage extends BaseTimeEntity {
 
     @Column(name = "store_image_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
