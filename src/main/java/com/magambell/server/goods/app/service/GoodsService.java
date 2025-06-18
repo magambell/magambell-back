@@ -32,6 +32,6 @@ public class GoodsService implements GoodsUseCase {
 
     private Store getStore(final User user) {
         return storeQueryPort.getStoreByUser(user)
-                .orElseThrow(() -> new NotFoundException(ErrorCode.OWNER_NOT_FOUND_STORE));
+                .orElseThrow(() -> new NotFoundException(ErrorCode.STORE_NOT_FOUND));
     }
 }

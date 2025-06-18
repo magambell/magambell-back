@@ -76,7 +76,7 @@ public class UserService implements UserUseCase {
 
     private void validateOwner(final UserRole userRole, final Approved approved) {
         if (userRole == UserRole.OWNER && approved == null) {
-            throw new NotFoundException(ErrorCode.OWNER_NOT_FOUND_STORE);
+            throw new NotFoundException(ErrorCode.STORE_NOT_FOUND);
         }
     }
 }

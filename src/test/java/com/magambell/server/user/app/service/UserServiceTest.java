@@ -186,6 +186,6 @@ class UserServiceTest {
         // when // then
         assertThatThrownBy(() -> userService.getUserInfo(customUserDetails))
                 .isInstanceOf(NotFoundException.class)
-                .hasMessage(ErrorCode.OWNER_NOT_FOUND_STORE.getMessage());
+                .hasMessage(ErrorCode.STORE_NOT_FOUND.getMessage());
     }
 }
