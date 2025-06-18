@@ -17,6 +17,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -47,7 +48,7 @@ public class StoreController {
             @Content(schema = @Schema(implementation = StoreListResponse.class))})
     @GetMapping("")
     public Response<StoreListResponse> getStoreList(
-            @RequestBody @Validated final SearchStoreListRequest request
+            @ModelAttribute @Validated final SearchStoreListRequest request
     ) {
         return new Response<>(storeUseCase.getStoreList(request.toService()));
     }
