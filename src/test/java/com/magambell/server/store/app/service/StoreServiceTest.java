@@ -7,6 +7,7 @@ import com.magambell.server.goods.domain.model.Goods;
 import com.magambell.server.goods.domain.repository.GoodsRepository;
 import com.magambell.server.stock.domain.model.Stock;
 import com.magambell.server.stock.domain.repository.StockHistoryRepository;
+import com.magambell.server.stock.domain.repository.StockRepository;
 import com.magambell.server.store.adapter.in.web.SearchStoreListServiceRequest;
 import com.magambell.server.store.adapter.in.web.StoreImagesRegister;
 import com.magambell.server.store.adapter.out.persistence.StoreListResponse;
@@ -42,25 +43,20 @@ class StoreServiceTest {
 
     @Autowired
     private UserRepository userRepository;
-
     @Autowired
     private UserSocialAccountRepository userSocialAccountRepository;
-
     @Autowired
     private StoreService storeService;
-
     @Autowired
     private StoreRepository storeRepository;
-
     @Autowired
     private StoreImageRepository storeImageRepository;
-
     @Autowired
     private GoodsRepository goodsRepository;
-
     @Autowired
     private StockHistoryRepository stockHistoryRepository;
-
+    @Autowired
+    private StockRepository stockRepository;
     private User user;
 
     @BeforeEach
@@ -77,6 +73,7 @@ class StoreServiceTest {
     @AfterEach
     void tearDown() {
         stockHistoryRepository.deleteAllInBatch();
+        stockRepository.deleteAllInBatch();
         goodsRepository.deleteAllInBatch();
         storeImageRepository.deleteAllInBatch();
         storeRepository.deleteAllInBatch();
