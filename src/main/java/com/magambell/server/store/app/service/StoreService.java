@@ -43,6 +43,7 @@ public class StoreService implements StoreUseCase {
         return new StoreListResponse(storeQueryPort.getStoreList(request));
     }
 
+    @Transactional
     @Override
     public void storeApprove(final StoreApproveServiceRequest request) {
         storeCommandPort.storeApprove(request.id());
