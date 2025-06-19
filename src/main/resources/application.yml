@@ -103,3 +103,8 @@ oauth:
   naver:
     client_id: ${NAVER_CLIENT_ID}
     client_secret: ${NAVER_CLIENT_SECRET}
+
+portone:
+  secret:
+    api: ${PORT_ONE_API}
+    webhook: ${PORT_ONE_WEBHOOK}

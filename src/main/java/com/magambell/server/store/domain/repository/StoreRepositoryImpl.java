@@ -1,6 +1,7 @@
 package com.magambell.server.store.domain.repository;
 
 import static com.magambell.server.goods.domain.model.QGoods.goods;
+import static com.magambell.server.stock.domain.model.QStock.stock;
 import static com.magambell.server.store.domain.enums.Approved.APPROVED;
 import static com.magambell.server.store.domain.model.QStore.store;
 import static com.magambell.server.store.domain.model.QStoreImage.storeImage;
@@ -38,10 +39,11 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                 store.longitude
         );
 
-        return queryFactory.select(store, storeImage, goods)
+        return queryFactory.select(store, storeImage, goods, stock)
                 .from(store)
                 .leftJoin(storeImage).on(storeImage.store.id.eq(store.id))
                 .leftJoin(goods).on(goods.store.id.eq(store.id))
+                .innerJoin(stock).on(stock.goods.id.eq(goods.id))
                 .where(
                         allOf(
                                 radiusCondition(request, distance),
@@ -65,7 +67,7 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                                         goods.originalPrice,
                                         goods.discount,
                                         goods.salePrice,
-                                        goods.quantity,
+                                        stock.quantity,
                                         distance
                                 ))
                 );
@@ -88,7 +90,7 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
 
     private BooleanExpression availableNowCondition(SearchStoreListServiceRequest request) {
         if (Boolean.TRUE.equals(request.onlyAvailable())) {
-            return goods.quantity.gt(0);
+            return stock.quantity.gt(0);
         }
         return null;
     }
