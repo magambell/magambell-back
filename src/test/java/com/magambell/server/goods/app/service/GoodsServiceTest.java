@@ -7,6 +7,7 @@ import com.magambell.server.goods.app.port.in.request.RegisterGoodsServiceReques
 import com.magambell.server.goods.domain.enums.SaleStatus;
 import com.magambell.server.goods.domain.model.Goods;
 import com.magambell.server.goods.domain.repository.GoodsRepository;
+import com.magambell.server.stock.domain.repository.StockHistoryRepository;
 import com.magambell.server.stock.domain.repository.StockRepository;
 import com.magambell.server.store.app.port.in.dto.RegisterStoreDTO;
 import com.magambell.server.store.domain.enums.Approved;
@@ -50,6 +51,9 @@ class GoodsServiceTest {
     @Autowired
     private StockRepository stockRepository;
 
+    @Autowired
+    private StockHistoryRepository stockHistoryRepository;
+
     private User user;
     private Store store;
 
@@ -83,6 +87,7 @@ class GoodsServiceTest {
 
     @AfterEach
     void tearDown() {
+        stockHistoryRepository.deleteAllInBatch();
         stockRepository.deleteAllInBatch();
         goodsRepository.deleteAllInBatch();
         storeRepository.deleteAllInBatch();
@@ -105,7 +110,14 @@ class GoodsServiceTest {
 
         // then
         Goods goods = goodsRepository.findAll().get(0);
+
         assertThat(goods.getName()).isEqualTo("상품명");
+        assertThat(goods.getStock()).isNotNull();
+        assertThat(goods.getStockQuantity()).isEqualTo(3);
+        assertThat(stockHistoryRepository.findAll()).hasSize(1);
+        assertThat(stockHistoryRepository.findAll().get(0).getResultQuantity()).isEqualTo(3);
+
+
     }
 
 }

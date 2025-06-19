@@ -1,6 +1,7 @@
 package com.magambell.server.user.domain.model;
 
 import com.magambell.server.common.BaseTimeEntity;
+import com.magambell.server.order.domain.model.Order;
 import com.magambell.server.store.domain.model.Store;
 import com.magambell.server.user.app.port.in.dto.UserDTO;
 import com.magambell.server.user.app.port.in.dto.UserSocialAccountDTO;
@@ -56,6 +57,9 @@ public class User extends BaseTimeEntity {
     @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
     private Store store;
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Order> orders = new ArrayList<>();
+
     @Builder(access = AccessLevel.PRIVATE)
     private User(final String email, final String password, final String name, final String nickName,
                  final String phoneNumber,
@@ -104,5 +108,9 @@ public class User extends BaseTimeEntity {
 
     public void withdraw() {
         this.userStatus = UserStatus.WITHDRAWN;
+    }
+
+    public void addOrder(final Order order) {
+        this.orders.add(order);
     }
 }

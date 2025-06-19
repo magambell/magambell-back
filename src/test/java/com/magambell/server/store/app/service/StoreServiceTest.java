@@ -5,8 +5,8 @@ import com.magambell.server.goods.app.port.in.dto.RegisterGoodsDTO;
 import com.magambell.server.goods.domain.enums.SaleStatus;
 import com.magambell.server.goods.domain.model.Goods;
 import com.magambell.server.goods.domain.repository.GoodsRepository;
-import com.magambell.server.stock.domain.model.StockHistory;
-import com.magambell.server.stock.domain.repository.StockRepository;
+import com.magambell.server.stock.domain.model.Stock;
+import com.magambell.server.stock.domain.repository.StockHistoryRepository;
 import com.magambell.server.store.adapter.in.web.SearchStoreListServiceRequest;
 import com.magambell.server.store.adapter.in.web.StoreImagesRegister;
 import com.magambell.server.store.adapter.out.persistence.StoreListResponse;
@@ -59,7 +59,7 @@ class StoreServiceTest {
     private GoodsRepository goodsRepository;
 
     @Autowired
-    private StockRepository stockRepository;
+    private StockHistoryRepository stockHistoryRepository;
 
     private User user;
 
@@ -76,7 +76,7 @@ class StoreServiceTest {
 
     @AfterEach
     void tearDown() {
-        stockRepository.deleteAllInBatch();
+        stockHistoryRepository.deleteAllInBatch();
         goodsRepository.deleteAllInBatch();
         storeImageRepository.deleteAllInBatch();
         storeRepository.deleteAllInBatch();
@@ -180,9 +180,9 @@ class StoreServiceTest {
         user.addStore(store);
 
         Goods goods = registerGoodsDTO.toGoods();
-        StockHistory stockHistory = registerGoodsDTO.toStock();
         store.addGoods(goods);
-        goods.addStock(stockHistory);
+        Stock stock = Stock.create(registerGoodsDTO.quantity());
+        goods.addStock(stock);
 
         userRepository.save(user);
         return store;

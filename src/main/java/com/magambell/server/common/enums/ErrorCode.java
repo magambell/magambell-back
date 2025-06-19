@@ -21,6 +21,10 @@ public enum ErrorCode {
     INVALID_NICK_NAME("닉네임을 입력해 주세요."),
     INVALID_USER_ROLE("사용자 유형을 선택해 주세요."),
     INVALID_PHONE_NUMBER("휴대폰 번호를 입력해 주세요."),
+    STOCK_NOT_ENOUGH("재고가 부족합니다."),
+    STOCK_INVALID_QUANTITY("수량은 0보다 커야 합니다."),
+    INVALID_PICKUP_TIME("유효하지 않은 픽업 시간입니다."),
+    INVALID_TOTAL_PRICE("결제 금액이 올바르지 않습니다."),
 
     USER_CUSTOMER_NO_ACCESS("사장님만 접근되는 메뉴입니다."),
 
@@ -33,6 +37,7 @@ public enum ErrorCode {
     OAUTH_NAVER_USER_NOT_FOUND("네이버 사용자 정보를 찾을 수 없습니다."),
     BANK_NOT_FOUND("은행정보를 찾을 수 없습니다."),
     STORE_NOT_FOUND("매장 정보를 찾을 수 없습니다."),
+    GOODS_NOT_FOUND("마감백을 찾을 수 없습니다."),
 
     JWT_VERIFY_EXPIRED("인증정보가 만료 됐습니다."),
     JWT_VALIDATE_ERROR("유효한 인증정보가 아닙니다."),

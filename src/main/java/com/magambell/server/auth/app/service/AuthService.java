@@ -64,6 +64,7 @@ public class AuthService implements AuthUseCase {
         oAuthClient.userWithdraw(request.authCode());
 
         user.withdraw();
+        userCommandPort.deleteBySocial(request.providerType(), userId);
     }
 
     private User oAuthSignUp(final OAuthUserInfo userInfo, final SocialLoginServiceRequest request) {
