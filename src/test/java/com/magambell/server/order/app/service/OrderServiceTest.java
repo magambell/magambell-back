@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.magambell.server.auth.domain.ProviderType;
 import com.magambell.server.goods.app.port.in.dto.RegisterGoodsDTO;
-import com.magambell.server.goods.domain.enums.SaleStatus;
 import com.magambell.server.goods.domain.model.Goods;
 import com.magambell.server.goods.domain.repository.GoodsRepository;
 import com.magambell.server.order.app.port.in.request.CreateOrderServiceRequest;
@@ -101,11 +100,10 @@ class OrderServiceTest {
 
         // 상품 생성
         RegisterGoodsDTO registerGoodsDTO = new RegisterGoodsDTO(
-                "상품명",
                 LocalDateTime.now().minusHours(1),
                 LocalDateTime.now().plusHours(2),
                 10, 10000, 10, 9000, "",
-                store, SaleStatus.ON
+                store
         );
         goods = Goods.create(registerGoodsDTO);
         store.addGoods(goods);

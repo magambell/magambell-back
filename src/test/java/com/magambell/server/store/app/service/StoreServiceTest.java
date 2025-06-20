@@ -1,8 +1,9 @@
 package com.magambell.server.store.app.service;
 
+import static com.magambell.server.goods.domain.enums.SaleStatus.ON;
+
 import com.magambell.server.auth.domain.ProviderType;
 import com.magambell.server.goods.app.port.in.dto.RegisterGoodsDTO;
-import com.magambell.server.goods.domain.enums.SaleStatus;
 import com.magambell.server.goods.domain.model.Goods;
 import com.magambell.server.goods.domain.repository.GoodsRepository;
 import com.magambell.server.stock.domain.model.Stock;
@@ -130,11 +131,10 @@ class StoreServiceTest {
         // then
         StoreListDTOResponse store = storeListResponse.storeListDTOResponses().get(0);
         Assertions.assertThat(store)
-                .extracting("storeName", "goodsName", "startTime", "endTime", "originPrice", "discount", "salePrice",
+                .extracting("storeName", "startTime", "endTime", "originPrice", "discount", "salePrice",
                         "quantity")
                 .contains(
                         "테스트 매장1",
-                        "상품명1",
                         LocalDateTime.of(2025, 1, 1, 9, 0),
                         LocalDateTime.of(2025, 1, 1, 18, 0),
                         10000,
@@ -170,13 +170,13 @@ class StoreServiceTest {
         Store store = registerStoreDTO.toEntity();
 
         RegisterGoodsDTO registerGoodsDTO = new RegisterGoodsDTO(
-                "상품명" + i,
                 LocalDateTime.of(2025, 1, 1, 9, 0), LocalDateTime.of(2025, 1, 1, 18, 0),
-                i, 10000, 10, 9000, "상품설명", store, SaleStatus.ON
+                i, 10000, 10, 9000, "상품설명", store
         );
         user.addStore(store);
 
         Goods goods = registerGoodsDTO.toGoods();
+        goods.changeStatus(ON);
         store.addGoods(goods);
         Stock stock = Stock.create(registerGoodsDTO.quantity());
         goods.addStock(stock);
