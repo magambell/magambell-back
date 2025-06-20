@@ -1,5 +1,6 @@
 package com.magambell.server.user.domain.repository;
 
+import static com.magambell.server.goods.domain.model.QGoods.goods;
 import static com.magambell.server.store.domain.model.QStore.store;
 import static com.magambell.server.user.domain.model.QUser.user;
 import static com.magambell.server.user.domain.model.QUserSocialAccount.userSocialAccount;
@@ -41,11 +42,13 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
                         user.nickName,
                         user.userRole,
                         userSocialAccount.providerType,
-                        store.approved
+                        store.approved,
+                        goods.id
                 ))
                 .from(user)
-                .leftJoin(user.userSocialAccounts, userSocialAccount)
-                .leftJoin(user.store, store)
+                .leftJoin(userSocialAccount).on(userSocialAccount.user.id.eq(user.id))
+                .leftJoin(store).on(store.user.id.eq(user.id))
+                .leftJoin(goods).on(goods.store.id.eq(store.id))
                 .where(
                         user.id.eq(userId),
                         user.userStatus.eq(UserStatus.ACTIVE)
