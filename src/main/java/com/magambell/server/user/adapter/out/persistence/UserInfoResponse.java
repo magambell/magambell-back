@@ -9,6 +9,7 @@ public record UserInfoResponse(
         String nickName,
         UserRole userRole,
         ProviderType providerType,
-        Approved approved
+        Approved approved,
+        Long goodsId
 ) {
 }

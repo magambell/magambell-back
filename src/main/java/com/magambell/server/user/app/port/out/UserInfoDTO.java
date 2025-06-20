@@ -10,9 +10,10 @@ public record UserInfoDTO(
         String nickName,
         UserRole userRole,
         ProviderType providerType,
-        Approved approved
+        Approved approved,
+        Long goodsId
 ) {
     public UserInfoResponse toResponse() {
-        return new UserInfoResponse(email, nickName, userRole, providerType, approved);
+        return new UserInfoResponse(email, nickName, userRole, providerType, approved, goodsId);
     }
 }
