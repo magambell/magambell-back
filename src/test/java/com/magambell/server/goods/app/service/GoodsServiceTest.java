@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.magambell.server.auth.domain.ProviderType;
 import com.magambell.server.goods.app.port.in.request.RegisterGoodsServiceRequest;
-import com.magambell.server.goods.domain.enums.SaleStatus;
 import com.magambell.server.goods.domain.model.Goods;
 import com.magambell.server.goods.domain.repository.GoodsRepository;
 import com.magambell.server.stock.domain.repository.StockHistoryRepository;
@@ -100,9 +99,9 @@ class GoodsServiceTest {
     void registerGoods() {
         // given
         RegisterGoodsServiceRequest req = new RegisterGoodsServiceRequest(
-                "상품명", "상품설명",
+                "상품설명",
                 LocalDateTime.of(2025, 1, 1, 9, 0), LocalDateTime.of(2025, 1, 1, 18, 0),
-                3, 10000, 10, 9000, SaleStatus.ON
+                3, 10000, 10, 9000
         );
 
         // when
@@ -111,7 +110,6 @@ class GoodsServiceTest {
         // then
         Goods goods = goodsRepository.findAll().get(0);
 
-        assertThat(goods.getName()).isEqualTo("상품명");
         assertThat(goods.getStock()).isNotNull();
         assertThat(goods.getStockQuantity()).isEqualTo(3);
         assertThat(stockHistoryRepository.findAll()).hasSize(1);

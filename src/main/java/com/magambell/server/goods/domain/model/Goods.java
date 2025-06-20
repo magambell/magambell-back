@@ -1,5 +1,7 @@
 package com.magambell.server.goods.domain.model;
 
+import static com.magambell.server.goods.domain.enums.SaleStatus.OFF;
+
 import com.magambell.server.common.BaseTimeEntity;
 import com.magambell.server.goods.app.port.in.dto.RegisterGoodsDTO;
 import com.magambell.server.goods.domain.enums.SaleStatus;
@@ -73,14 +75,13 @@ public class Goods extends BaseTimeEntity {
 
     public static Goods create(RegisterGoodsDTO dto) {
         Goods goods = Goods.builder()
-                .name(dto.name())
                 .startTime(dto.startTime())
                 .endTime(dto.endTime())
                 .originalPrice(dto.originalPrice())
                 .discount(dto.discount())
                 .salePrice(dto.salePrice())
                 .description(dto.description())
-                .saleStatus(dto.saleStatus())
+                .saleStatus(OFF)
                 .build();
         Stock stock = Stock.create(dto.quantity());
         StockHistory stockHistory = dto.toStock();
@@ -109,5 +110,9 @@ public class Goods extends BaseTimeEntity {
     public void addStockHistory(final StockHistory stockHistory) {
         this.stockHistory.add(stockHistory);
         stockHistory.addGoods(this);
+    }
+
+    public void changeStatus(final SaleStatus saleStatus) {
+        this.saleStatus = saleStatus;
     }
 }
