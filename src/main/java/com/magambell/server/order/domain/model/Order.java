@@ -86,4 +86,8 @@ public class Order extends BaseTimeEntity {
         this.orderGoodsList.add(orderGoods);
         orderGoods.addOrder(this);
     }
+
+    public void addPayment(final Payment payment) {
+        this.payments.add(payment);
+    }
 }

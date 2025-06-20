@@ -1,5 +1,6 @@
 package com.magambell.server.order.app.service;
 
+import static com.magambell.server.payment.app.service.PaymentService.MERCHANT_UID_PREFIX;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.magambell.server.auth.domain.ProviderType;
@@ -11,6 +12,9 @@ import com.magambell.server.order.app.port.in.request.CreateOrderServiceRequest;
 import com.magambell.server.order.domain.model.Order;
 import com.magambell.server.order.domain.repository.OrderGoodsRepository;
 import com.magambell.server.order.domain.repository.OrderRepository;
+import com.magambell.server.payment.domain.enums.PayType;
+import com.magambell.server.payment.domain.model.Payment;
+import com.magambell.server.payment.domain.repository.PaymentRepository;
 import com.magambell.server.stock.domain.repository.StockHistoryRepository;
 import com.magambell.server.stock.domain.repository.StockRepository;
 import com.magambell.server.store.app.port.in.dto.RegisterStoreDTO;
@@ -55,7 +59,8 @@ class OrderServiceTest {
     private StockHistoryRepository stockHistoryRepository;
     @Autowired
     private StockRepository stockRepository;
-
+    @Autowired
+    private PaymentRepository paymentRepository;
     private User user;
     private Goods goods;
 
@@ -116,6 +121,7 @@ class OrderServiceTest {
         stockHistoryRepository.deleteAllInBatch();
         stockRepository.deleteAllInBatch();
         orderGoodsRepository.deleteAllInBatch();
+        paymentRepository.deleteAllInBatch();
         orderRepository.deleteAllInBatch();
         goodsRepository.deleteAllInBatch();
         storeRepository.deleteAllInBatch();
@@ -132,7 +138,10 @@ class OrderServiceTest {
                 2,
                 18000,
                 LocalDateTime.now().plusMinutes(30),
-                "빨리 주세요"
+                "빨리 주세요",
+                PayType.CARD,
+                "삼성카드",
+                null
         );
 
         // when
@@ -144,8 +153,12 @@ class OrderServiceTest {
         assertThat(updatedGoods.getStock().getQuantity()).isEqualTo(8);
 
         Order order = orderRepository.findAll().get(0);
+        Payment payment = paymentRepository.findAll().get(0);
         assertThat(order).isNotNull();
         assertThat(order.getUser().getId()).isEqualTo(user.getId());
         assertThat(order.getUser().getId()).isEqualTo(user.getId());
+        assertThat(payment).isNotNull();
+        assertThat(payment.getMerchantUid()).isEqualTo(MERCHANT_UID_PREFIX + order.getId().toString());
+        assertThat(payment.getPayType()).isEqualTo(PayType.CARD);
     }
 }

@@ -5,9 +5,10 @@ import lombok.RequiredArgsConstructor;
 
 @Getter
 @RequiredArgsConstructor
-public enum PayType {
-    CARD("카드"),
-    EASY_PAY("간편 결제");
+public enum EasyPayProvider {
+    KAKAOPAY("카카오페이"),
+    NAVERPAY("네이버페이"),
+    TOSSPAY("토스");
 
     private final String text;
 }

@@ -1,7 +1,11 @@
 package com.magambell.server.payment.domain.model;
 
+import static com.magambell.server.payment.app.service.PaymentService.MERCHANT_UID_PREFIX;
+
 import com.magambell.server.common.BaseTimeEntity;
 import com.magambell.server.order.domain.model.Order;
+import com.magambell.server.payment.app.port.in.dto.CreatePaymentDTO;
+import com.magambell.server.payment.domain.enums.EasyPayProvider;
 import com.magambell.server.payment.domain.enums.PayType;
 import com.magambell.server.payment.domain.enums.PaymentStatus;
 import io.hypersistence.utils.hibernate.id.Tsid;
@@ -15,6 +19,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import java.time.LocalDateTime;
 import lombok.AccessLevel;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -33,13 +38,57 @@ public class Payment extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     private PayType payType;
+
+    @Enumerated(EnumType.STRING)
+    private EasyPayProvider easyPayProvider;
+    private String cardName;
     private Integer amount;
+
+    @Enumerated(EnumType.STRING)
     private PaymentStatus paymentStatus;
-    private LocalDateTime paid_at;
+    private LocalDateTime paidAt;
     private String failReason;
     private String cancelReason;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
+
+    @Builder(access = AccessLevel.PRIVATE)
+    private Payment(final String impUid, final String merchantUid, final PayType payType,
+                    final EasyPayProvider easyPayProvider, final String cardName,
+                    final Integer amount, final PaymentStatus paymentStatus, final LocalDateTime paidAt,
+                    final String failReason,
+                    final String cancelReason) {
+        this.impUid = impUid;
+        this.merchantUid = merchantUid;
+        this.payType = payType;
+        this.easyPayProvider = easyPayProvider;
+        this.cardName = cardName;
+        this.amount = amount;
+        this.paymentStatus = paymentStatus;
+        this.paidAt = paidAt;
+        this.failReason = failReason;
+        this.cancelReason = cancelReason;
+    }
+
+    public static Payment create(final CreatePaymentDTO dto) {
+        Payment payment = Payment.builder()
+                .merchantUid(MERCHANT_UID_PREFIX + dto.order().getId().toString())
+                .payType(dto.payType())
+                .easyPayProvider(dto.easyPayProvider())
+                .cardName(dto.cardName())
+                .amount(dto.amount())
+                .paymentStatus(dto.paymentStatus())
+                .build();
+
+        payment.addOrder(dto.order());
+
+        return payment;
+    }
+
+    private void addOrder(final Order order) {
+        this.order = order;
+        order.addPayment(this);
+    }
 }
