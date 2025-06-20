@@ -28,6 +28,14 @@ public enum ErrorCode {
     INVALID_CARD_NAME("카드를 선택해 주세요."),
     INVALID_EASY_PAY_PROVIDER("간편 결제 수단을 선택해 주세요."),
 
+    INVALID_PAYMENT_STATUS_PAID("결제가 완료되지 않았습니다."),
+    INVALID_PAYMENT_STATUS_CANCEL("결제가 취소되지 않았습니다."),
+    INVALID_PAYMENT_STATUS_FAILED("결제가 실패하지 않았습니다."),
+
+    TOTAL_PRICE_NOT_EQUALS("결제 금액이 일치하지 않습니다."),
+    PAYMENT_ALREADY_PROCESSED("이미 처리된 결제입니다."),
+    PAYMENT_NOT_ALREADY_PROCESSED("결제 완료 처리가 안된 결제입니다."),
+
     USER_CUSTOMER_NO_ACCESS("사장님만 접근되는 메뉴입니다."),
 
     USER_EMAIL_AUTH_CODE_NOT_EQUALS("인증번호가 일치하지 않습니다."),
@@ -40,6 +48,9 @@ public enum ErrorCode {
     BANK_NOT_FOUND("은행정보를 찾을 수 없습니다."),
     STORE_NOT_FOUND("매장 정보를 찾을 수 없습니다."),
     GOODS_NOT_FOUND("마감백을 찾을 수 없습니다."),
+    ORDER_NOT_FOUND("주문을 찾을 수 없습니다."),
+    PAYMENT_NOT_FOUND("주문을 찾을 수 없습니다."),
+    STOCK_NOT_FOUND("재고를 찾을 수 없습니다."),
 
     JWT_VERIFY_EXPIRED("인증정보가 만료 됐습니다."),
     JWT_VALIDATE_ERROR("유효한 인증정보가 아닙니다."),

@@ -90,4 +90,16 @@ public class Order extends BaseTimeEntity {
     public void addPayment(final Payment payment) {
         this.payments.add(payment);
     }
+
+    public void paid() {
+        this.orderStatus = OrderStatus.PAID;
+    }
+
+    public void cancelled() {
+        this.orderStatus = OrderStatus.CANCELED;
+    }
+
+    public void failed() {
+        this.orderStatus = OrderStatus.FAILED;
+    }
 }

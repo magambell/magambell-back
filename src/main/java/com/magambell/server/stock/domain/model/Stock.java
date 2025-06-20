@@ -1,5 +1,6 @@
 package com.magambell.server.stock.domain.model;
 
+import static com.magambell.server.stock.domain.enums.StockType.CANCEL;
 import static com.magambell.server.stock.domain.enums.StockType.ORDER;
 
 import com.magambell.server.common.BaseTimeEntity;
@@ -70,6 +71,17 @@ public class Stock extends BaseTimeEntity {
         int afterQuantity = this.quantity;
 
         StockHistory stockHistory = StockHistory.create(ORDER, beforeQuantity, amount, afterQuantity);
+        goods.addStockHistory(stockHistory);
+
+        return stockHistory;
+    }
+
+    public StockHistory restoreCancel(final Goods goods, final Integer quantity) {
+        int beforeQuantity = this.quantity;
+        increase(quantity);
+        int afterQuantity = this.quantity;
+
+        StockHistory stockHistory = StockHistory.create(CANCEL, beforeQuantity, quantity, afterQuantity);
         goods.addStockHistory(stockHistory);
 
         return stockHistory;
