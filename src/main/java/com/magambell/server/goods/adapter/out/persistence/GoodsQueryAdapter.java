@@ -14,8 +14,8 @@ public class GoodsQueryAdapter implements GoodsQueryPort {
     private final GoodsRepository goodsRepository;
 
     @Override
-    public Goods findByIdWithStockAndLock(final Long goodsId) {
-        return goodsRepository.findByIdWithStockAndLock(goodsId)
+    public Goods findById(final Long goodsId) {
+        return goodsRepository.findById(goodsId)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.GOODS_NOT_FOUND));
     }
 }

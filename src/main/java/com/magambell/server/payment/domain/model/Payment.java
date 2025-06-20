@@ -8,6 +8,7 @@ import com.magambell.server.payment.app.port.in.dto.CreatePaymentDTO;
 import com.magambell.server.payment.domain.enums.EasyPayProvider;
 import com.magambell.server.payment.domain.enums.PayType;
 import com.magambell.server.payment.domain.enums.PaymentStatus;
+import com.magambell.server.payment.infra.PortOnePaymentResponse;
 import io.hypersistence.utils.hibernate.id.Tsid;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -33,7 +34,7 @@ public class Payment extends BaseTimeEntity {
     @Column(name = "payment_id")
     private Long id;
 
-    private String impUid;
+    private String transactionId;
     private String merchantUid;
 
     @Enumerated(EnumType.STRING)
@@ -55,12 +56,12 @@ public class Payment extends BaseTimeEntity {
     private Order order;
 
     @Builder(access = AccessLevel.PRIVATE)
-    private Payment(final String impUid, final String merchantUid, final PayType payType,
+    private Payment(final String transactionId, final String merchantUid, final PayType payType,
                     final EasyPayProvider easyPayProvider, final String cardName,
                     final Integer amount, final PaymentStatus paymentStatus, final LocalDateTime paidAt,
                     final String failReason,
                     final String cancelReason) {
-        this.impUid = impUid;
+        this.transactionId = transactionId;
         this.merchantUid = merchantUid;
         this.payType = payType;
         this.easyPayProvider = easyPayProvider;
@@ -75,9 +76,6 @@ public class Payment extends BaseTimeEntity {
     public static Payment create(final CreatePaymentDTO dto) {
         Payment payment = Payment.builder()
                 .merchantUid(MERCHANT_UID_PREFIX + dto.order().getId().toString())
-                .payType(dto.payType())
-                .easyPayProvider(dto.easyPayProvider())
-                .cardName(dto.cardName())
                 .amount(dto.amount())
                 .paymentStatus(dto.paymentStatus())
                 .build();
@@ -87,8 +85,32 @@ public class Payment extends BaseTimeEntity {
         return payment;
     }
 
-    private void addOrder(final Order order) {
+    public void addOrder(final Order order) {
         this.order = order;
         order.addPayment(this);
+    }
+
+    public boolean isPaid() {
+        return paymentStatus == PaymentStatus.PAID;
+    }
+
+    public void paid(final PortOnePaymentResponse response) {
+        this.paymentStatus = PaymentStatus.PAID;
+        this.transactionId = response.transactionId();
+        this.paidAt = response.paidAt();
+        this.payType = response.payType();
+        this.easyPayProvider = response.easyPayProvider();
+        this.cardName = response.cardName();
+        this.order.paid();
+    }
+
+    public void cancel() {
+        this.paymentStatus = PaymentStatus.CANCELLED;
+        this.order.cancelled();
+    }
+
+    public void failed() {
+        this.paymentStatus = PaymentStatus.FAILED;
+        this.order.failed();
     }
 }

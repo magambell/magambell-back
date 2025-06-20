@@ -13,9 +13,10 @@ import com.magambell.server.order.app.port.out.response.CreateOrderResponseDTO;
 import com.magambell.server.order.domain.model.Order;
 import com.magambell.server.payment.app.port.in.dto.CreatePaymentDTO;
 import com.magambell.server.payment.app.port.out.PaymentCommandPort;
-import com.magambell.server.payment.domain.enums.PayType;
 import com.magambell.server.payment.domain.model.Payment;
 import com.magambell.server.stock.app.port.out.StockCommandPort;
+import com.magambell.server.stock.app.port.out.StockQueryPort;
+import com.magambell.server.stock.domain.model.Stock;
 import com.magambell.server.stock.domain.model.StockHistory;
 import com.magambell.server.user.app.port.out.UserQueryPort;
 import com.magambell.server.user.domain.model.User;
@@ -33,27 +34,24 @@ public class OrderService implements OrderUseCase {
     private final UserQueryPort userQueryPort;
     private final StockCommandPort stockCommandPort;
     private final PaymentCommandPort paymentCommandPort;
+    private final StockQueryPort stockQueryPort;
 
     @Transactional
     @Override
     public CreateOrderResponseDTO createOrder(final CreateOrderServiceRequest request, final Long userId) {
         User user = userQueryPort.findById(userId);
-        Goods goods = goodsQueryPort.findByIdWithStockAndLock(request.goodsId());
-
-        StockHistory stockHistory = goods.getStock().recordDecrease(goods, request.quantity());
+        Goods goods = goodsQueryPort.findById(request.goodsId());
+        Stock stock = stockQueryPort.findByGoodsIdWithLock(goods.getId());
+        StockHistory stockHistory = stock.recordDecrease(goods, request.quantity());
         stockCommandPort.saveStockHistory(stockHistory);
 
         validateOrderRequest(request, goods);
-        validatePaymentInfo(request);
 
         Order order = orderCommandPort.createOrder(request.toDTO(user, goods));
 
         Payment payment = paymentCommandPort.createReadyPayment(
                 new CreatePaymentDTO(order,
                         request.totalPrice(),
-                        request.payType(),
-                        request.cardName(),
-                        request.easyPayProvider(),
                         READY)
         );
 
@@ -67,16 +65,6 @@ public class OrderService implements OrderUseCase {
 
         if (request.pickupTime().isBefore(goods.getStartTime()) || request.pickupTime().isAfter(goods.getEndTime())) {
             throw new InvalidRequestException(ErrorCode.INVALID_PICKUP_TIME);
-        }
-    }
-
-    private void validatePaymentInfo(final CreateOrderServiceRequest request) {
-        if (request.payType() == PayType.CARD && (request.cardName() == null || request.cardName().isBlank())) {
-            throw new InvalidRequestException(ErrorCode.INVALID_CARD_NAME);
-        }
-
-        if (request.payType() == PayType.EASY_PAY && request.easyPayProvider() == null) {
-            throw new InvalidRequestException(ErrorCode.INVALID_EASY_PAY_PROVIDER);
         }
     }
 

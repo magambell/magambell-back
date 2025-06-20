@@ -12,7 +12,7 @@ public enum OrderStatus {
     REJECTED("매장(사장님) 픽업 거부"),
     COMPLETED("픽업 완료"),
     CANCELED("고객 취소"),
-    EXPIRED("시간 초과");
+    FAILED("결제 실패");
 
     private final String text;
 }

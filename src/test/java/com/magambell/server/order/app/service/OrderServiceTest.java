@@ -12,7 +12,6 @@ import com.magambell.server.order.app.port.in.request.CreateOrderServiceRequest;
 import com.magambell.server.order.domain.model.Order;
 import com.magambell.server.order.domain.repository.OrderGoodsRepository;
 import com.magambell.server.order.domain.repository.OrderRepository;
-import com.magambell.server.payment.domain.enums.PayType;
 import com.magambell.server.payment.domain.model.Payment;
 import com.magambell.server.payment.domain.repository.PaymentRepository;
 import com.magambell.server.stock.domain.repository.StockHistoryRepository;
@@ -138,10 +137,7 @@ class OrderServiceTest {
                 2,
                 18000,
                 LocalDateTime.now().plusMinutes(30),
-                "빨리 주세요",
-                PayType.CARD,
-                "삼성카드",
-                null
+                "빨리 주세요"
         );
 
         // when
@@ -159,6 +155,5 @@ class OrderServiceTest {
         assertThat(order.getUser().getId()).isEqualTo(user.getId());
         assertThat(payment).isNotNull();
         assertThat(payment.getMerchantUid()).isEqualTo(MERCHANT_UID_PREFIX + order.getId().toString());
-        assertThat(payment.getPayType()).isEqualTo(PayType.CARD);
     }
 }

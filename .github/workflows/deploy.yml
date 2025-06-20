@@ -65,6 +65,9 @@ jobs:
             --build-arg JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} \
             --build-arg NAVER_CLIENT_ID=${{ secrets.NAVER_CLIENT_ID }} \
             --build-arg NAVER_CLIENT_SECRET=${{ secrets.NAVER_CLIENT_SECRET }} \
+            --build-arg PORT_ONE_STORE_ID=${{ secrets.PORT_ONE_STORE_ID }} \
+            --build-arg PORT_ONE_API_KEY=${{ secrets.PORT_ONE_API_KEY }} \
+            --build-arg PORT_ONE_WEB_HOOK=${{ secrets.PORT_ONE_WEB_HOOK }} \
             --build-arg SPRING_PROFILES_ACTIVE=prod \
             .
           
@@ -92,6 +95,9 @@ jobs:
             export JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }}
             export NAVER_CLIENT_ID=${{ secrets.NAVER_CLIENT_ID }}
             export NAVER_CLIENT_SECRET=${{ secrets.NAVER_CLIENT_SECRET }}
+            export PORT_ONE_STORE_ID=${{ secrets.PORT_ONE_STORE_ID }}
+            export PORT_ONE_API_KEY=${{ secrets.PORT_ONE_API_KEY }}
+            export PORT_ONE_WEB_HOOK=${{ secrets.PORT_ONE_WEB_HOOK }}
             export SPRING_PROFILES_ACTIVE=prod
             sudo -E bash /home/ubuntu/deploy.sh
             
