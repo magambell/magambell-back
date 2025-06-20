@@ -1,4 +1,4 @@
-package com.magambell.server.user.app.port.out;
+package com.magambell.server.user.app.port.out.dto;
 
 import com.magambell.server.auth.domain.ProviderType;
 import com.magambell.server.store.domain.enums.Approved;

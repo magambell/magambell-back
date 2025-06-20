@@ -14,6 +14,7 @@ import com.magambell.server.store.adapter.in.web.StoreImagesRegister;
 import com.magambell.server.store.adapter.out.persistence.StoreListResponse;
 import com.magambell.server.store.app.port.in.dto.RegisterStoreDTO;
 import com.magambell.server.store.app.port.in.request.RegisterStoreServiceRequest;
+import com.magambell.server.store.app.port.out.dto.StoreDetailDTO;
 import com.magambell.server.store.app.port.out.response.StoreListDTOResponse;
 import com.magambell.server.store.domain.enums.Approved;
 import com.magambell.server.store.domain.enums.Bank;
@@ -113,7 +114,7 @@ class StoreServiceTest {
 
     @DisplayName("매장 리스트를 가져온다.")
     @Test
-    void getStoreList() {
+    void getStoreDetailList() {
         // given
         SearchStoreListServiceRequest request = new SearchStoreListServiceRequest(
                 37.5665, 37.5665, "매장1", SearchSortType.DISTANCE_ASC, true
@@ -142,6 +143,25 @@ class StoreServiceTest {
                         9000,
                         1
                 );
+    }
+
+    @DisplayName("매장 상세 정보를 조회한다")
+    @Test
+    void getStoreDetail() {
+        // given
+        Store store = createStore(1); // storeId = 1L
+        storeRepository.save(store);
+
+        // when
+        StoreDetailDTO result = storeService.getStoreDetail(store.getId());
+
+        // then
+        Assertions.assertThat(result).isNotNull();
+        Assertions.assertThat(result.storeId()).isEqualTo(store.getId());
+        Assertions.assertThat(result.storeName()).isEqualTo("테스트 매장1");
+        Assertions.assertThat(result.description()).isEqualTo("상품설명");
+        Assertions.assertThat(result.salePrice()).isEqualTo(9000);
+        Assertions.assertThat(result.images()).isEmpty();
     }
 
     private Store createStore(int i) {

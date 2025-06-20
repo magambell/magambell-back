@@ -1,6 +1,7 @@
 package com.magambell.server.user.app.port.out;
 
 import com.magambell.server.auth.domain.ProviderType;
+import com.magambell.server.user.app.port.out.dto.UserInfoDTO;
 import com.magambell.server.user.domain.model.User;
 import java.util.Optional;
 

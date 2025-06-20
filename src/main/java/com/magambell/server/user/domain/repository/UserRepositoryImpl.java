@@ -6,7 +6,7 @@ import static com.magambell.server.user.domain.model.QUser.user;
 import static com.magambell.server.user.domain.model.QUserSocialAccount.userSocialAccount;
 
 import com.magambell.server.auth.domain.ProviderType;
-import com.magambell.server.user.app.port.out.UserInfoDTO;
+import com.magambell.server.user.app.port.out.dto.UserInfoDTO;
 import com.magambell.server.user.domain.enums.UserStatus;
 import com.magambell.server.user.domain.model.User;
 import com.querydsl.core.types.Projections;

@@ -11,6 +11,7 @@ import static com.querydsl.core.types.dsl.Expressions.allOf;
 
 import com.magambell.server.goods.domain.enums.SaleStatus;
 import com.magambell.server.store.adapter.in.web.SearchStoreListServiceRequest;
+import com.magambell.server.store.app.port.out.dto.StoreDetailDTO;
 import com.magambell.server.store.app.port.out.response.StoreListDTOResponse;
 import com.magambell.server.store.domain.enums.SearchSortType;
 import com.querydsl.core.types.OrderSpecifier;
@@ -20,6 +21,8 @@ import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
+import java.util.Map;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -74,6 +77,43 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                                         distance
                                 ))
                 );
+    }
+
+    @Override
+    public Optional<StoreDetailDTO> getStoreDetail(final Long storeId) {
+        Map<Long, StoreDetailDTO> result = queryFactory.select(store, storeImage, goods, stock)
+                .from(store)
+                .leftJoin(storeImage).on(storeImage.store.id.eq(store.id))
+                .leftJoin(goods).on(goods.store.id.eq(store.id))
+                .leftJoin(stock).on(stock.goods.id.eq(goods.id))
+                .where(
+                        store.id.eq(storeId)
+                                .and(
+                                        store.approved.eq(APPROVED)
+                                )
+                                .and(
+                                        goods.saleStatus.eq(SaleStatus.ON)
+                                )
+                )
+                .transform(
+                        groupBy(store.id).as(
+                                Projections.constructor(StoreDetailDTO.class,
+                                        store.id,
+                                        goods.id,
+                                        store.name,
+                                        store.address,
+                                        list(storeImage.name),
+                                        goods.startTime,
+                                        goods.endTime,
+                                        goods.originalPrice,
+                                        goods.salePrice,
+                                        goods.discount,
+                                        goods.description,
+                                        stock.quantity
+                                )
+                        )
+                );
+        return Optional.ofNullable(result.get(storeId));
     }
 
     private BooleanExpression keywordCondition(final String keyword) {
