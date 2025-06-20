@@ -2,9 +2,10 @@ package com.magambell.server.order.adapter;
 
 import com.magambell.server.common.Response;
 import com.magambell.server.common.security.CustomUserDetails;
-import com.magambell.server.common.swagger.BaseResponse;
 import com.magambell.server.order.adapter.in.web.CreateOrderRequest;
+import com.magambell.server.order.adapter.out.persistence.CreateOrderResponse;
 import com.magambell.server.order.app.port.in.OrderUseCase;
+import com.magambell.server.order.app.port.out.response.CreateOrderResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -28,13 +29,13 @@ public class OrderController {
 
     @Operation(summary = "주문 등록")
     @ApiResponse(responseCode = "200", content = {
-            @Content(schema = @Schema(implementation = BaseResponse.class))})
+            @Content(schema = @Schema(implementation = CreateOrderResponse.class))})
     @PostMapping("")
-    public Response<BaseResponse> createOrder(
+    public Response<CreateOrderResponse> createOrder(
             @RequestBody @Validated final CreateOrderRequest request,
             @AuthenticationPrincipal final CustomUserDetails customUserDetails
     ) {
-        orderUseCase.createOrder(request.toServiceRequest(), customUserDetails.userId());
-        return new Response<>();
+        CreateOrderResponseDTO dto = orderUseCase.createOrder(request.toServiceRequest(), customUserDetails.userId());
+        return new Response<>(new CreateOrderResponse(dto.merchantUid(), dto.totalAmount()));
     }
 }

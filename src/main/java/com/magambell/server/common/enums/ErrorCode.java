@@ -25,6 +25,8 @@ public enum ErrorCode {
     STOCK_INVALID_QUANTITY("수량은 0보다 커야 합니다."),
     INVALID_PICKUP_TIME("유효하지 않은 픽업 시간입니다."),
     INVALID_TOTAL_PRICE("결제 금액이 올바르지 않습니다."),
+    INVALID_CARD_NAME("카드를 선택해 주세요."),
+    INVALID_EASY_PAY_PROVIDER("간편 결제 수단을 선택해 주세요."),
 
     USER_CUSTOMER_NO_ACCESS("사장님만 접근되는 메뉴입니다."),
 

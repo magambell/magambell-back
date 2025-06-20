@@ -1,7 +1,8 @@
 package com.magambell.server.order.app.port.out;
 
 import com.magambell.server.order.app.port.in.dto.CreateOrderDTO;
+import com.magambell.server.order.domain.model.Order;
 
 public interface OrderCommandPort {
-    void createOrder(CreateOrderDTO dto);
+    Order createOrder(CreateOrderDTO dto);
 }
