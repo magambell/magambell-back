@@ -30,14 +30,17 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
 
     @Override
     public List<StoreListDTOResponse> getStoreList(final SearchStoreListServiceRequest request) {
-        NumberExpression<Double> distance = Expressions.numberTemplate(
-                Double.class,
-                "6371 * acos(cos(radians({0})) * cos(radians({1})) * cos(radians({2}) - radians({3})) + sin(radians({0})) * sin(radians({1})))",
-                request.latitude(),
-                store.latitude,
-                request.longitude(),
-                store.longitude
-        );
+        NumberExpression<Double> distance = null;
+        if (request.latitude() != null && request.longitude() != null) {
+            distance = Expressions.numberTemplate(
+                    Double.class,
+                    "6371 * acos(cos(radians({0})) * cos(radians({1})) * cos(radians({2}) - radians({3})) + sin(radians({0})) * sin(radians({1})))",
+                    request.latitude(),
+                    store.latitude,
+                    request.longitude(),
+                    store.longitude
+            );
+        }
 
         return queryFactory.select(store, storeImage, goods, stock)
                 .from(store)
@@ -97,14 +100,17 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
 
     private OrderSpecifier<?> sortCondition(SearchSortType sortType, NumberExpression<Double> distance) {
         if (sortType == null) {
-            return store.name.asc(); // 기본 정렬
+            return store.createdAt.desc();
         }
         if (sortType == SearchSortType.DISTANCE_ASC) {
+            if (distance == null) {
+                return store.createdAt.desc();
+            }
             return distance.asc();
         }
         if (sortType == SearchSortType.PRICE_ASC) {
             return goods.salePrice.asc();
         }
-        return store.name.asc();
+        return store.createdAt.desc();
     }
 }
