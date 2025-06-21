@@ -27,6 +27,7 @@ public enum ErrorCode {
     INVALID_TOTAL_PRICE("결제 금액이 올바르지 않습니다."),
     INVALID_CARD_NAME("카드를 선택해 주세요."),
     INVALID_EASY_PAY_PROVIDER("간편 결제 수단을 선택해 주세요."),
+    INVALID_GOODS_OWNER("잘못된 접근입니다."),
 
     INVALID_PAYMENT_STATUS_PAID("결제가 완료되지 않았습니다."),
     INVALID_PAYMENT_STATUS_CANCEL("결제가 취소되지 않았습니다."),
