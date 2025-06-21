@@ -10,6 +10,6 @@ public record UserInfoResponse(
         UserRole userRole,
         ProviderType providerType,
         Approved approved,
-        Long goodsId
+        String goodsId
 ) {
 }

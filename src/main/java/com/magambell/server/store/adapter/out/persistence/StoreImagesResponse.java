@@ -4,7 +4,7 @@ import com.magambell.server.store.app.port.out.response.PreSignedUrlImage;
 import java.util.List;
 
 public record StoreImagesResponse(
-        Long id,
+        String id,
         List<PreSignedUrlImage> preSignedUrlImages
 ) {
 }

@@ -58,7 +58,7 @@ public class StoreController {
         return new Response<>(storeUseCase.getStoreList(request.toService()));
     }
 
-    @Operation(summary = "매장 리스트")
+    @Operation(summary = "매장 상세")
     @ApiResponse(responseCode = "200", content = {
             @Content(schema = @Schema(implementation = StoreDetailResponse.class))})
     @GetMapping("/{storeId}")

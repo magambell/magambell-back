@@ -4,8 +4,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public record StoreDetailResponse(
-        Long storeId,
-        Long goodsId,
+        String storeId,
+        String goodsId,
         String storeName,
         String address,
         List<String> images,
