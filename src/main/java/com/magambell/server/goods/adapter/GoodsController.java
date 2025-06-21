@@ -3,6 +3,7 @@ package com.magambell.server.goods.adapter;
 import com.magambell.server.common.Response;
 import com.magambell.server.common.security.CustomUserDetails;
 import com.magambell.server.common.swagger.BaseResponse;
+import com.magambell.server.goods.adapter.in.web.ChangeGoodsStatusRequest;
 import com.magambell.server.goods.adapter.in.web.RegisterGoodsRequest;
 import com.magambell.server.goods.app.port.in.GoodsUseCase;
 import io.swagger.v3.oas.annotations.Operation;
@@ -14,6 +15,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -38,6 +40,19 @@ public class GoodsController {
     ) {
 
         goodsUseCase.registerGoods(request.toService(), customUserDetails.userId());
+        return new Response<>();
+    }
+
+    @PreAuthorize("hasRole('OWNER')")
+    @Operation(summary = "마감백 판매 여부 변경")
+    @ApiResponse(responseCode = "200", content = {
+            @Content(schema = @Schema(implementation = BaseResponse.class))})
+    @PatchMapping("/status")
+    public Response<BaseResponse> changeGoodsStatus(
+            @RequestBody @Validated final ChangeGoodsStatusRequest request,
+            @AuthenticationPrincipal final CustomUserDetails customUserDetails
+    ) {
+        goodsUseCase.changeGoodsStatus(request.toService(customUserDetails.userId()));
         return new Response<>();
     }
 }
