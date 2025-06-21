@@ -14,6 +14,6 @@ public record UserInfoDTO(
         Long goodsId
 ) {
     public UserInfoResponse toResponse() {
-        return new UserInfoResponse(email, nickName, userRole, providerType, approved, goodsId);
+        return new UserInfoResponse(email, nickName, userRole, providerType, approved, String.valueOf(goodsId));
     }
 }

@@ -19,7 +19,8 @@ public record StoreDetailDTO(
         Integer quantity
 ) {
     public StoreDetailResponse toResponse() {
-        return new StoreDetailResponse(storeId, goodsId, storeName, address, images, startTime, endTime, originalPrice,
+        return new StoreDetailResponse(String.valueOf(storeId), String.valueOf(goodsId), storeName, address, images,
+                startTime, endTime, originalPrice,
                 salePrice, discount, description, quantity);
     }
 }

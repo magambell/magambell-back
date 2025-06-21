@@ -36,7 +36,8 @@ public class StoreService implements StoreUseCase {
         StoreRegisterResponseDTO storeRegisterResponseDTO = storeCommandPort.registerStore(
                 request.toStoreDTO(Approved.WAITING, user));
 
-        return new StoreImagesResponse(storeRegisterResponseDTO.id(), storeRegisterResponseDTO.preSignedUrlImages());
+        return new StoreImagesResponse(String.valueOf(storeRegisterResponseDTO.id()),
+                storeRegisterResponseDTO.preSignedUrlImages());
     }
 
     @Override
