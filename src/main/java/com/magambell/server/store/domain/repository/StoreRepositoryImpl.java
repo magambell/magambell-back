@@ -9,7 +9,6 @@ import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.group.GroupBy.list;
 import static com.querydsl.core.types.dsl.Expressions.allOf;
 
-import com.magambell.server.goods.domain.enums.SaleStatus;
 import com.magambell.server.store.adapter.in.web.SearchStoreListServiceRequest;
 import com.magambell.server.store.app.port.out.dto.StoreDetailDTO;
 import com.magambell.server.store.app.port.out.response.StoreListDTOResponse;
@@ -57,8 +56,6 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                                 keywordCondition(request.keyword())
                         )
                                 .and(store.approved.eq(APPROVED))
-                                .and(goods.saleStatus.eq(SaleStatus.ON))
-
                 )
                 .orderBy(sortCondition(request.sortType(), distance))
                 .transform(
@@ -74,7 +71,8 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                                         goods.discount,
                                         goods.salePrice,
                                         stock.quantity,
-                                        distance
+                                        distance,
+                                        goods.saleStatus
                                 ))
                 );
     }
@@ -91,9 +89,6 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                                 .and(
                                         store.approved.eq(APPROVED)
                                 )
-                                .and(
-                                        goods.saleStatus.eq(SaleStatus.ON)
-                                )
                 )
                 .transform(
                         groupBy(store.id).as(
@@ -109,7 +104,8 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                                         goods.salePrice,
                                         goods.discount,
                                         goods.description,
-                                        stock.quantity
+                                        stock.quantity,
+                                        goods.saleStatus
                                 )
                         )
                 );

@@ -1,5 +1,6 @@
 package com.magambell.server.store.app.port.out.response;
 
+import com.magambell.server.goods.domain.enums.SaleStatus;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -14,6 +15,7 @@ public record StoreListDTOResponse(
         Integer discount,
         Integer salePrice,
         Integer quantity,
-        Double distance
+        Double distance,
+        SaleStatus saleStatus
 ) {
 }
