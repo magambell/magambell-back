@@ -33,7 +33,9 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
     @Override
     public List<StoreListDTOResponse> getStoreList(final SearchStoreListServiceRequest request) {
         NumberExpression<Double> distance = null;
-        if (request.latitude() != 0 && request.longitude() != 0) {
+
+        if (request.latitude() != null && request.longitude() != null
+                && request.latitude() != 0.0 && request.longitude() != 0.0) {
             distance = Expressions.numberTemplate(
                     Double.class,
                     "6371 * acos(cos(radians({0})) * cos(radians({1})) * cos(radians({2}) - radians({3})) + sin(radians({0})) * sin(radians({1})))",
@@ -121,7 +123,7 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
 
     private BooleanExpression radiusCondition(SearchStoreListServiceRequest request,
                                               NumberExpression<Double> distance) {
-        if (request.latitude() != null && request.longitude() != null) {
+        if (distance != null) {
             return distance.loe(LIMIT_KM);
         }
         return null;
