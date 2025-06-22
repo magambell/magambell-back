@@ -4,4 +4,6 @@ import com.magambell.server.goods.domain.model.Goods;
 
 public interface GoodsQueryPort {
     Goods findById(Long goodsId);
+
+    boolean existsByStoreId(Long storeId);
 }

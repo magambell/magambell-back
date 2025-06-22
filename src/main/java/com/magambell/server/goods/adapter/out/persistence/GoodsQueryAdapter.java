@@ -18,4 +18,9 @@ public class GoodsQueryAdapter implements GoodsQueryPort {
         return goodsRepository.findById(goodsId)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.GOODS_NOT_FOUND));
     }
+
+    @Override
+    public boolean existsByStoreId(final Long storeId) {
+        return goodsRepository.existsByStoreId(storeId);
+    }
 }

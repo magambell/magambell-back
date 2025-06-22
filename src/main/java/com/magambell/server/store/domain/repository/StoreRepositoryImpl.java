@@ -58,7 +58,7 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                 .select(store.id)
                 .from(store)
                 .leftJoin(goods).on(goods.store.id.eq(store.id))
-                .leftJoin(stock).on(stock.goods.id.eq(goods.id))
+                .innerJoin(stock).on(stock.goods.id.eq(goods.id))
                 .where(conditions)
                 .orderBy(sortCondition(request.sortType(), distance))
                 .offset(pageable.getOffset())

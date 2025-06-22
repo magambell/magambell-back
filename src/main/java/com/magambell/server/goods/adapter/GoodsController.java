@@ -38,7 +38,6 @@ public class GoodsController {
             @RequestBody @Validated final RegisterGoodsRequest request,
             @AuthenticationPrincipal final CustomUserDetails customUserDetails
     ) {
-
         goodsUseCase.registerGoods(request.toService(), customUserDetails.userId());
         return new Response<>();
     }
