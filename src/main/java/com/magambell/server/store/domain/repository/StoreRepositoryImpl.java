@@ -7,12 +7,12 @@ import static com.magambell.server.store.domain.model.QStore.store;
 import static com.magambell.server.store.domain.model.QStoreImage.storeImage;
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.group.GroupBy.list;
-import static com.querydsl.core.types.dsl.Expressions.allOf;
 
-import com.magambell.server.store.adapter.in.web.SearchStoreListServiceRequest;
+import com.magambell.server.store.app.port.in.request.SearchStoreListServiceRequest;
 import com.magambell.server.store.app.port.out.dto.StoreDetailDTO;
 import com.magambell.server.store.app.port.out.response.StoreListDTOResponse;
 import com.magambell.server.store.domain.enums.SearchSortType;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 
 @RequiredArgsConstructor
 public class StoreRepositoryImpl implements StoreRepositoryCustom {
@@ -31,7 +32,8 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<StoreListDTOResponse> getStoreList(final SearchStoreListServiceRequest request) {
+    public List<StoreListDTOResponse> getStoreList(final SearchStoreListServiceRequest request,
+                                                   final Pageable pageable) {
         NumberExpression<Double> distance = null;
 
         if (request.latitude() != null && request.longitude() != null
@@ -46,19 +48,33 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
             );
         }
 
+        BooleanBuilder conditions = new BooleanBuilder();
+        Optional.ofNullable(radiusCondition(request, distance)).ifPresent(conditions::and);
+        Optional.ofNullable(availableNowCondition(request)).ifPresent(conditions::and);
+        Optional.ofNullable(keywordCondition(request.keyword())).ifPresent(conditions::and);
+        conditions.and(store.approved.eq(APPROVED));
+
+        List<Long> storeIds = queryFactory
+                .select(store.id)
+                .from(store)
+                .leftJoin(goods).on(goods.store.id.eq(store.id))
+                .leftJoin(stock).on(stock.goods.id.eq(goods.id))
+                .where(conditions)
+                .orderBy(sortCondition(request.sortType(), distance))
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        if (storeIds.isEmpty()) {
+            return List.of();
+        }
+
         return queryFactory.select(store, storeImage, goods, stock)
                 .from(store)
                 .leftJoin(storeImage).on(storeImage.store.id.eq(store.id))
                 .leftJoin(goods).on(goods.store.id.eq(store.id))
                 .innerJoin(stock).on(stock.goods.id.eq(goods.id))
-                .where(
-                        allOf(
-                                radiusCondition(request, distance),
-                                availableNowCondition(request),
-                                keywordCondition(request.keyword())
-                        )
-                                .and(store.approved.eq(APPROVED))
-                )
+                .where(store.id.in(storeIds))
                 .orderBy(sortCondition(request.sortType(), distance))
                 .transform(
                         groupBy(store.id)
@@ -138,6 +154,9 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
 
     private OrderSpecifier<?> sortCondition(SearchSortType sortType, NumberExpression<Double> distance) {
         if (sortType == null) {
+            return store.createdAt.desc();
+        }
+        if (sortType == SearchSortType.RECENT_DESC) {
             return store.createdAt.desc();
         }
         if (sortType == SearchSortType.DISTANCE_ASC) {
