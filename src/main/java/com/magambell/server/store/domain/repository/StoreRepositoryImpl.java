@@ -73,7 +73,7 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                                         goods.discount,
                                         goods.salePrice,
                                         stock.quantity,
-                                        distance,
+                                        distance != null ? distance : Expressions.nullExpression(Double.class),
                                         goods.saleStatus
                                 ))
                 );
