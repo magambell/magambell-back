@@ -9,11 +9,11 @@ import com.magambell.server.goods.domain.repository.GoodsRepository;
 import com.magambell.server.stock.domain.model.Stock;
 import com.magambell.server.stock.domain.repository.StockHistoryRepository;
 import com.magambell.server.stock.domain.repository.StockRepository;
-import com.magambell.server.store.adapter.in.web.SearchStoreListServiceRequest;
 import com.magambell.server.store.adapter.in.web.StoreImagesRegister;
 import com.magambell.server.store.adapter.out.persistence.StoreListResponse;
 import com.magambell.server.store.app.port.in.dto.RegisterStoreDTO;
 import com.magambell.server.store.app.port.in.request.RegisterStoreServiceRequest;
+import com.magambell.server.store.app.port.in.request.SearchStoreListServiceRequest;
 import com.magambell.server.store.app.port.out.dto.StoreDetailDTO;
 import com.magambell.server.store.app.port.out.response.StoreListDTOResponse;
 import com.magambell.server.store.domain.enums.Approved;
@@ -117,7 +117,7 @@ class StoreServiceTest {
     void getStoreDetailList() {
         // given
         SearchStoreListServiceRequest request = new SearchStoreListServiceRequest(
-                37.5665, 37.5665, "매장1", SearchSortType.DISTANCE_ASC, true
+                37.5665, 37.5665, "", SearchSortType.RECENT_DESC, true, 1, 30
         );
 
         List<Store> storeList = IntStream.range(1, 31)
@@ -129,19 +129,21 @@ class StoreServiceTest {
         // when
         StoreListResponse storeListResponse = storeService.getStoreList(request);
 
+        storeRepository.findAll().forEach(s -> System.out.println(s.getName() + " - " + s.getCreatedAt()));
+
         // then
         StoreListDTOResponse store = storeListResponse.storeListDTOResponses().get(0);
         Assertions.assertThat(store)
                 .extracting("storeName", "startTime", "endTime", "originPrice", "discount", "salePrice",
                         "quantity")
                 .contains(
-                        "테스트 매장1",
+                        "테스트 매장30",
                         LocalDateTime.of(2025, 1, 1, 9, 0),
                         LocalDateTime.of(2025, 1, 1, 18, 0),
                         10000,
                         10,
                         9000,
-                        1
+                        30
                 );
     }
 

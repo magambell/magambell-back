@@ -18,4 +18,7 @@ public record StoreListDTOResponse(
         Double distance,
         SaleStatus saleStatus
 ) {
+    public String getStoreId() {
+        return String.valueOf(storeId);
+    }
 }
