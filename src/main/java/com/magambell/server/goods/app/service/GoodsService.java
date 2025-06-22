@@ -1,6 +1,7 @@
 package com.magambell.server.goods.app.service;
 
 import com.magambell.server.common.enums.ErrorCode;
+import com.magambell.server.common.exception.DuplicateException;
 import com.magambell.server.common.exception.InvalidRequestException;
 import com.magambell.server.common.exception.NotFoundException;
 import com.magambell.server.goods.app.port.in.GoodsUseCase;
@@ -32,6 +33,7 @@ public class GoodsService implements GoodsUseCase {
     public void registerGoods(final RegisterGoodsServiceRequest request, final Long userId) {
         User user = userQueryPort.findById(userId);
         Store store = getStore(user);
+        existGoods(store);
         goodsCommandPort.registerGoods(request.toDTO(store));
     }
 
@@ -52,6 +54,12 @@ public class GoodsService implements GoodsUseCase {
     private void validateChangeGoodsStatus(final User user, final Goods goods) {
         if (!user.getStore().getId().equals(goods.getStore().getId())) {
             throw new InvalidRequestException(ErrorCode.INVALID_GOODS_OWNER);
+        }
+    }
+
+    private void existGoods(final Store store) {
+        if (goodsQueryPort.existsByStoreId(store.getId())) {
+            throw new DuplicateException(ErrorCode.DUPLICATE_GOODS);
         }
     }
 }
