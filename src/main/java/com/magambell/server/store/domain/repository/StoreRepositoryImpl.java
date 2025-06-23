@@ -5,6 +5,7 @@ import static com.magambell.server.stock.domain.model.QStock.stock;
 import static com.magambell.server.store.domain.enums.Approved.APPROVED;
 import static com.magambell.server.store.domain.model.QStore.store;
 import static com.magambell.server.store.domain.model.QStoreImage.storeImage;
+import static com.magambell.server.user.domain.model.QUser.user;
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.group.GroupBy.list;
 
@@ -12,6 +13,7 @@ import com.magambell.server.store.app.port.in.request.SearchStoreListServiceRequ
 import com.magambell.server.store.app.port.out.dto.StoreDetailDTO;
 import com.magambell.server.store.app.port.out.response.StoreListDTOResponse;
 import com.magambell.server.store.domain.enums.SearchSortType;
+import com.magambell.server.user.domain.enums.UserStatus;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
@@ -53,12 +55,14 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
         Optional.ofNullable(availableNowCondition(request)).ifPresent(conditions::and);
         Optional.ofNullable(keywordCondition(request.keyword())).ifPresent(conditions::and);
         conditions.and(store.approved.eq(APPROVED));
+        conditions.and(user.userStatus.eq(UserStatus.ACTIVE));
 
         List<Long> storeIds = queryFactory
                 .select(store.id)
                 .from(store)
                 .leftJoin(goods).on(goods.store.id.eq(store.id))
                 .innerJoin(stock).on(stock.goods.id.eq(goods.id))
+                .innerJoin(user).on(user.id.eq(store.user.id))
                 .where(conditions)
                 .orderBy(sortCondition(request.sortType(), distance))
                 .offset(pageable.getOffset())
@@ -102,10 +106,13 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                 .leftJoin(storeImage).on(storeImage.store.id.eq(store.id))
                 .leftJoin(goods).on(goods.store.id.eq(store.id))
                 .leftJoin(stock).on(stock.goods.id.eq(goods.id))
+                .innerJoin(user).on(user.id.eq(store.user.id))
                 .where(
                         store.id.eq(storeId)
                                 .and(
                                         store.approved.eq(APPROVED)
+                                ).and(
+                                        user.userStatus.eq(UserStatus.ACTIVE)
                                 )
                 )
                 .transform(
