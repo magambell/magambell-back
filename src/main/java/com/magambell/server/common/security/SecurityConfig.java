@@ -53,6 +53,7 @@ public class SecurityConfig {
                         .permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/store/**").permitAll()
                         .requestMatchers(HttpMethod.POST, "/api/v1/store").hasRole("OWNER")
+                        .requestMatchers(HttpMethod.PATCH, "/api/v1/store/approve").permitAll() // todo 추후 admin으로 변경
                         .requestMatchers("/admin")
                         .hasRole(UserRole.ADMIN.name())
                         .anyRequest()
