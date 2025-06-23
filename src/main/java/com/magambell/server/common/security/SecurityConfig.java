@@ -38,6 +38,7 @@ public class SecurityConfig {
                 "/api/v1/user/register",
                 "/api/v1/verify/email/register/**",
                 "/api/v1/verify/social",
+
                 "/api/v1/auth/**",
                 "/favicon.ico",
                 "/error"
@@ -52,8 +53,8 @@ public class SecurityConfig {
                         .requestMatchers(permitAllWhiteList)
                         .permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/store/**").permitAll()
+                        .requestMatchers(HttpMethod.PATCH, "/api/v1/store/**").permitAll()// todo 추후 admin으로 변경
                         .requestMatchers(HttpMethod.POST, "/api/v1/store").hasRole("OWNER")
-                        .requestMatchers(HttpMethod.PATCH, "/api/v1/store/approve").permitAll() // todo 추후 admin으로 변경
                         .requestMatchers("/admin")
                         .hasRole(UserRole.ADMIN.name())
                         .anyRequest()
