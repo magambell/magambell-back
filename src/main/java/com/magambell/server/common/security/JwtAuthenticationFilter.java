@@ -30,6 +30,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                                     final FilterChain filterChain)
             throws ServletException, IOException {
         log.info("exception filter");
+        log.info("요청 URI: {}", request.getRequestURI());
         String token = request.getHeader("Authorization");
 
         if (request.getRequestURI().equals("/api/v1/store/approve")) {
