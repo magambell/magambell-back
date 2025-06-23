@@ -32,17 +32,26 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         log.info("exception filter");
         String token = request.getHeader("Authorization");
 
-        if (StringUtils.hasText(token) && jwtService.isValidJwtToken(token)) {
-            Long userId = jwtService.getJwtUserId(token);
-            UserRole role = jwtService.getJwtUserRole(token);
-            Authentication auth = new UsernamePasswordAuthenticationToken(
-                    new CustomUserDetails(userId, role),
-                    null,
-                    List.of(new SimpleGrantedAuthority("ROLE_" + role.name()))
-            );
-            SecurityContextHolder.getContext().setAuthentication(auth);
+        if (request.getRequestURI().equals("/api/v1/store/approve")) {
+            log.info("start");
+        }
 
-            log.info("jwt success");
+        if (StringUtils.hasText(token) && jwtService.isValidJwtToken(token)) {
+            if (request.getRequestURI().equals("/api/v1/store/approve")) {
+                log.info("skip auth for /store/approve");
+            } else {
+                Long userId = jwtService.getJwtUserId(token);
+                UserRole role = jwtService.getJwtUserRole(token);
+                Authentication auth = new UsernamePasswordAuthenticationToken(
+                        new CustomUserDetails(userId, role),
+                        null,
+                        List.of(new SimpleGrantedAuthority("ROLE_" + role.name()))
+                );
+                SecurityContextHolder.getContext().setAuthentication(auth);
+
+                log.info("jwt success");
+            }
+
         }
 
         filterChain.doFilter(request, response);
