@@ -20,7 +20,7 @@ public record PortOneWebhookRequest(
 
     public PortOneWebhookServiceRequest toServiceRequest() {
         String paymentStatus = type.replace("Transaction.", "");
-        return new PortOneWebhookServiceRequest(PaymentStatus.valueOf(paymentStatus), timestamp, data.storeId,
+        return new PortOneWebhookServiceRequest(PaymentStatus.from(paymentStatus), timestamp, data.storeId,
                 data.paymentId, data.transactionId,
                 data.cancellationId);
     }
