@@ -87,8 +87,11 @@ public class GoogleOAuthClient implements OAuthClient {
     }
 
     private void validateGoogleResponse(GoogleUserResponse response) {
-        if (response == null || response.id() == null || response.email() == null) {
+        if (response == null || response.id() == null) {
             throw new NotFoundException(ErrorCode.OAUTH_GOOGLE_USER_NOT_FOUND);
+        }
+        if (response.email() == null) {
+            throw new NotFoundException(ErrorCode.EMAIL_NOT_FOUND);
         }
     }
 }
