@@ -102,4 +102,8 @@ public class Order extends BaseTimeEntity {
     public void failed() {
         this.orderStatus = OrderStatus.FAILED;
     }
+
+    public void completed() {
+        this.orderStatus = OrderStatus.COMPLETED;
+    }
 }

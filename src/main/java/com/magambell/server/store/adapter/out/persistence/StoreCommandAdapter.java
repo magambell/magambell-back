@@ -3,11 +3,11 @@ package com.magambell.server.store.adapter.out.persistence;
 import com.magambell.server.common.annotation.Adapter;
 import com.magambell.server.common.enums.ErrorCode;
 import com.magambell.server.common.exception.NotFoundException;
-import com.magambell.server.store.app.port.in.S3InputPort;
+import com.magambell.server.common.s3.S3InputPort;
+import com.magambell.server.common.s3.dto.TransformedImageDTO;
 import com.magambell.server.store.app.port.in.dto.RegisterStoreDTO;
-import com.magambell.server.store.app.port.in.dto.TransformedImageDTO;
 import com.magambell.server.store.app.port.out.StoreCommandPort;
-import com.magambell.server.store.app.port.out.response.PreSignedUrlImage;
+import com.magambell.server.store.app.port.out.response.StorePreSignedUrlImage;
 import com.magambell.server.store.app.port.out.response.StoreRegisterResponseDTO;
 import com.magambell.server.store.domain.model.Store;
 import com.magambell.server.store.domain.model.StoreImage;
@@ -21,6 +21,8 @@ import lombok.RequiredArgsConstructor;
 @Adapter
 public class StoreCommandAdapter implements StoreCommandPort {
 
+    private static final String IMAGE_PREFIX = "STORE";
+
     private final StoreRepository storeRepository;
     private final StoreImageRepository storeImageRepository;
     private final S3InputPort s3InputPort;
@@ -30,12 +32,14 @@ public class StoreCommandAdapter implements StoreCommandPort {
         User user = dto.user();
         Store store = dto.toEntity();
         user.addStore(store);
-        List<TransformedImageDTO> transformedImageDTOS = s3InputPort.saveImages(dto.storeImagesRegisters(), user);
-        List<PreSignedUrlImage> preSignedUrlImages = addImagesAndGetPreSignedUrlImage(transformedImageDTOS, store);
+        List<TransformedImageDTO> transformedImageDTOS = s3InputPort.saveImages(IMAGE_PREFIX,
+                dto.toImage(), user);
+        List<StorePreSignedUrlImage> storePreSignedUrlImages = addImagesAndGetPreSignedUrlImage(transformedImageDTOS,
+                store);
 
         storeRepository.save(store);
 
-        return new StoreRegisterResponseDTO(store.getId(), preSignedUrlImages);
+        return new StoreRegisterResponseDTO(store.getId(), storePreSignedUrlImages);
     }
 
     @Override
@@ -45,12 +49,12 @@ public class StoreCommandAdapter implements StoreCommandPort {
         store.approve();
     }
 
-    private List<PreSignedUrlImage> addImagesAndGetPreSignedUrlImage(final List<TransformedImageDTO> imageDTOList,
-                                                                     final Store store) {
+    private List<StorePreSignedUrlImage> addImagesAndGetPreSignedUrlImage(final List<TransformedImageDTO> imageDTOList,
+                                                                          final Store store) {
         return imageDTOList.stream()
                 .map(imageDTO -> {
                     store.addStoreImage(StoreImage.create(imageDTO.getUrl(), imageDTO.id()));
-                    return new PreSignedUrlImage(imageDTO.id(), imageDTO.putUrl());
+                    return new StorePreSignedUrlImage(imageDTO.id(), imageDTO.putUrl());
                 })
                 .toList();
     }

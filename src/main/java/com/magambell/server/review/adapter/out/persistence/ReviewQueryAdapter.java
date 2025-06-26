@@ -1,0 +1,21 @@
+package com.magambell.server.review.adapter.out.persistence;
+
+import com.magambell.server.common.annotation.Adapter;
+import com.magambell.server.order.domain.model.Order;
+import com.magambell.server.review.app.port.out.ReviewQueryPort;
+import com.magambell.server.review.domain.repository.ReviewRepository;
+import com.magambell.server.user.domain.model.User;
+import lombok.RequiredArgsConstructor;
+
+@RequiredArgsConstructor
+@Adapter
+public class ReviewQueryAdapter implements ReviewQueryPort {
+
+    private final ReviewRepository reviewRepository;
+
+
+    @Override
+    public boolean existsOrderAndReview(final Order order, final User user) {
+        return reviewRepository.existsByOrderIdAndUserId(order.getId(), user.getId());
+    }
+}

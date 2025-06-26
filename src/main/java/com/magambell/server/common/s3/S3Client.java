@@ -1,4 +1,4 @@
-package com.magambell.server.store.infra;
+package com.magambell.server.common.s3;
 
 import com.amazonaws.HttpMethod;
 import com.amazonaws.services.s3.AmazonS3Client;

@@ -1,10 +1,8 @@
-package com.magambell.server.store.adapter.out.persistence;
+package com.magambell.server.common.s3;
 
 import com.magambell.server.common.annotation.Adapter;
-import com.magambell.server.store.adapter.in.web.StoreImagesRegister;
-import com.magambell.server.store.app.port.in.S3InputPort;
-import com.magambell.server.store.app.port.in.dto.TransformedImageDTO;
-import com.magambell.server.store.infra.S3Client;
+import com.magambell.server.common.s3.dto.ImageRegister;
+import com.magambell.server.common.s3.dto.TransformedImageDTO;
 import com.magambell.server.user.domain.model.User;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -20,15 +18,16 @@ public class S3Adapter implements S3InputPort {
     private String AWS_CF_DISTRIBUTION;
 
     @Override
-    public List<TransformedImageDTO> saveImages(final List<StoreImagesRegister> storeImagesRegisters, final User user) {
-        return storeImagesRegisters.stream()
+    public List<TransformedImageDTO> saveImages(final String imagePrefix,
+                                                final List<ImageRegister> imageRegisters, final User user) {
+        return imageRegisters.stream()
                 .map(image -> {
-                    String imagePrefix = getImagePrefix(image, user);
+                    String getImagePrefix = getImagePrefix(imagePrefix, image, user);
 
                     return new TransformedImageDTO(
                             image.id(),
-                            getCloudFrontSignedUrl(imagePrefix),
-                            s3Client.getPreSignedUrl(imagePrefix)
+                            getCloudFrontSignedUrl(getImagePrefix),
+                            s3Client.getPreSignedUrl(getImagePrefix)
                     );
                 })
                 .toList();
@@ -43,9 +42,10 @@ public class S3Adapter implements S3InputPort {
     }
 
     @Override
-    public String getImagePrefix(final StoreImagesRegister storeImagesRegister, final User user) {
-        return user.getUserRole() + "/" + user.getId() + "/" + storeImagesRegister.id() + "_"
-                + storeImagesRegister.key();
+    public String getImagePrefix(final String imagePrefix, final ImageRegister imageRegisters,
+                                 final User user) {
+        return imagePrefix + "/" + user.getUserRole() + "/" + user.getId() + "/" + imageRegisters.id() + "_"
+                + imageRegisters.key();
     }
 
     private String getCloudFrontSignedUrl(final String imageKey) {
