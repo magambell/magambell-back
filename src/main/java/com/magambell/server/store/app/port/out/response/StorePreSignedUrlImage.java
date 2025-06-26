@@ -1,6 +1,6 @@
 package com.magambell.server.store.app.port.out.response;
 
-public record PreSignedUrlImage(
+public record StorePreSignedUrlImage(
         Integer id,
         String url
 ) {

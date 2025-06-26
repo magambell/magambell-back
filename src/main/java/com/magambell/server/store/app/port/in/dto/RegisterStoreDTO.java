@@ -1,5 +1,6 @@
 package com.magambell.server.store.app.port.in.dto;
 
+import com.magambell.server.common.s3.dto.ImageRegister;
 import com.magambell.server.store.adapter.in.web.StoreImagesRegister;
 import com.magambell.server.store.domain.enums.Approved;
 import com.magambell.server.store.domain.enums.Bank;
@@ -23,5 +24,11 @@ public record RegisterStoreDTO(
 ) {
     public Store toEntity() {
         return Store.create(this);
+    }
+
+    public List<ImageRegister> toImage() {
+        return storeImagesRegisters.stream()
+                .map(image -> new ImageRegister(image.id(), image.key()))
+                .toList();
     }
 }

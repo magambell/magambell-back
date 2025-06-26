@@ -4,6 +4,6 @@ import java.util.List;
 
 public record StoreRegisterResponseDTO(
         Long id,
-        List<PreSignedUrlImage> preSignedUrlImages
+        List<StorePreSignedUrlImage> storePreSignedUrlImages
 ) {
 }

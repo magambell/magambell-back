@@ -1,4 +1,4 @@
-package com.magambell.server.store.app.port.in.dto;
+package com.magambell.server.common.s3.dto;
 
 public record TransformedImageDTO(
         Integer id,

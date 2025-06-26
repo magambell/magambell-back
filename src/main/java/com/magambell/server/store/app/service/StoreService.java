@@ -38,7 +38,7 @@ public class StoreService implements StoreUseCase {
                 request.toStoreDTO(Approved.WAITING, user));
 
         return new StoreImagesResponse(String.valueOf(storeRegisterResponseDTO.id()),
-                storeRegisterResponseDTO.preSignedUrlImages());
+                storeRegisterResponseDTO.storePreSignedUrlImages());
     }
 
     @Override
