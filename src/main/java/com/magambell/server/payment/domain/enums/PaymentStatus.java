@@ -1,6 +1,8 @@
 package com.magambell.server.payment.domain.enums;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
+import com.magambell.server.common.enums.ErrorCode;
+import com.magambell.server.common.exception.InvalidRequestException;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -17,6 +19,12 @@ public enum PaymentStatus {
 
     @JsonCreator
     public static PaymentStatus from(String value) {
-        return PaymentStatus.valueOf(value.toUpperCase());
+        return switch (value.toLowerCase()) {
+            case "ready" -> READY;
+            case "paid" -> PAID;
+            case "cancelled" -> CANCELLED;
+            case "failed" -> FAILED;
+            default -> throw new InvalidRequestException(ErrorCode.INVALID_PAYMENT_STATUS);
+        };
     }
 }
