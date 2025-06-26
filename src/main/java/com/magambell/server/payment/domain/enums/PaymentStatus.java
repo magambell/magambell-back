@@ -1,5 +1,6 @@
 package com.magambell.server.payment.domain.enums;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -13,4 +14,9 @@ public enum PaymentStatus {
     FAILED("결제 실패");
 
     private final String text;
+
+    @JsonCreator
+    public static PaymentStatus from(String value) {
+        return PaymentStatus.valueOf(value.toUpperCase());
+    }
 }
