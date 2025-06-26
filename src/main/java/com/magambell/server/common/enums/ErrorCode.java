@@ -11,6 +11,7 @@ public enum ErrorCode {
     DUPLICATE_STORE("매장이 이미 존재합니다."),
     DUPLICATE_NICKNAME("중복된 닉네임 입니다."),
     DUPLICATE_GOODS("이미 등록된 마감백입니다."),
+    DUPLICATE_REVIEW("이미 등록된 리뷰입니다."),
 
     USER_VALID_PASSWORD("비밀번호는 8~16자리의 영문 대문자와 소문자, 특수문자 숫자의 조합이어야 합니다."),
     USER_VALID_EMAIL("유효한 이메일 주소가 아닙니다."),
@@ -33,6 +34,7 @@ public enum ErrorCode {
     INVALID_PAYMENT_STATUS_PAID("결제가 완료되지 않았습니다."),
     INVALID_PAYMENT_STATUS_CANCEL("결제가 취소되지 않았습니다."),
     INVALID_PAYMENT_STATUS_FAILED("결제가 실패하지 않았습니다."),
+    INVALID_ORDER_STATUS("주문이 완료되지 않았습니다."),
 
     TOTAL_PRICE_NOT_EQUALS("결제 금액이 일치하지 않습니다."),
     PAYMENT_ALREADY_PROCESSED("이미 처리된 결제입니다."),

@@ -5,6 +5,7 @@ import com.magambell.server.common.enums.ErrorCode;
 import com.magambell.server.common.exception.NotFoundException;
 import com.magambell.server.user.app.dto.OAuthUserInfo;
 import com.magambell.server.user.app.port.out.OAuthClient;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -66,6 +67,24 @@ public class NaverOAuthClient implements OAuthClient {
                 )
                 .bodyToMono(Void.class)
                 .block();
+    }
+
+    @Override
+    public Optional<OAuthUserInfo> findUserBySocialId(final String accessToken) {
+        NaverUserResponse response = fetchNaverUserResponse(accessToken);
+        if (response == null || response.response() == null) {
+            return Optional.empty();
+        }
+
+        NaverUserResponse.Response user = response.response();
+
+        return Optional.of(
+                new OAuthUserInfo(
+                        user.id(),
+                        user.email(),
+                        ProviderType.NAVER
+                )
+        );
     }
 
     private NaverUserResponse fetchNaverUserResponse(String accessToken) {

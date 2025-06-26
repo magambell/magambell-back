@@ -71,7 +71,11 @@ public class UserVerifyService implements UserVerifyUseCase {
     @Override
     public boolean verifySocialUser(final UserSocialVerifyServiceRequest request) {
         OAuthClient oAuthClient = oAuthClientMap.get(request.providerType());
-        OAuthUserInfo userInfo = oAuthClient.getUserInfo(request.authCode());
+        OAuthUserInfo userInfo = oAuthClient.findUserBySocialId(request.authCode())
+                .orElse(null);
+        if (userInfo == null) {
+            return false;
+        }
         return userQueryPort.existsUserBySocial(userInfo.providerType(), userInfo.id());
     }
 

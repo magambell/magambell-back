@@ -7,6 +7,7 @@ import com.magambell.server.common.enums.ErrorCode;
 import com.magambell.server.common.exception.NotFoundException;
 import com.magambell.server.user.app.dto.OAuthUserInfo;
 import com.magambell.server.user.app.port.out.OAuthClient;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpHeaders;
@@ -54,6 +55,20 @@ public class KakaoOAuthClient implements OAuthClient {
                 )
                 .bodyToMono(Void.class)
                 .block();
+    }
+
+    @Override
+    public Optional<OAuthUserInfo> findUserBySocialId(final String accessToken) {
+        KakaoUserResponse response = fetchKakaoUserResponse(accessToken);
+        if (response == null) {
+            return Optional.empty();
+        }
+        return Optional.of(
+                new OAuthUserInfo(
+                        String.valueOf(response.id()),
+                        response.kakaoAccount().email(),
+                        ProviderType.KAKAO
+                ));
     }
 
     private KakaoUserResponse fetchKakaoUserResponse(String accessToken) {
