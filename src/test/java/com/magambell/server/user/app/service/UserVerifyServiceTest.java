@@ -31,6 +31,7 @@ import com.magambell.server.user.domain.repository.UserEmailRepository;
 import com.magambell.server.user.domain.repository.UserRepository;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -170,7 +171,7 @@ class UserVerifyServiceTest {
         // when
         OAuthClient kakaoOAuthClient = mock(OAuthClient.class);
         when(kakaoOAuthClient.getProviderType()).thenReturn(ProviderType.KAKAO);
-        when(kakaoOAuthClient.getUserInfo(anyString())).thenReturn(userInfo);
+        when(kakaoOAuthClient.findUserBySocialId(anyString())).thenReturn(Optional.of(userInfo));
 
         List<OAuthClient> kakaoOAuthClients = Collections.singletonList(kakaoOAuthClient);
         UserVerifyService testService = new UserVerifyService(
