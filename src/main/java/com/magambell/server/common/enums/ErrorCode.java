@@ -50,6 +50,7 @@ public enum ErrorCode {
     OAUTH_KAKAO_USER_NOT_FOUND("카카오 사용자 정보를 찾을 수 없습니다."),
     OAUTH_GOOGLE_USER_NOT_FOUND("구글 사용자 정보를 찾을 수 없습니다."),
     OAUTH_NAVER_USER_NOT_FOUND("네이버 사용자 정보를 찾을 수 없습니다."),
+    OAUTH_APPLE_USER_NOT_FOUND("애플 사용자 정보를 찾을 수 없습니다."),
     BANK_NOT_FOUND("은행정보를 찾을 수 없습니다."),
     STORE_NOT_FOUND("매장 정보를 찾을 수 없습니다."),
     GOODS_NOT_FOUND("마감백을 찾을 수 없습니다."),
