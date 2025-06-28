@@ -1,13 +1,9 @@
-package com.magambell.server.review.app.port.out;
+package com.magambell.server.review.domain.repository;
 
-import com.magambell.server.order.domain.model.Order;
 import com.magambell.server.review.app.port.in.request.ReviewListServiceRequest;
 import com.magambell.server.review.app.port.out.response.ReviewListDTO;
-import com.magambell.server.user.domain.model.User;
 import java.util.List;
 
-public interface ReviewQueryPort {
-    boolean existsOrderAndReview(Order order, User user);
-
+public interface ReviewRepositoryCustom {
     List<ReviewListDTO> getReviewList(ReviewListServiceRequest request);
 }

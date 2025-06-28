@@ -8,11 +8,14 @@ import com.magambell.server.order.domain.enums.OrderStatus;
 import com.magambell.server.order.domain.model.Order;
 import com.magambell.server.review.app.port.in.ReviewUseCase;
 import com.magambell.server.review.app.port.in.request.RegisterReviewServiceRequest;
+import com.magambell.server.review.app.port.in.request.ReviewListServiceRequest;
 import com.magambell.server.review.app.port.out.ReviewCommandPort;
 import com.magambell.server.review.app.port.out.ReviewQueryPort;
+import com.magambell.server.review.app.port.out.response.ReviewListDTO;
 import com.magambell.server.review.app.port.out.response.ReviewRegisterResponseDTO;
 import com.magambell.server.user.app.port.out.UserQueryPort;
 import com.magambell.server.user.domain.model.User;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -37,6 +40,11 @@ public class ReviewService implements ReviewUseCase {
         existsOrderReview(order, user);
 
         return reviewCommandPort.registerReview(request.toDto(user, order));
+    }
+
+    @Override
+    public List<ReviewListDTO> getReviewList(final ReviewListServiceRequest request) {
+        return reviewQueryPort.getReviewList(request);
     }
 
     private void validateOrderStatus(final Order order) {
