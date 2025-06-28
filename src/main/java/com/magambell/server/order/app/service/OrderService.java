@@ -11,6 +11,7 @@ import com.magambell.server.order.app.port.in.request.CreateOrderServiceRequest;
 import com.magambell.server.order.app.port.out.OrderCommandPort;
 import com.magambell.server.order.app.port.out.OrderQueryPort;
 import com.magambell.server.order.app.port.out.response.CreateOrderResponseDTO;
+import com.magambell.server.order.app.port.out.response.OrderDetailDTO;
 import com.magambell.server.order.app.port.out.response.OrderListDTO;
 import com.magambell.server.order.domain.model.Order;
 import com.magambell.server.payment.app.port.in.dto.CreatePaymentDTO;
@@ -66,6 +67,12 @@ public class OrderService implements OrderUseCase {
     public List<OrderListDTO> getOrderList(final Long userId) {
         User user = userQueryPort.findById(userId);
         return orderQueryPort.getOrderList(user.getId());
+    }
+
+    @Override
+    public OrderDetailDTO getOrderDetail(final Long orderId, final Long userId) {
+        User user = userQueryPort.findById(userId);
+        return orderQueryPort.getOrderDetail(orderId, user.getId());
     }
 
     private void validateOrderRequest(final CreateOrderServiceRequest request, final Goods goods) {

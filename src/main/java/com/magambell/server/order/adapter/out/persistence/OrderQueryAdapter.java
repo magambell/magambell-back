@@ -4,6 +4,7 @@ import com.magambell.server.common.annotation.Adapter;
 import com.magambell.server.common.enums.ErrorCode;
 import com.magambell.server.common.exception.NotFoundException;
 import com.magambell.server.order.app.port.out.OrderQueryPort;
+import com.magambell.server.order.app.port.out.response.OrderDetailDTO;
 import com.magambell.server.order.app.port.out.response.OrderListDTO;
 import com.magambell.server.order.domain.model.Order;
 import com.magambell.server.order.domain.repository.OrderRepository;
@@ -25,5 +26,11 @@ public class OrderQueryAdapter implements OrderQueryPort {
     @Override
     public List<OrderListDTO> getOrderList(final Long userId) {
         return orderRepository.getOrderList(userId);
+    }
+
+    @Override
+    public OrderDetailDTO getOrderDetail(final Long orderId, final Long userId) {
+        return orderRepository.getOrderDetail(orderId, userId)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.ORDER_NOT_FOUND));
     }
 }
