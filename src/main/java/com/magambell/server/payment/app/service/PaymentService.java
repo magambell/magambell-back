@@ -17,9 +17,11 @@ import com.magambell.server.payment.domain.model.Payment;
 import com.magambell.server.payment.infra.PortOnePaymentResponse;
 import com.magambell.server.stock.app.port.in.StockUseCase;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
@@ -35,6 +37,9 @@ public class PaymentService implements PaymentUseCase {
     @Override
     public void redirectPaid(final PaymentRedirectPaidServiceRequest request) {
         PortOnePaymentResponse portOnePaymentResponse = portOnePort.getPaymentById(request.paymentId());
+
+        log.info("✅ PortOne 응답: {}", portOnePaymentResponse);
+        log.info("✅ merchantUid: {}", portOnePaymentResponse.merchantUid());
         Payment payment = paymentQueryPort.findByMerchantUidJoinOrder(portOnePaymentResponse.merchantUid());
         validatePaid(portOnePaymentResponse, payment);
         payment.paid(portOnePaymentResponse);
@@ -79,11 +84,12 @@ public class PaymentService implements PaymentUseCase {
             throw new InvalidRequestException(ErrorCode.TOTAL_PRICE_NOT_EQUALS);
         }
 
-        if (response.payType() == PayType.CARD && (response.cardName() == null || response.cardName().isBlank())) {
+        if (response.payType() == PayType.CARD && (response.card().company() == null || response.card().company()
+                .isBlank())) {
             throw new InvalidRequestException(ErrorCode.INVALID_CARD_NAME);
         }
 
-        if (response.payType() == PayType.EASY_PAY && response.easyPayProvider() == null) {
+        if (response.payType() == PayType.EASY_PAY && response.easyPay().provider() == null) {
             throw new InvalidRequestException(ErrorCode.INVALID_EASY_PAY_PROVIDER);
         }
     }
