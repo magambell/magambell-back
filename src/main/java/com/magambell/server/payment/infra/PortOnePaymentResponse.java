@@ -10,8 +10,8 @@ public record PortOnePaymentResponse(
 
         String id,
 
-        @JsonProperty("merchant_transaction_id")
-        String merchantTransactionId,
+        @JsonProperty("merchant_uid")
+        String merchantUid,
 
         @JsonProperty("transaction_id")
         String transactionId,
