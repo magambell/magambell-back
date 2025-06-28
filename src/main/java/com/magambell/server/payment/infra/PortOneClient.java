@@ -1,7 +1,5 @@
 package com.magambell.server.payment.infra;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import com.magambell.server.common.enums.ErrorCode;
 import com.magambell.server.common.exception.InvalidRequestException;
 import com.magambell.server.common.exception.NotFoundException;
@@ -23,13 +21,12 @@ public class PortOneClient implements PortOnePort {
 
     private final WebClient webClient;
 
-    private final ObjectMapper objectMapper;
-
     @Value("${portone.secret.store-id}")
     private String storeId;
 
     @Value("${portone.secret.api-key}")
     private String apiSecret;
+
 
     @Override
     public PortOnePaymentResponse getPaymentById(final String paymentId) {
@@ -47,15 +44,7 @@ public class PortOneClient implements PortOnePort {
                                     return Mono.error(new NotFoundException(ErrorCode.PAYMENT_NOT_FOUND));
                                 })
                 )
-                .bodyToMono(String.class)
-                .doOnNext(raw -> log.info("🧾 PortOne 원본 응답: {}", raw))
-                .map(json -> {
-                    try {
-                        return objectMapper.readValue(json, PortOnePaymentResponse.class);
-                    } catch (JsonProcessingException e) {
-                        throw new RuntimeException(e);
-                    }
-                })
+                .bodyToMono(PortOnePaymentResponse.class)
                 .block();
     }
 
