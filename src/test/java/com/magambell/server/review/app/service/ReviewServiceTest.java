@@ -14,7 +14,10 @@ import com.magambell.server.order.domain.model.Order;
 import com.magambell.server.order.domain.repository.OrderGoodsRepository;
 import com.magambell.server.order.domain.repository.OrderRepository;
 import com.magambell.server.payment.domain.repository.PaymentRepository;
+import com.magambell.server.review.app.port.in.dto.RegisterReviewDTO;
 import com.magambell.server.review.app.port.in.request.RegisterReviewServiceRequest;
+import com.magambell.server.review.app.port.in.request.ReviewListServiceRequest;
+import com.magambell.server.review.app.port.out.response.ReviewListDTO;
 import com.magambell.server.review.domain.model.Review;
 import com.magambell.server.review.domain.repository.ReviewImageRepository;
 import com.magambell.server.review.domain.repository.ReviewRepository;
@@ -164,5 +167,29 @@ class ReviewServiceTest {
         Review review = reviewRepository.findAll().get(0);
         assertThat(review).isNotNull();
         assertThat(review.getDescription()).isEqualTo("test");
+    }
+
+    @DisplayName("리뷰를 리스트를 출력한다.")
+    @Test
+    void getReviewList() {
+        // given
+        RegisterReviewDTO dto = new RegisterReviewDTO(
+                order.getId(),
+                BAD,
+                FRIENDLY,
+                "test",
+                List.of(),
+                user,
+                order
+        );
+        reviewRepository.save(Review.create(dto));
+        ReviewListServiceRequest request = new ReviewListServiceRequest(goods.getId(), false);
+
+        // when
+        List<ReviewListDTO> reviewList = reviewService.getReviewList(request);
+
+        // then
+        assertThat(reviewList).isNotNull();
+        assertThat(reviewList.get(0).description()).isEqualTo("test");
     }
 }

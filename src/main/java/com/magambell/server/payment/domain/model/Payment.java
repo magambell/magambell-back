@@ -98,8 +98,7 @@ public class Payment extends BaseTimeEntity {
     public void paid(final PortOnePaymentResponse response) {
         this.paymentStatus = PaymentStatus.PAID;
         this.transactionId = response.transactionId();
-        LocalDateTime paidAtKst = response.paidAt().atZoneSameInstant(ZoneId.of("Asia/Seoul")).toLocalDateTime();
-        this.paidAt = paidAtKst;
+        this.paidAt = response.paidAt().atZoneSameInstant(ZoneId.of("Asia/Seoul")).toLocalDateTime();
         this.payType = resolvePayType(response);
         this.easyPayProvider = response.method().provider();
         this.order.paid();
