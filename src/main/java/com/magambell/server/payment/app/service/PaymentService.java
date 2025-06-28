@@ -35,7 +35,7 @@ public class PaymentService implements PaymentUseCase {
     @Override
     public void redirectPaid(final PaymentRedirectPaidServiceRequest request) {
         PortOnePaymentResponse portOnePaymentResponse = portOnePort.getPaymentById(request.paymentId());
-        Payment payment = paymentQueryPort.findByMerchantUidJoinOrder(portOnePaymentResponse.merchantTransactionId());
+        Payment payment = paymentQueryPort.findByMerchantUidJoinOrder(portOnePaymentResponse.merchantUid());
         validatePaid(portOnePaymentResponse, payment);
         payment.paid(portOnePaymentResponse);
     }
@@ -44,7 +44,7 @@ public class PaymentService implements PaymentUseCase {
     @Override
     public void webhook(final PortOneWebhookServiceRequest request) {
         PortOnePaymentResponse portOnePaymentResponse = portOnePort.getPaymentById(request.paymentId());
-        Payment payment = paymentQueryPort.findByMerchantUidJoinOrder(portOnePaymentResponse.merchantTransactionId());
+        Payment payment = paymentQueryPort.findByMerchantUidJoinOrder(portOnePaymentResponse.merchantUid());
 
         switch (request.paymentStatus()) {
             case PAID -> {
