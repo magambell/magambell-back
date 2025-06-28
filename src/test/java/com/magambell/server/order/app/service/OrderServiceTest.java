@@ -9,6 +9,7 @@ import com.magambell.server.goods.domain.model.Goods;
 import com.magambell.server.goods.domain.repository.GoodsRepository;
 import com.magambell.server.order.app.port.in.dto.CreateOrderDTO;
 import com.magambell.server.order.app.port.in.request.CreateOrderServiceRequest;
+import com.magambell.server.order.app.port.out.response.OrderDetailDTO;
 import com.magambell.server.order.app.port.out.response.OrderListDTO;
 import com.magambell.server.order.domain.enums.OrderStatus;
 import com.magambell.server.order.domain.model.Order;
@@ -175,5 +176,23 @@ class OrderServiceTest {
         OrderListDTO orderListDTO = orderList.get(0);
         assertThat(orderListDTO.orderStatus()).isEqualTo(OrderStatus.COMPLETED);
         assertThat(orderListDTO.salePrice()).isEqualTo(9000);
+    }
+
+    @DisplayName("고객 주문상세")
+    @Test
+    void getOrderDetail() {
+        // given
+        CreateOrderDTO createOrderDTO = new CreateOrderDTO(user, goods, 1, 9000, LocalDateTime.now(), "test");
+        Order createOrder = createOrderDTO.toOrder();
+        createOrder.completed();
+        orderRepository.save(createOrder);
+
+        // when
+        OrderDetailDTO orderDetail = orderService.getOrderDetail(createOrder.getId(), user.getId());
+
+        // then
+        assertThat(orderDetail).isNotNull();
+        assertThat(orderDetail.orderStatus()).isEqualTo(OrderStatus.COMPLETED);
+        assertThat(orderDetail.totalPrice()).isEqualTo(9000);
     }
 }

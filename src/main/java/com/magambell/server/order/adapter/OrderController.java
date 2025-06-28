@@ -4,9 +4,11 @@ import com.magambell.server.common.Response;
 import com.magambell.server.common.security.CustomUserDetails;
 import com.magambell.server.order.adapter.in.web.CreateOrderRequest;
 import com.magambell.server.order.adapter.out.persistence.CreateOrderResponse;
+import com.magambell.server.order.adapter.out.persistence.OrderDetailResponse;
 import com.magambell.server.order.adapter.out.persistence.OrderListResponse;
 import com.magambell.server.order.app.port.in.OrderUseCase;
 import com.magambell.server.order.app.port.out.response.CreateOrderResponseDTO;
+import com.magambell.server.order.app.port.out.response.OrderDetailDTO;
 import com.magambell.server.order.app.port.out.response.OrderListDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -19,6 +21,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -54,5 +57,19 @@ public class OrderController {
     ) {
         List<OrderListDTO> orderList = orderUseCase.getOrderList(customUserDetails.userId());
         return new Response<>(new OrderListResponse(orderList));
+    }
+
+    @PreAuthorize("hasRole('CUSTOMER')")
+    @Operation(summary = "고객 주문상세")
+    @ApiResponse(responseCode = "200", content = {
+            @Content(schema = @Schema(implementation = OrderDetailResponse.class))})
+    @GetMapping("/{orderId}")
+    public Response<OrderDetailResponse> getOrderDetail(
+            @PathVariable final Long orderId,
+            @AuthenticationPrincipal final CustomUserDetails customUserDetails
+    ) {
+        OrderDetailDTO orderDetail = orderUseCase.getOrderDetail(orderId, customUserDetails.userId());
+
+        return new Response<>(orderDetail.toResponse());
     }
 }
