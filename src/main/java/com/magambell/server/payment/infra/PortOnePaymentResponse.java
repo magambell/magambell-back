@@ -24,13 +24,26 @@ public record PortOnePaymentResponse(
         @JsonProperty("pay_method")
         PayType payType,
 
-        String cardName,
+        @JsonProperty("card")
+        Card card,
 
-        @JsonProperty("easy_pay_provider")
-        EasyPayProvider easyPayProvider,
+        @JsonProperty("easy_pay")
+        EasyPay easyPay,
 
         Amount amount
 ) {
+    public record Card(
+            @JsonProperty("company")
+            String company
+    ) {
+    }
+
+    public record EasyPay(
+            @JsonProperty("provider")
+            EasyPayProvider provider
+    ) {
+    }
+
     public record Amount(
             int total
     ) {

@@ -99,8 +99,8 @@ public class Payment extends BaseTimeEntity {
         this.transactionId = response.transactionId();
         this.paidAt = response.paidAt();
         this.payType = response.payType();
-        this.easyPayProvider = response.easyPayProvider();
-        this.cardName = response.cardName();
+        this.easyPayProvider = response.easyPay().provider();
+        this.cardName = response.card().company();
         this.order.paid();
     }
 
