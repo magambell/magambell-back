@@ -32,6 +32,7 @@ public enum ErrorCode {
     INVALID_GOODS_OWNER("잘못된 접근입니다."),
     INVALID_PAYMENT_STATUS("사용하지 않는 값 입니다."),
 
+    INVALID_PORT_ONE_ACCESS_TOKEN("토큰 발급 실패"),
     INVALID_PAYMENT_STATUS_PAID("결제가 완료되지 않았습니다."),
     INVALID_PAYMENT_STATUS_CANCEL("결제가 취소되지 않았습니다."),
     INVALID_PAYMENT_STATUS_FAILED("결제가 실패하지 않았습니다."),
