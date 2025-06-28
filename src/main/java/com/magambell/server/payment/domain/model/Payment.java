@@ -19,6 +19,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -97,7 +98,8 @@ public class Payment extends BaseTimeEntity {
     public void paid(final PortOnePaymentResponse response) {
         this.paymentStatus = PaymentStatus.PAID;
         this.transactionId = response.transactionId();
-        this.paidAt = response.paidAt();
+        LocalDateTime paidAtKst = response.paidAt().atZoneSameInstant(ZoneId.of("Asia/Seoul")).toLocalDateTime();
+        this.paidAt = paidAtKst;
         this.payType = resolvePayType(response);
         this.easyPayProvider = response.method().provider();
         this.order.paid();

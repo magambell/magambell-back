@@ -2,7 +2,7 @@ package com.magambell.server.payment.infra;
 
 import com.magambell.server.payment.domain.enums.EasyPayProvider;
 import com.magambell.server.payment.domain.enums.PaymentStatus;
-import java.time.LocalDateTime;
+import java.time.OffsetDateTime;
 
 public record PortOnePaymentResponse(
 
@@ -14,7 +14,7 @@ public record PortOnePaymentResponse(
 
         PaymentStatus status,
 
-        LocalDateTime paidAt,
+        OffsetDateTime paidAt,
 
         Method method,
 
