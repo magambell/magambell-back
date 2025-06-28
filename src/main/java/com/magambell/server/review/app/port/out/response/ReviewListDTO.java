@@ -15,4 +15,15 @@ public record ReviewListDTO(
         Long goodsId,
         Long storeId
 ) {
+    public String getReviewId() {
+        return String.valueOf(reviewId);
+    }
+
+    public String getGoodsId() {
+        return String.valueOf(goodsId);
+    }
+
+    public String getStoreId() {
+        return String.valueOf(storeId);
+    }
 }

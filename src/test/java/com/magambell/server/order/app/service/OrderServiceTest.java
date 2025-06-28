@@ -7,7 +7,10 @@ import com.magambell.server.auth.domain.ProviderType;
 import com.magambell.server.goods.app.port.in.dto.RegisterGoodsDTO;
 import com.magambell.server.goods.domain.model.Goods;
 import com.magambell.server.goods.domain.repository.GoodsRepository;
+import com.magambell.server.order.app.port.in.dto.CreateOrderDTO;
 import com.magambell.server.order.app.port.in.request.CreateOrderServiceRequest;
+import com.magambell.server.order.app.port.out.response.OrderListDTO;
+import com.magambell.server.order.domain.enums.OrderStatus;
 import com.magambell.server.order.domain.model.Order;
 import com.magambell.server.order.domain.repository.OrderGoodsRepository;
 import com.magambell.server.order.domain.repository.OrderRepository;
@@ -153,5 +156,24 @@ class OrderServiceTest {
         assertThat(order.getUser().getId()).isEqualTo(user.getId());
         assertThat(payment).isNotNull();
         assertThat(payment.getMerchantUid()).isEqualTo(MERCHANT_UID_PREFIX + order.getId().toString());
+    }
+
+    @DisplayName("고객 주문 목록")
+    @Test
+    void getOrderList() {
+        // given
+        CreateOrderDTO createOrderDTO = new CreateOrderDTO(user, goods, 1, 9000, LocalDateTime.now(), "test");
+        Order createOrder = createOrderDTO.toOrder();
+        createOrder.completed();
+        orderRepository.save(createOrder);
+
+        // when
+        List<OrderListDTO> orderList = orderService.getOrderList(user.getId());
+
+        // then
+        assertThat(orderList.size()).isEqualTo(1);
+        OrderListDTO orderListDTO = orderList.get(0);
+        assertThat(orderListDTO.orderStatus()).isEqualTo(OrderStatus.COMPLETED);
+        assertThat(orderListDTO.salePrice()).isEqualTo(9000);
     }
 }

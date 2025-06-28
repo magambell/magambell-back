@@ -9,7 +9,9 @@ import com.magambell.server.goods.domain.model.Goods;
 import com.magambell.server.order.app.port.in.OrderUseCase;
 import com.magambell.server.order.app.port.in.request.CreateOrderServiceRequest;
 import com.magambell.server.order.app.port.out.OrderCommandPort;
+import com.magambell.server.order.app.port.out.OrderQueryPort;
 import com.magambell.server.order.app.port.out.response.CreateOrderResponseDTO;
+import com.magambell.server.order.app.port.out.response.OrderListDTO;
 import com.magambell.server.order.domain.model.Order;
 import com.magambell.server.payment.app.port.in.dto.CreatePaymentDTO;
 import com.magambell.server.payment.app.port.out.PaymentCommandPort;
@@ -20,6 +22,7 @@ import com.magambell.server.stock.domain.model.Stock;
 import com.magambell.server.stock.domain.model.StockHistory;
 import com.magambell.server.user.app.port.out.UserQueryPort;
 import com.magambell.server.user.domain.model.User;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +33,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class OrderService implements OrderUseCase {
 
     private final OrderCommandPort orderCommandPort;
+    private final OrderQueryPort orderQueryPort;
     private final GoodsQueryPort goodsQueryPort;
     private final UserQueryPort userQueryPort;
     private final StockCommandPort stockCommandPort;
@@ -56,6 +60,12 @@ public class OrderService implements OrderUseCase {
         );
 
         return new CreateOrderResponseDTO(payment.getMerchantUid(), payment.getAmount());
+    }
+
+    @Override
+    public List<OrderListDTO> getOrderList(final Long userId) {
+        User user = userQueryPort.findById(userId);
+        return orderQueryPort.getOrderList(user.getId());
     }
 
     private void validateOrderRequest(final CreateOrderServiceRequest request, final Goods goods) {

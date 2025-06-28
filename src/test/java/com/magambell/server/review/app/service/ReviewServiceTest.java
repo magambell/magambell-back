@@ -191,5 +191,6 @@ class ReviewServiceTest {
         // then
         assertThat(reviewList).isNotNull();
         assertThat(reviewList.get(0).description()).isEqualTo("test");
+        assertThat(reviewList.get(0).goodsId()).isEqualTo(goods.getId());
     }
 }
