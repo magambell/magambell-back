@@ -98,9 +98,8 @@ public class Payment extends BaseTimeEntity {
         this.paymentStatus = PaymentStatus.PAID;
         this.transactionId = response.transactionId();
         this.paidAt = response.paidAt();
-        this.payType = response.payType();
-        this.easyPayProvider = response.easyPay().provider();
-        this.cardName = response.card().company();
+        this.payType = resolvePayType(response);
+        this.easyPayProvider = response.method().provider();
         this.order.paid();
     }
 
@@ -113,4 +112,16 @@ public class Payment extends BaseTimeEntity {
         this.paymentStatus = PaymentStatus.FAILED;
         this.order.failed();
     }
+
+    private PayType resolvePayType(PortOnePaymentResponse response) {
+        if (response.method() != null && response.method().type() != null) {
+            return switch (response.method().type()) {
+                case "PaymentMethodEasyPay" -> PayType.EASY_PAY;
+                case "PaymentMethodCard" -> PayType.CARD;
+                default -> null;
+            };
+        }
+        return null;
+    }
+
 }

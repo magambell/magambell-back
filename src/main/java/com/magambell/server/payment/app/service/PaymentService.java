@@ -12,7 +12,6 @@ import com.magambell.server.payment.app.port.in.request.PaymentRedirectPaidServi
 import com.magambell.server.payment.app.port.in.request.PortOneWebhookServiceRequest;
 import com.magambell.server.payment.app.port.out.PaymentQueryPort;
 import com.magambell.server.payment.app.port.out.PortOnePort;
-import com.magambell.server.payment.domain.enums.PayType;
 import com.magambell.server.payment.domain.model.Payment;
 import com.magambell.server.payment.infra.PortOnePaymentResponse;
 import com.magambell.server.stock.app.port.in.StockUseCase;
@@ -37,10 +36,7 @@ public class PaymentService implements PaymentUseCase {
     @Override
     public void redirectPaid(final PaymentRedirectPaidServiceRequest request) {
         PortOnePaymentResponse portOnePaymentResponse = portOnePort.getPaymentById(request.paymentId());
-
-        log.info("✅ PortOne 응답: {}", portOnePaymentResponse);
-        log.info("✅ merchantUid: {}", portOnePaymentResponse.merchantUid());
-        Payment payment = paymentQueryPort.findByMerchantUidJoinOrder(portOnePaymentResponse.merchantUid());
+        Payment payment = paymentQueryPort.findByMerchantUidJoinOrder(portOnePaymentResponse.id());
         validatePaid(portOnePaymentResponse, payment);
         payment.paid(portOnePaymentResponse);
     }
@@ -49,7 +45,7 @@ public class PaymentService implements PaymentUseCase {
     @Override
     public void webhook(final PortOneWebhookServiceRequest request) {
         PortOnePaymentResponse portOnePaymentResponse = portOnePort.getPaymentById(request.paymentId());
-        Payment payment = paymentQueryPort.findByMerchantUidJoinOrder(portOnePaymentResponse.merchantUid());
+        Payment payment = paymentQueryPort.findByMerchantUidJoinOrder(portOnePaymentResponse.id());
 
         switch (request.paymentStatus()) {
             case PAID -> {
@@ -84,12 +80,7 @@ public class PaymentService implements PaymentUseCase {
             throw new InvalidRequestException(ErrorCode.TOTAL_PRICE_NOT_EQUALS);
         }
 
-        if (response.payType() == PayType.CARD && (response.card().company() == null || response.card().company()
-                .isBlank())) {
-            throw new InvalidRequestException(ErrorCode.INVALID_CARD_NAME);
-        }
-
-        if (response.payType() == PayType.EASY_PAY && response.easyPay().provider() == null) {
+        if (response.method().provider() == null) {
             throw new InvalidRequestException(ErrorCode.INVALID_EASY_PAY_PROVIDER);
         }
     }
