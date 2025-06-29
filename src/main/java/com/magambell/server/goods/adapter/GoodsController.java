@@ -4,6 +4,7 @@ import com.magambell.server.common.Response;
 import com.magambell.server.common.security.CustomUserDetails;
 import com.magambell.server.common.swagger.BaseResponse;
 import com.magambell.server.goods.adapter.in.web.ChangeGoodsStatusRequest;
+import com.magambell.server.goods.adapter.in.web.EditGoodsRequest;
 import com.magambell.server.goods.adapter.in.web.RegisterGoodsRequest;
 import com.magambell.server.goods.app.port.in.GoodsUseCase;
 import io.swagger.v3.oas.annotations.Operation;
@@ -53,6 +54,19 @@ public class GoodsController {
             @AuthenticationPrincipal final CustomUserDetails customUserDetails
     ) {
         goodsUseCase.changeGoodsStatus(request.toService(customUserDetails.userId()), LocalDate.now());
+        return new Response<>();
+    }
+
+    @PreAuthorize("hasRole('OWNER')")
+    @Operation(summary = "마감백 변경")
+    @ApiResponse(responseCode = "200", content = {
+            @Content(schema = @Schema(implementation = BaseResponse.class))})
+    @PatchMapping("")
+    public Response<BaseResponse> editGoods(
+            @RequestBody @Validated final EditGoodsRequest request,
+            @AuthenticationPrincipal final CustomUserDetails customUserDetails
+    ) {
+        goodsUseCase.editGoods(request.toService(customUserDetails.userId()));
         return new Response<>();
     }
 }

@@ -6,8 +6,10 @@ import static com.magambell.server.goods.domain.enums.SaleStatus.ON;
 import com.magambell.server.common.BaseTimeEntity;
 import com.magambell.server.common.enums.ErrorCode;
 import com.magambell.server.common.exception.InvalidRequestException;
+import com.magambell.server.goods.app.port.in.dto.EditGoodsDTO;
 import com.magambell.server.goods.app.port.in.dto.RegisterGoodsDTO;
 import com.magambell.server.goods.domain.enums.SaleStatus;
+import com.magambell.server.stock.domain.enums.StockType;
 import com.magambell.server.stock.domain.model.Stock;
 import com.magambell.server.stock.domain.model.StockHistory;
 import com.magambell.server.store.domain.model.Store;
@@ -88,6 +90,9 @@ public class Goods extends BaseTimeEntity {
                 .description(dto.description())
                 .saleStatus(OFF)
                 .build();
+
+        goods.validateTime(dto.startTime(), dto.endTime());
+
         Stock stock = Stock.create(dto.quantity());
         StockHistory stockHistory = dto.toStock();
         goods.addStock(stock);
@@ -126,6 +131,29 @@ public class Goods extends BaseTimeEntity {
             adjustDatesToTodayIfNeeded(today);
         }
         this.saleStatus = saleStatus;
+    }
+
+    public void edit(final EditGoodsDTO dto) {
+        validateTime(dto.startTime(), dto.endTime());
+
+        this.name = dto.name();
+        this.startTime = dto.startTime();
+        this.endTime = dto.endTime();
+        this.originalPrice = dto.originalPrice();
+        this.discount = dto.discount();
+        this.salePrice = dto.salePrice();
+        this.description = dto.description();
+
+        StockHistory stockHistory = StockHistory.create(StockType.MANUAL, this.stock.getQuantity(), dto.quantity(),
+                dto.quantity());
+        this.stock.editQuantity(dto.quantity());
+        this.addStockHistory(stockHistory);
+    }
+
+    private void validateTime(final LocalDateTime start, final LocalDateTime end) {
+        if (!start.isBefore(end)) {
+            throw new InvalidRequestException(ErrorCode.TIME_VALID);
+        }
     }
 
     private void checkStock() {
