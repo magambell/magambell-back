@@ -2,7 +2,6 @@ package com.magambell.server.goods.app.service;
 
 import com.magambell.server.common.enums.ErrorCode;
 import com.magambell.server.common.exception.DuplicateException;
-import com.magambell.server.common.exception.InvalidRequestException;
 import com.magambell.server.common.exception.NotFoundException;
 import com.magambell.server.goods.app.port.in.GoodsUseCase;
 import com.magambell.server.goods.app.port.in.request.ChangeGoodsStatusServiceRequest;
@@ -14,6 +13,7 @@ import com.magambell.server.store.app.port.out.StoreQueryPort;
 import com.magambell.server.store.domain.model.Store;
 import com.magambell.server.user.app.port.out.UserQueryPort;
 import com.magambell.server.user.domain.model.User;
+import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,22 +39,15 @@ public class GoodsService implements GoodsUseCase {
 
     @Transactional
     @Override
-    public void changeGoodsStatus(final ChangeGoodsStatusServiceRequest request) {
+    public void changeGoodsStatus(final ChangeGoodsStatusServiceRequest request, final LocalDate today) {
         User user = userQueryPort.findById(request.userId());
-        Goods goods = goodsQueryPort.findById(request.goodsId());
-        validateChangeGoodsStatus(user, goods);
-        goods.changeStatus(request.saleStatus());
+        Goods goods = goodsQueryPort.findWithStoreAndUserById(request.goodsId());
+        goods.changeStatus(user, request.saleStatus(), today);
     }
 
     private Store getStore(final User user) {
         return storeQueryPort.getStoreByUser(user)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.STORE_NOT_FOUND));
-    }
-
-    private void validateChangeGoodsStatus(final User user, final Goods goods) {
-        if (!user.getStore().getId().equals(goods.getStore().getId())) {
-            throw new InvalidRequestException(ErrorCode.INVALID_GOODS_OWNER);
-        }
     }
 
     private void existGoods(final Store store) {
