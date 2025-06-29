@@ -3,6 +3,8 @@ package com.magambell.server.goods.app.service;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.magambell.server.auth.domain.ProviderType;
+import com.magambell.server.goods.app.port.in.dto.RegisterGoodsDTO;
+import com.magambell.server.goods.app.port.in.request.EditGoodsServiceRequest;
 import com.magambell.server.goods.app.port.in.request.RegisterGoodsServiceRequest;
 import com.magambell.server.goods.domain.model.Goods;
 import com.magambell.server.goods.domain.repository.GoodsRepository;
@@ -76,7 +78,7 @@ class GoodsServiceTest {
                 Bank.IBK기업은행,
                 "102391485",
                 List.of(),
-                Approved.WAITING,
+                Approved.APPROVED,
                 user
         );
         store = registerStoreDTO.toEntity();
@@ -114,8 +116,51 @@ class GoodsServiceTest {
         assertThat(goods.getStockQuantity()).isEqualTo(3);
         assertThat(stockHistoryRepository.findAll()).hasSize(1);
         assertThat(stockHistoryRepository.findAll().get(0).getResultQuantity()).isEqualTo(3);
-
-
     }
 
+    @DisplayName("정상적으로 상품이 수정된다.")
+    @Test
+    void editGoods() {
+        // given
+        RegisterGoodsDTO dto = new RegisterGoodsDTO(
+                LocalDateTime.of(2025, 1, 1, 9, 0),
+                LocalDateTime.of(2025, 1, 1, 18, 0),
+                3, 10000, 10, 9000,
+                "상품설명",
+                store);
+        Store store = dto.store();
+        Goods dtoGoods = dto.toGoods();
+
+        store.addGoods(dtoGoods);
+        Goods saveGoods = goodsRepository.save(dtoGoods);
+
+        EditGoodsServiceRequest request = new EditGoodsServiceRequest(saveGoods.getId(), "이름 수정",
+                "상품 설명2",
+                LocalDateTime.of(2025, 1, 13, 9, 0),
+                LocalDateTime.of(2025, 1, 13, 18, 0),
+                5, 20000, 10, 16000, user.getId()
+        );
+
+        // when
+        goodsService.editGoods(request);
+
+        // then
+        Goods goods = goodsRepository.findAll().get(0);
+
+        assertThat(goods).extracting("name", "description", "startTime", "endTime", "originalPrice", "discount",
+                        "salePrice")
+                .contains(
+                        "이름 수정",
+                        "상품 설명2",
+                        LocalDateTime.of(2025, 1, 13, 9, 0),
+                        LocalDateTime.of(2025, 1, 13, 18, 0),
+                        20000,
+                        10,
+                        16000
+                );
+        assertThat(goods.getStock()).isNotNull();
+        assertThat(goods.getStockQuantity()).isEqualTo(5);
+        assertThat(stockHistoryRepository.findAll()).hasSize(2);
+        assertThat(stockHistoryRepository.findAll().get(1).getResultQuantity()).isEqualTo(5);
+    }
 }

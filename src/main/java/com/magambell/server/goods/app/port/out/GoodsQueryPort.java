@@ -8,4 +8,6 @@ public interface GoodsQueryPort {
     boolean existsByStoreId(Long storeId);
 
     Goods findById(Long goodsId);
+
+    Goods findOwnedGoodsWithRelations(Long goodsId, Long userId);
 }

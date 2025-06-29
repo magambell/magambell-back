@@ -5,6 +5,7 @@ import com.magambell.server.common.exception.DuplicateException;
 import com.magambell.server.common.exception.NotFoundException;
 import com.magambell.server.goods.app.port.in.GoodsUseCase;
 import com.magambell.server.goods.app.port.in.request.ChangeGoodsStatusServiceRequest;
+import com.magambell.server.goods.app.port.in.request.EditGoodsServiceRequest;
 import com.magambell.server.goods.app.port.in.request.RegisterGoodsServiceRequest;
 import com.magambell.server.goods.app.port.out.GoodsCommandPort;
 import com.magambell.server.goods.app.port.out.GoodsQueryPort;
@@ -43,6 +44,13 @@ public class GoodsService implements GoodsUseCase {
         User user = userQueryPort.findById(request.userId());
         Goods goods = goodsQueryPort.findWithStoreAndUserById(request.goodsId());
         goods.changeStatus(user, request.saleStatus(), today);
+    }
+
+    @Transactional
+    @Override
+    public void editGoods(final EditGoodsServiceRequest request) {
+        Goods goods = goodsQueryPort.findOwnedGoodsWithRelations(request.goodsId(), request.userId());
+        goods.edit(request.toDTO());
     }
 
     private Store getStore(final User user) {

@@ -5,4 +5,6 @@ import java.util.Optional;
 
 public interface GoodsRepositoryCustom {
     Optional<Goods> findWithStoreAndUserById(Long goodsId);
+
+    Optional<Goods> findOwnedGoodsWithRelations(Long goodsId, Long userId);
 }

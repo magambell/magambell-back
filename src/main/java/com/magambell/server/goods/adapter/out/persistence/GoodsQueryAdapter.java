@@ -29,4 +29,10 @@ public class GoodsQueryAdapter implements GoodsQueryPort {
         return goodsRepository.findById(goodsId)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.GOODS_NOT_FOUND));
     }
+
+    @Override
+    public Goods findOwnedGoodsWithRelations(final Long goodsId, final Long userId) {
+        return goodsRepository.findOwnedGoodsWithRelations(goodsId, userId)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.GOODS_NOT_FOUND));
+    }
 }

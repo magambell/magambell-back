@@ -43,7 +43,6 @@ public class Stock extends BaseTimeEntity {
         return new Stock(quantity);
     }
 
-
     public void addGoods(final Goods goods) {
         this.goods = goods;
     }
@@ -85,5 +84,9 @@ public class Stock extends BaseTimeEntity {
         goods.addStockHistory(stockHistory);
 
         return stockHistory;
+    }
+
+    public void editQuantity(final Integer quantity) {
+        this.quantity = quantity;
     }
 }
