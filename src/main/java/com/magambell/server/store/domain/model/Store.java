@@ -5,6 +5,7 @@ import com.magambell.server.goods.domain.model.Goods;
 import com.magambell.server.store.app.port.in.dto.RegisterStoreDTO;
 import com.magambell.server.store.domain.enums.Approved;
 import com.magambell.server.store.domain.enums.Bank;
+import com.magambell.server.user.domain.enums.UserRole;
 import com.magambell.server.user.domain.model.User;
 import io.hypersistence.utils.hibernate.id.Tsid;
 import jakarta.persistence.CascadeType;
@@ -106,5 +107,9 @@ public class Store extends BaseTimeEntity {
 
     public void approve() {
         this.approved = Approved.APPROVED;
+    }
+
+    public boolean isOwnedBy(final User user) {
+        return this.user.getId().equals(user.getId()) && user.getUserRole() == UserRole.OWNER;
     }
 }

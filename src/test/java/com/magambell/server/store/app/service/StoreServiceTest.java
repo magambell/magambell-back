@@ -27,6 +27,7 @@ import com.magambell.server.user.domain.enums.UserRole;
 import com.magambell.server.user.domain.model.User;
 import com.magambell.server.user.domain.repository.UserRepository;
 import com.magambell.server.user.domain.repository.UserSocialAccountRepository;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.IntStream;
@@ -198,12 +199,12 @@ class StoreServiceTest {
         user.addStore(store);
 
         Goods goods = registerGoodsDTO.toGoods();
-        goods.changeStatus(ON);
         store.addGoods(goods);
         Stock stock = Stock.create(registerGoodsDTO.quantity());
         goods.addStock(stock);
 
         userRepository.save(user);
+        goods.changeStatus(user, ON, LocalDate.of(2025, 1, 1));
         return store;
     }
 }

@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import java.time.LocalDate;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
@@ -51,7 +52,7 @@ public class GoodsController {
             @RequestBody @Validated final ChangeGoodsStatusRequest request,
             @AuthenticationPrincipal final CustomUserDetails customUserDetails
     ) {
-        goodsUseCase.changeGoodsStatus(request.toService(customUserDetails.userId()));
+        goodsUseCase.changeGoodsStatus(request.toService(customUserDetails.userId()), LocalDate.now());
         return new Response<>();
     }
 }

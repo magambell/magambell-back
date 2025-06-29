@@ -14,13 +14,19 @@ public class GoodsQueryAdapter implements GoodsQueryPort {
     private final GoodsRepository goodsRepository;
 
     @Override
-    public Goods findById(final Long goodsId) {
-        return goodsRepository.findById(goodsId)
+    public Goods findWithStoreAndUserById(final Long goodsId) {
+        return goodsRepository.findWithStoreAndUserById(goodsId)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.GOODS_NOT_FOUND));
     }
 
     @Override
     public boolean existsByStoreId(final Long storeId) {
         return goodsRepository.existsByStoreId(storeId);
+    }
+
+    @Override
+    public Goods findById(final Long goodsId) {
+        return goodsRepository.findById(goodsId)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.GOODS_NOT_FOUND));
     }
 }

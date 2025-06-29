@@ -1,13 +1,17 @@
 package com.magambell.server.goods.domain.model;
 
 import static com.magambell.server.goods.domain.enums.SaleStatus.OFF;
+import static com.magambell.server.goods.domain.enums.SaleStatus.ON;
 
 import com.magambell.server.common.BaseTimeEntity;
+import com.magambell.server.common.enums.ErrorCode;
+import com.magambell.server.common.exception.InvalidRequestException;
 import com.magambell.server.goods.app.port.in.dto.RegisterGoodsDTO;
 import com.magambell.server.goods.domain.enums.SaleStatus;
 import com.magambell.server.stock.domain.model.Stock;
 import com.magambell.server.stock.domain.model.StockHistory;
 import com.magambell.server.store.domain.model.Store;
+import com.magambell.server.user.domain.model.User;
 import io.hypersistence.utils.hibernate.id.Tsid;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
@@ -20,6 +24,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -112,7 +117,30 @@ public class Goods extends BaseTimeEntity {
         stockHistory.addGoods(this);
     }
 
-    public void changeStatus(final SaleStatus saleStatus) {
+    public void changeStatus(final User user, final SaleStatus saleStatus, final LocalDate today) {
+        if (!this.store.isOwnedBy(user)) {
+            throw new InvalidRequestException(ErrorCode.INVALID_GOODS_OWNER);
+        }
+        if (saleStatus == ON) {
+            checkStock();
+            adjustDatesToTodayIfNeeded(today);
+        }
         this.saleStatus = saleStatus;
+    }
+
+    private void checkStock() {
+        if (this.stock.getQuantity() == 0) {
+            throw new InvalidRequestException(ErrorCode.STOCK_NOT_ENOUGH);
+        }
+    }
+
+    private void adjustDatesToTodayIfNeeded(final LocalDate today) {
+        if (!this.startTime.toLocalDate().equals(today)) {
+            this.startTime = LocalDateTime.of(today, this.startTime.toLocalTime());
+        }
+
+        if (!this.endTime.toLocalDate().equals(today)) {
+            this.endTime = LocalDateTime.of(today, this.endTime.toLocalTime());
+        }
     }
 }
