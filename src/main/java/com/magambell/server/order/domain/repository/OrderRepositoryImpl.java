@@ -14,6 +14,8 @@ import com.magambell.server.order.app.port.out.response.OrderDetailDTO;
 import com.magambell.server.order.app.port.out.response.OrderListDTO;
 import com.magambell.server.order.app.port.out.response.OrderStoreListDTO;
 import com.magambell.server.order.domain.enums.OrderStatus;
+import com.magambell.server.order.domain.model.Order;
+import com.magambell.server.store.domain.enums.Approved;
 import com.magambell.server.user.domain.enums.UserRole;
 import com.magambell.server.user.domain.enums.UserStatus;
 import com.magambell.server.user.domain.model.QUser;
@@ -137,5 +139,25 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
                                         )
                                 )
                 );
+    }
+
+    @Override
+    public Optional<Order> findWithAllById(final Long orderId) {
+        return Optional.ofNullable(
+                queryFactory
+                        .selectFrom(order)
+                        .innerJoin(orderGoods).on(orderGoods.order.id.eq(order.id)).fetchJoin()
+                        .innerJoin(goods).on(goods.id.eq(orderGoods.goods.id)).fetchJoin()
+                        .innerJoin(store).on(store.id.eq(goods.store.id)).fetchJoin()
+                        .innerJoin(payment).on(payment.order.id.eq(order.id)).fetchJoin()
+                        .innerJoin(user).on(user.id.eq(store.user.id)).fetchJoin()
+                        .where(
+                                order.id.eq(orderId)
+                                        .and(user.userRole.eq(UserRole.OWNER))
+                                        .and(user.userStatus.eq(UserStatus.ACTIVE))
+                                        .and(store.approved.eq(Approved.APPROVED))
+                        )
+                        .fetchOne()
+        );
     }
 }

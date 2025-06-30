@@ -3,6 +3,9 @@ package com.magambell.server.order.app.service;
 import static com.magambell.server.order.domain.enums.OrderStatus.COMPLETED;
 import static com.magambell.server.payment.app.service.PaymentService.MERCHANT_UID_PREFIX;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 
 import com.magambell.server.auth.domain.ProviderType;
 import com.magambell.server.goods.app.port.in.dto.RegisterGoodsDTO;
@@ -13,11 +16,16 @@ import com.magambell.server.order.app.port.in.request.CreateOrderServiceRequest;
 import com.magambell.server.order.app.port.out.response.OrderDetailDTO;
 import com.magambell.server.order.app.port.out.response.OrderListDTO;
 import com.magambell.server.order.app.port.out.response.OrderStoreListDTO;
+import com.magambell.server.order.domain.enums.OrderStatus;
 import com.magambell.server.order.domain.model.Order;
 import com.magambell.server.order.domain.repository.OrderGoodsRepository;
 import com.magambell.server.order.domain.repository.OrderRepository;
+import com.magambell.server.payment.app.port.in.dto.CreatePaymentDTO;
+import com.magambell.server.payment.app.port.out.PortOnePort;
+import com.magambell.server.payment.domain.enums.PaymentStatus;
 import com.magambell.server.payment.domain.model.Payment;
 import com.magambell.server.payment.domain.repository.PaymentRepository;
+import com.magambell.server.stock.domain.model.Stock;
 import com.magambell.server.stock.domain.repository.StockHistoryRepository;
 import com.magambell.server.stock.domain.repository.StockRepository;
 import com.magambell.server.store.app.port.in.dto.RegisterStoreDTO;
@@ -38,10 +46,13 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles("test")
+@AutoConfigureMockMvc(addFilters = false)
 @SpringBootTest
 class OrderServiceTest {
 
@@ -65,6 +76,8 @@ class OrderServiceTest {
     private StockRepository stockRepository;
     @Autowired
     private PaymentRepository paymentRepository;
+    @MockBean
+    private PortOnePort portOnePort;
     private User user;
     private Goods goods;
     private User owner;
@@ -220,6 +233,57 @@ class OrderServiceTest {
                         30,
                         9000
                 );
+    }
+
+    @DisplayName("주문을 승인하면 상태가 ACCEPTED로 변경된다.")
+    @Test
+    void approveOrder() {
+        // given
+        CreateOrderDTO createOrderDTO = new CreateOrderDTO(user, goods, 1, 9000, LocalDateTime.of(2025, 6, 30, 17, 30),
+                "test");
+        Order order = createOrderDTO.toOrder();
+        order.paid();
+        orderRepository.save(order);
+        CreatePaymentDTO createPaymentDTO = new CreatePaymentDTO(order, order.getTotalPrice(), PaymentStatus.PAID);
+        Payment payment = createPaymentDTO.toPayment();
+        paymentRepository.save(payment);
+
+        // when
+        orderService.approveOrder(order.getId(), owner.getId(), LocalDateTime.of(2025, 6, 30, 13, 30));
+
+        // then
+        Order result = orderRepository.findById(order.getId()).orElseThrow();
+        assertThat(result.getOrderStatus()).isEqualTo(OrderStatus.ACCEPTED);
+    }
+
+    @DisplayName("주문을 거절하면 상태가 REJECTED로 변경되고 재고가 복구되며 결제 취소 요청이 호출된다.")
+    @Test
+    void rejectOrder() {
+        // given
+        CreateOrderServiceRequest request = new CreateOrderServiceRequest(
+                goods.getId(),
+                2,
+                18000,
+                LocalDateTime.now().plusMinutes(30),
+                "빨리 주세요"
+        );
+        orderService.createOrder(request, user.getId());
+
+        // when
+        Order order = orderRepository.findAll().get(0);
+        order.paid();
+        orderRepository.save(order);
+        orderService.rejectOrder(order.getId(), owner.getId());
+
+        // then
+        Order result = orderRepository.findById(order.getId()).orElseThrow();
+        assertThat(result.getOrderStatus()).isEqualTo(OrderStatus.REJECTED);
+
+        Stock updatedStock = stockRepository.findAll().get(0);
+        assertThat(updatedStock.getQuantity()).isEqualTo(120);
+
+        verify(portOnePort, times(1))
+                .cancelPayment(eq(order.getPayment().getMerchantUid()), eq(18000), eq("사장님 주문 취소"));
     }
 
     private Order createOrder(int i) {
