@@ -1,5 +1,6 @@
 package com.magambell.server.order.app.service;
 
+import static com.magambell.server.order.domain.enums.OrderStatus.COMPLETED;
 import static com.magambell.server.payment.app.service.PaymentService.MERCHANT_UID_PREFIX;
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -11,7 +12,7 @@ import com.magambell.server.order.app.port.in.dto.CreateOrderDTO;
 import com.magambell.server.order.app.port.in.request.CreateOrderServiceRequest;
 import com.magambell.server.order.app.port.out.response.OrderDetailDTO;
 import com.magambell.server.order.app.port.out.response.OrderListDTO;
-import com.magambell.server.order.domain.enums.OrderStatus;
+import com.magambell.server.order.app.port.out.response.OrderStoreListDTO;
 import com.magambell.server.order.domain.model.Order;
 import com.magambell.server.order.domain.repository.OrderGoodsRepository;
 import com.magambell.server.order.domain.repository.OrderRepository;
@@ -31,6 +32,7 @@ import com.magambell.server.user.domain.repository.UserRepository;
 import com.magambell.server.user.domain.repository.UserSocialAccountRepository;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.IntStream;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -65,6 +67,7 @@ class OrderServiceTest {
     private PaymentRepository paymentRepository;
     private User user;
     private Goods goods;
+    private User owner;
 
     @BeforeEach
     void setUp() {
@@ -84,7 +87,7 @@ class OrderServiceTest {
                 "123974",
                 UserRole.OWNER
         );
-        User owner = ownerAccountDTO.toUser();
+        owner = ownerAccountDTO.toUser();
         owner.addUserSocialAccount(ownerAccountDTO.toUserSocialAccount());
 
         // 매장 생성
@@ -106,7 +109,7 @@ class OrderServiceTest {
         RegisterGoodsDTO registerGoodsDTO = new RegisterGoodsDTO(
                 LocalDateTime.now().minusHours(1),
                 LocalDateTime.now().plusHours(2),
-                10, 10000, 10, 9000, "",
+                120, 10000, 10, 9000, "",
                 store
         );
         goods = Goods.create(registerGoodsDTO);
@@ -148,7 +151,7 @@ class OrderServiceTest {
         // then
         Goods updatedGoods = goodsRepository.findById(goods.getId()).orElse(null);
         assertThat(updatedGoods).isNotNull();
-        assertThat(updatedGoods.getStock().getQuantity()).isEqualTo(8);
+        assertThat(updatedGoods.getStock().getQuantity()).isEqualTo(118);
 
         Order order = orderRepository.findAll().get(0);
         Payment payment = paymentRepository.findAll().get(0);
@@ -174,7 +177,7 @@ class OrderServiceTest {
         // then
         assertThat(orderList.size()).isEqualTo(1);
         OrderListDTO orderListDTO = orderList.get(0);
-        assertThat(orderListDTO.orderStatus()).isEqualTo(OrderStatus.COMPLETED);
+        assertThat(orderListDTO.orderStatus()).isEqualTo(COMPLETED);
         assertThat(orderListDTO.salePrice()).isEqualTo(9000);
     }
 
@@ -192,7 +195,38 @@ class OrderServiceTest {
 
         // then
         assertThat(orderDetail).isNotNull();
-        assertThat(orderDetail.orderStatus()).isEqualTo(OrderStatus.COMPLETED);
+        assertThat(orderDetail.orderStatus()).isEqualTo(COMPLETED);
         assertThat(orderDetail.totalPrice()).isEqualTo(9000);
+    }
+
+    @DisplayName("사장님 주문목록")
+    @Test
+    void getOrderStoreList() {
+        // given
+        List<Order> orderList = IntStream.range(1, 31)
+                .mapToObj(this::createOrder)
+                .toList();
+        orderRepository.saveAll(orderList);
+
+        // when
+        List<OrderStoreListDTO> orderStoreList = orderService.getOrderStoreList(owner.getId());
+
+        // then
+        assertThat(orderStoreList.size()).isEqualTo(30);
+        assertThat(orderStoreList.get(0)).extracting("orderStatus", "pickupTime", "quantity", "totalPrice")
+                .contains(
+                        COMPLETED,
+                        LocalDateTime.of(2025, 6, 30, 17, 30),
+                        30,
+                        9000
+                );
+    }
+
+    private Order createOrder(int i) {
+        CreateOrderDTO createOrderDTO = new CreateOrderDTO(user, goods, i, 9000, LocalDateTime.of(2025, 6, 30, 17, 30),
+                "test");
+        Order createOrder = createOrderDTO.toOrder();
+        createOrder.completed();
+        return createOrder;
     }
 }
