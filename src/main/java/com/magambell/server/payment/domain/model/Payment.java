@@ -17,7 +17,7 @@ import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.OneToOne;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import lombok.AccessLevel;
@@ -52,7 +52,7 @@ public class Payment extends BaseTimeEntity {
     private String failReason;
     private String cancelReason;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "order_id", nullable = false)
     private Order order;
 
@@ -106,6 +106,10 @@ public class Payment extends BaseTimeEntity {
 
     public void cancel() {
         this.paymentStatus = PaymentStatus.CANCELLED;
+    }
+
+    public void hookCancel() {
+        cancel();
         this.order.cancelled();
     }
 
@@ -124,5 +128,4 @@ public class Payment extends BaseTimeEntity {
         }
         return null;
     }
-
 }

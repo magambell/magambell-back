@@ -16,6 +16,7 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -49,8 +50,8 @@ public class Order extends BaseTimeEntity {
     @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
     private List<OrderGoods> orderGoodsList = new ArrayList<>();
 
-    @OneToMany(mappedBy = "order", cascade = CascadeType.ALL)
-    private List<Payment> payments = new ArrayList<>();
+    @OneToOne(mappedBy = "order", cascade = CascadeType.ALL)
+    private Payment payment;
 
     @Builder(access = AccessLevel.PRIVATE)
     private Order(final OrderStatus orderStatus, final Integer totalPrice, final LocalDateTime pickupTime,
@@ -88,11 +89,24 @@ public class Order extends BaseTimeEntity {
     }
 
     public void addPayment(final Payment payment) {
-        this.payments.add(payment);
+        this.payment = payment;
     }
 
     public void paid() {
         this.orderStatus = OrderStatus.PAID;
+    }
+
+    public void accepted() {
+        this.orderStatus = OrderStatus.ACCEPTED;
+    }
+
+    public void rejected() {
+        this.orderStatus = OrderStatus.REJECTED;
+        this.payment.cancel();
+    }
+
+    public void completed() {
+        this.orderStatus = OrderStatus.COMPLETED;
     }
 
     public void cancelled() {
@@ -103,7 +117,11 @@ public class Order extends BaseTimeEntity {
         this.orderStatus = OrderStatus.FAILED;
     }
 
-    public void completed() {
-        this.orderStatus = OrderStatus.COMPLETED;
+    public boolean isOwner(final User user) {
+        return this.getOrderGoodsList().get(0)
+                .getGoods()
+                .getStore()
+                .getUser()
+                .equals(user);
     }
 }

@@ -37,12 +37,15 @@ public enum ErrorCode {
     INVALID_PAYMENT_STATUS_CANCEL("결제가 취소되지 않았습니다."),
     INVALID_PAYMENT_STATUS_FAILED("결제가 실패하지 않았습니다."),
     INVALID_ORDER_STATUS("주문이 완료되지 않았습니다."),
+    ORDER_ALREADY_ACCEPTED("주문이 이미 승인됐습니다."),
+    ORDER_ALREADY_REJECTED("주문이 이미 거절됐습니다."),
 
     TOTAL_PRICE_NOT_EQUALS("결제 금액이 일치하지 않습니다."),
     PAYMENT_ALREADY_PROCESSED("이미 처리된 결제입니다."),
     PAYMENT_NOT_ALREADY_PROCESSED("결제 완료 처리가 안된 결제입니다."),
 
     USER_CUSTOMER_NO_ACCESS("사장님만 접근되는 메뉴입니다."),
+    ORDER_NO_ACCESS("해당 주문에 접근할 권한이 없습니다."),
 
     USER_EMAIL_AUTH_CODE_NOT_EQUALS("인증번호가 일치하지 않습니다."),
 

@@ -14,4 +14,6 @@ public interface OrderQueryPort {
     OrderDetailDTO getOrderDetail(Long orderId, Long userId);
 
     List<OrderStoreListDTO> getOrderStoreList(Long userId);
+
+    Order findWithAllById(Long orderId);
 }

@@ -39,4 +39,10 @@ public class OrderQueryAdapter implements OrderQueryPort {
     public List<OrderStoreListDTO> getOrderStoreList(final Long userId) {
         return orderRepository.getOrderStoreList(userId);
     }
+
+    @Override
+    public Order findWithAllById(final Long orderId) {
+        return orderRepository.findWithAllById(orderId)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.ORDER_NOT_FOUND));
+    }
 }

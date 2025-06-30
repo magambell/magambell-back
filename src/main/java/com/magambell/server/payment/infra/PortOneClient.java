@@ -4,12 +4,15 @@ import com.magambell.server.common.enums.ErrorCode;
 import com.magambell.server.common.exception.InvalidRequestException;
 import com.magambell.server.common.exception.NotFoundException;
 import com.magambell.server.payment.app.port.out.PortOnePort;
+import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatusCode;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
+import org.springframework.web.reactive.function.client.ClientResponse;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
@@ -39,13 +42,43 @@ public class PortOneClient implements PortOnePort {
                         HttpStatusCode::isError,
                         clientResponse -> clientResponse.bodyToMono(String.class)
                                 .flatMap(errorBody -> {
-                                    log.warn("PortOne API 에러 발생: {} | Body: {}", clientResponse.statusCode(),
-                                            errorBody);
+                                    errorLog(clientResponse, errorBody);
                                     return Mono.error(new NotFoundException(ErrorCode.PAYMENT_NOT_FOUND));
                                 })
                 )
                 .bodyToMono(PortOnePaymentResponse.class)
                 .block();
+    }
+
+    @Override
+    public void cancelPayment(final String paymentId, final Integer totalPrice, final String reason) {
+        String accessToken = getPortOneAccessToken();
+
+        Map<String, Object> cancelRequest = new HashMap<>();
+        cancelRequest.put("cancelAmount", totalPrice);
+        cancelRequest.put("reason", reason);
+
+        webClient.post()
+                .uri(BASE_URL + "/payments/{paymentId}/cancel", paymentId)
+                .header("Authorization", "Bearer " + accessToken)
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(cancelRequest)
+                .retrieve()
+                .onStatus(
+                        HttpStatusCode::isError,
+                        clientResponse -> clientResponse.bodyToMono(String.class)
+                                .flatMap(errorBody -> {
+                                    errorLog(clientResponse, errorBody);
+                                    return Mono.error(new NotFoundException(ErrorCode.PAYMENT_NOT_FOUND));
+                                })
+                )
+                .bodyToMono(Void.class)
+                .block();
+    }
+
+    private void errorLog(final ClientResponse clientResponse, final String errorBody) {
+        log.warn("PortOne API 에러 발생: {} | Body: {}", clientResponse.statusCode(),
+                errorBody);
     }
 
     private String getPortOneAccessToken() {

@@ -54,7 +54,7 @@ public class PaymentService implements PaymentUseCase {
             }
             case CANCELLED -> {
                 validateCancelled(portOnePaymentResponse, payment);
-                payment.cancel();
+                payment.hookCancel();
 
                 restoreStockIfNecessary(payment);
             }
@@ -106,6 +106,5 @@ public class PaymentService implements PaymentUseCase {
     private void restoreStockIfNecessary(final Payment payment) {
         stockUseCase.restoreStockIfNecessary(payment);
     }
-
 
 }
