@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -46,7 +47,7 @@ public class UserAuthController {
 
     @Operation(summary = "유저 정보 조회")
     @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(implementation = UserInfoResponse.class))})
-    @PostMapping("/me")
+    @GetMapping("/me")
     public Response<UserInfoResponse> getUserInfo(@AuthenticationPrincipal final CustomUserDetails customUserDetails) {
         return new Response<>(userUseCase.getUserInfo(customUserDetails));
     }
