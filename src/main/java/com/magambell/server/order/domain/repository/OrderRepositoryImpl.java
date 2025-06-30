@@ -12,7 +12,11 @@ import static com.querydsl.core.group.GroupBy.list;
 
 import com.magambell.server.order.app.port.out.response.OrderDetailDTO;
 import com.magambell.server.order.app.port.out.response.OrderListDTO;
+import com.magambell.server.order.app.port.out.response.OrderStoreListDTO;
+import com.magambell.server.order.domain.enums.OrderStatus;
+import com.magambell.server.user.domain.enums.UserRole;
 import com.magambell.server.user.domain.enums.UserStatus;
+import com.magambell.server.user.domain.model.QUser;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
@@ -89,5 +93,49 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
                         )
                         .fetchOne()
         );
+    }
+
+    @Override
+    public List<OrderStoreListDTO> getOrderStoreList(final Long userId) {
+        QUser owner = new QUser("owner");
+        QUser customer = new QUser("customer");
+
+        return queryFactory
+                .select(order, orderGoods, goods, store, customer)
+                .from(owner)
+                .innerJoin(store).on(store.user.id.eq(owner.id))
+                .innerJoin(goods).on(goods.store.id.eq(store.id))
+                .innerJoin(orderGoods).on(orderGoods.goods.id.eq(goods.id))
+                .innerJoin(order).on(order.id.eq(orderGoods.order.id))
+                .innerJoin(customer).on(customer.id.eq(order.user.id))
+                .where(
+                        owner.id.eq(userId)
+                                .and(owner.userRole.eq(UserRole.OWNER))
+                                .and(owner.userStatus.eq(UserStatus.ACTIVE))
+                                .and(
+                                        order.orderStatus.notIn(
+                                                OrderStatus.PENDING,
+                                                OrderStatus.CANCELED,
+                                                OrderStatus.FAILED
+                                        )
+                                )
+                )
+                .orderBy(order.createdAt.desc())
+                .transform(
+                        groupBy(order.id)
+                                .list(
+                                        Projections.constructor(
+                                                OrderStoreListDTO.class,
+                                                order.id,
+                                                order.orderStatus,
+                                                order.createdAt,
+                                                order.pickupTime,
+                                                orderGoods.quantity,
+                                                order.totalPrice,
+                                                customer.phoneNumber,
+                                                goods.name
+                                        )
+                                )
+                );
     }
 }

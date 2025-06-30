@@ -6,10 +6,12 @@ import com.magambell.server.order.adapter.in.web.CreateOrderRequest;
 import com.magambell.server.order.adapter.out.persistence.CreateOrderResponse;
 import com.magambell.server.order.adapter.out.persistence.OrderDetailResponse;
 import com.magambell.server.order.adapter.out.persistence.OrderListResponse;
+import com.magambell.server.order.adapter.out.persistence.OrderStoreListResponse;
 import com.magambell.server.order.app.port.in.OrderUseCase;
 import com.magambell.server.order.app.port.out.response.CreateOrderResponseDTO;
 import com.magambell.server.order.app.port.out.response.OrderDetailDTO;
 import com.magambell.server.order.app.port.out.response.OrderListDTO;
+import com.magambell.server.order.app.port.out.response.OrderStoreListDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -69,7 +71,18 @@ public class OrderController {
             @AuthenticationPrincipal final CustomUserDetails customUserDetails
     ) {
         OrderDetailDTO orderDetail = orderUseCase.getOrderDetail(orderId, customUserDetails.userId());
-
         return new Response<>(orderDetail.toResponse());
+    }
+
+    @PreAuthorize("hasRole('OWNER')")
+    @Operation(summary = "매장 주문내역")
+    @ApiResponse(responseCode = "200", content = {
+            @Content(schema = @Schema(implementation = OrderStoreListResponse.class))})
+    @GetMapping("/store")
+    public Response<OrderStoreListResponse> getOrderStoreList(
+            @AuthenticationPrincipal final CustomUserDetails customUserDetails
+    ) {
+        List<OrderStoreListDTO> orderStoreList = orderUseCase.getOrderStoreList(customUserDetails.userId());
+        return new Response<>(new OrderStoreListResponse(orderStoreList));
     }
 }

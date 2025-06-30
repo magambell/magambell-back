@@ -13,6 +13,7 @@ import com.magambell.server.order.app.port.out.OrderQueryPort;
 import com.magambell.server.order.app.port.out.response.CreateOrderResponseDTO;
 import com.magambell.server.order.app.port.out.response.OrderDetailDTO;
 import com.magambell.server.order.app.port.out.response.OrderListDTO;
+import com.magambell.server.order.app.port.out.response.OrderStoreListDTO;
 import com.magambell.server.order.domain.model.Order;
 import com.magambell.server.payment.app.port.in.dto.CreatePaymentDTO;
 import com.magambell.server.payment.app.port.out.PaymentCommandPort;
@@ -73,6 +74,12 @@ public class OrderService implements OrderUseCase {
     public OrderDetailDTO getOrderDetail(final Long orderId, final Long userId) {
         User user = userQueryPort.findById(userId);
         return orderQueryPort.getOrderDetail(orderId, user.getId());
+    }
+
+    @Override
+    public List<OrderStoreListDTO> getOrderStoreList(final Long userId) {
+        User user = userQueryPort.findById(userId);
+        return orderQueryPort.getOrderStoreList(user.getId());
     }
 
     private void validateOrderRequest(final CreateOrderServiceRequest request, final Goods goods) {

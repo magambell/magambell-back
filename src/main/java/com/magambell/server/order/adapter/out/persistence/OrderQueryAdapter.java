@@ -6,6 +6,7 @@ import com.magambell.server.common.exception.NotFoundException;
 import com.magambell.server.order.app.port.out.OrderQueryPort;
 import com.magambell.server.order.app.port.out.response.OrderDetailDTO;
 import com.magambell.server.order.app.port.out.response.OrderListDTO;
+import com.magambell.server.order.app.port.out.response.OrderStoreListDTO;
 import com.magambell.server.order.domain.model.Order;
 import com.magambell.server.order.domain.repository.OrderRepository;
 import java.util.List;
@@ -32,5 +33,10 @@ public class OrderQueryAdapter implements OrderQueryPort {
     public OrderDetailDTO getOrderDetail(final Long orderId, final Long userId) {
         return orderRepository.getOrderDetail(orderId, userId)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.ORDER_NOT_FOUND));
+    }
+
+    @Override
+    public List<OrderStoreListDTO> getOrderStoreList(final Long userId) {
+        return orderRepository.getOrderStoreList(userId);
     }
 }
