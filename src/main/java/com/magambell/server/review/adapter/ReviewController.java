@@ -57,7 +57,6 @@ public class ReviewController {
             @ModelAttribute @Validated final ReviewListRequest request
     ) {
         List<ReviewListDTO> reviewList = reviewUseCase.getReviewList(request.toServiceRequest());
-
         return new Response<>(new ReviewListResponse(reviewList));
     }
 }

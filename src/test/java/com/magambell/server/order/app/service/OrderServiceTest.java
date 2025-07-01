@@ -13,6 +13,8 @@ import com.magambell.server.goods.domain.model.Goods;
 import com.magambell.server.goods.domain.repository.GoodsRepository;
 import com.magambell.server.order.app.port.in.dto.CreateOrderDTO;
 import com.magambell.server.order.app.port.in.request.CreateOrderServiceRequest;
+import com.magambell.server.order.app.port.in.request.CustomerOrderListServiceRequest;
+import com.magambell.server.order.app.port.in.request.OwnerOrderListServiceRequest;
 import com.magambell.server.order.app.port.out.response.OrderDetailDTO;
 import com.magambell.server.order.app.port.out.response.OrderListDTO;
 import com.magambell.server.order.app.port.out.response.OrderStoreListDTO;
@@ -184,8 +186,10 @@ class OrderServiceTest {
         createOrder.completed();
         orderRepository.save(createOrder);
 
+        CustomerOrderListServiceRequest pageRequest = new CustomerOrderListServiceRequest(1, 10);
+
         // when
-        List<OrderListDTO> orderList = orderService.getOrderList(user.getId());
+        List<OrderListDTO> orderList = orderService.getOrderList(pageRequest, user.getId());
 
         // then
         assertThat(orderList.size()).isEqualTo(1);
@@ -220,12 +224,13 @@ class OrderServiceTest {
                 .mapToObj(this::createOrder)
                 .toList();
         orderRepository.saveAll(orderList);
+        OwnerOrderListServiceRequest request = new OwnerOrderListServiceRequest(1, 10);
 
         // when
-        List<OrderStoreListDTO> orderStoreList = orderService.getOrderStoreList(owner.getId());
+        List<OrderStoreListDTO> orderStoreList = orderService.getOrderStoreList(request, owner.getId());
 
         // then
-        assertThat(orderStoreList.size()).isEqualTo(30);
+        assertThat(orderStoreList.size()).isEqualTo(10);
         assertThat(orderStoreList.get(0)).extracting("orderStatus", "pickupTime", "quantity", "totalPrice")
                 .contains(
                         COMPLETED,

@@ -9,6 +9,7 @@ import com.magambell.server.review.domain.repository.ReviewRepository;
 import com.magambell.server.user.domain.model.User;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 
 @RequiredArgsConstructor
 @Adapter
@@ -22,7 +23,7 @@ public class ReviewQueryAdapter implements ReviewQueryPort {
     }
 
     @Override
-    public List<ReviewListDTO> getReviewList(final ReviewListServiceRequest request) {
-        return reviewRepository.getReviewList(request);
+    public List<ReviewListDTO> getReviewList(final ReviewListServiceRequest request, final Pageable pageable) {
+        return reviewRepository.getReviewList(request, pageable);
     }
 }

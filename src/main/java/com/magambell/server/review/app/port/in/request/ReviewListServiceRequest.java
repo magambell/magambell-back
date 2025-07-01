@@ -2,6 +2,8 @@ package com.magambell.server.review.app.port.in.request;
 
 public record ReviewListServiceRequest(
         Long goodsId,
-        Boolean imageCheck
+        Boolean imageCheck,
+        Integer page,
+        Integer size
 ) {
 }

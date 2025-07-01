@@ -17,6 +17,7 @@ import com.magambell.server.user.app.port.out.UserQueryPort;
 import com.magambell.server.user.domain.model.User;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,7 +45,7 @@ public class ReviewService implements ReviewUseCase {
 
     @Override
     public List<ReviewListDTO> getReviewList(final ReviewListServiceRequest request) {
-        return reviewQueryPort.getReviewList(request);
+        return reviewQueryPort.getReviewList(request, PageRequest.of(request.page() - 1, request.size()));
     }
 
     private void validateOrderStatus(final Order order) {
