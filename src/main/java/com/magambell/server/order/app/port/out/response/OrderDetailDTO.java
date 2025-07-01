@@ -13,7 +13,9 @@ public record OrderDetailDTO(
         Integer quantity,
         Integer totalPrice,
         LocalDateTime pickupTime,
-        String memo
+        String memo,
+        Long storeId,
+        Long reviewId
 ) {
     public OrderDetailResponse toResponse() {
         return new OrderDetailResponse(
@@ -25,7 +27,9 @@ public record OrderDetailDTO(
                 quantity,
                 totalPrice,
                 pickupTime,
-                memo
+                memo,
+                String.valueOf(storeId),
+                String.valueOf(reviewId)
         );
     }
 }

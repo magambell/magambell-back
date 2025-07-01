@@ -66,7 +66,7 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
                                                 store.name,
                                                 list(storeImage.name),
                                                 goods.name,
-                                                review.id
+                                                review.id.min()
                                         )
                                 )
                 );
@@ -86,7 +86,9 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
                                 orderGoods.quantity,
                                 order.totalPrice,
                                 order.pickupTime,
-                                order.memo
+                                order.memo,
+                                store.id,
+                                review.id.min()
                         ))
                         .from(order)
                         .innerJoin(orderGoods).on(orderGoods.order.id.eq(order.id))
@@ -94,6 +96,7 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
                         .innerJoin(store).on(store.id.eq(goods.store.id))
                         .leftJoin(storeImage).on(storeImage.store.id.eq(store.id))
                         .innerJoin(payment).on(payment.order.id.eq(order.id))
+                        .leftJoin(review).on(review.order.id.eq(order.id))
                         .where(
                                 order.id.eq(orderId),
                                 order.user.id.eq(userId),

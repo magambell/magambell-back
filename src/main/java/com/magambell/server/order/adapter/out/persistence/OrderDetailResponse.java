@@ -12,7 +12,9 @@ public record OrderDetailResponse(
         Integer quantity,
         Integer totalPrice,
         LocalDateTime pickupTime,
-        String memo
+        String memo,
+        String storeId,
+        String reviewId
 ) {
 
 }
