@@ -13,7 +13,8 @@ public record OrderListDTO(
         Long storeId,
         String storeName,
         List<String> imageUrls,
-        String goodsName
+        String goodsName,
+        Long reviewId
 ) {
     public String getOrderId() {
         return String.valueOf(orderId);
@@ -21,5 +22,9 @@ public record OrderListDTO(
 
     public String getStoreId() {
         return String.valueOf(storeId);
+    }
+
+    public String getReviewId() {
+        return String.valueOf(reviewId);
     }
 }
