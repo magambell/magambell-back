@@ -56,6 +56,7 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.PATCH, "/api/v1/store/**").permitAll()// todo 추후 admin으로 변경
                         .requestMatchers(HttpMethod.POST, "/api/v1/store").hasRole("OWNER")
                         .requestMatchers(HttpMethod.GET, "/api/v1/review").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/review/rating").permitAll()
                         .requestMatchers("/admin")
                         .hasRole(UserRole.ADMIN.name())
                         .anyRequest()
