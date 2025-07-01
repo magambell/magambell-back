@@ -4,6 +4,7 @@ import static com.magambell.server.goods.domain.model.QGoods.goods;
 import static com.magambell.server.order.domain.model.QOrder.order;
 import static com.magambell.server.order.domain.model.QOrderGoods.orderGoods;
 import static com.magambell.server.payment.domain.model.QPayment.payment;
+import static com.magambell.server.review.domain.model.QReview.review;
 import static com.magambell.server.store.domain.model.QStore.store;
 import static com.magambell.server.store.domain.model.QStoreImage.storeImage;
 import static com.magambell.server.user.domain.model.QUser.user;
@@ -34,12 +35,13 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
     @Override
     public List<OrderListDTO> getOrderList(final Pageable pageable, final Long userId) {
         return queryFactory
-                .select(order, orderGoods, goods, store, storeImage, user)
+                .select(order, orderGoods, goods, store, storeImage, user, review)
                 .from(order)
                 .innerJoin(orderGoods).on(orderGoods.order.id.eq(order.id))
                 .innerJoin(goods).on(goods.id.eq(orderGoods.goods.id))
                 .innerJoin(store).on(store.id.eq(goods.store.id))
                 .leftJoin(storeImage).on(storeImage.store.id.eq(store.id))
+                .leftJoin(review).on(review.order.id.eq(order.id))
                 .innerJoin(user).on(user.id.eq(order.user.id))
                 .where(
                         user.userStatus.eq(UserStatus.ACTIVE)
@@ -63,7 +65,8 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
                                                 store.id,
                                                 store.name,
                                                 list(storeImage.name),
-                                                goods.name
+                                                goods.name,
+                                                review.id
                                         )
                                 )
                 );
