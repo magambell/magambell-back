@@ -4,6 +4,7 @@ import com.magambell.server.common.Response;
 import com.magambell.server.common.security.CustomUserDetails;
 import com.magambell.server.review.adapter.in.web.RegisterReviewRequest;
 import com.magambell.server.review.adapter.in.web.ReviewListRequest;
+import com.magambell.server.review.adapter.in.web.ReviewRatingAllRequest;
 import com.magambell.server.review.adapter.out.persistence.ReviewListResponse;
 import com.magambell.server.review.adapter.out.persistence.ReviewRegisterResponse;
 import com.magambell.server.review.app.port.in.ReviewUseCase;
@@ -58,5 +59,16 @@ public class ReviewController {
     ) {
         List<ReviewListDTO> reviewList = reviewUseCase.getReviewList(request.toServiceRequest());
         return new Response<>(new ReviewListResponse(reviewList));
+    }
+
+    @Operation(summary = "리뷰 리스트")
+    @ApiResponse(responseCode = "200", content = {
+            @Content(schema = @Schema(implementation = ReviewListResponse.class))})
+    @GetMapping("/rating")
+    public Response<ReviewListResponse> getReviewRatingAll(
+            @ModelAttribute @Validated final ReviewRatingAllRequest request
+    ) {
+        reviewUseCase.getReviewRatingAll(request.toServiceRequest());
+        return new Response<>();
     }
 }

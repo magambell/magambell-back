@@ -7,6 +7,7 @@ import jakarta.validation.constraints.Positive;
 public record ReviewListRequest(
         @NotNull(message = "상품을 선택해주세요.")
         Long goodsId,
+        @NotNull(message = "이미지 유무를 선택해 주세요.")
         Boolean imageCheck,
         @Positive(message = "페이지를 선택해 주세요.")
         Integer page,

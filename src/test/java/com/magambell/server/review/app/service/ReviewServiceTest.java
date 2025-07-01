@@ -18,7 +18,9 @@ import com.magambell.server.payment.domain.repository.PaymentRepository;
 import com.magambell.server.review.app.port.in.dto.RegisterReviewDTO;
 import com.magambell.server.review.app.port.in.request.RegisterReviewServiceRequest;
 import com.magambell.server.review.app.port.in.request.ReviewListServiceRequest;
+import com.magambell.server.review.app.port.in.request.ReviewRatingAllServiceRequest;
 import com.magambell.server.review.app.port.out.response.ReviewListDTO;
+import com.magambell.server.review.app.port.out.response.ReviewRatingSummaryDTO;
 import com.magambell.server.review.domain.model.Review;
 import com.magambell.server.review.domain.repository.ReviewImageRepository;
 import com.magambell.server.review.domain.repository.ReviewReasonRepository;
@@ -38,6 +40,7 @@ import com.magambell.server.user.domain.repository.UserRepository;
 import com.magambell.server.user.domain.repository.UserSocialAccountRepository;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.IntStream;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -174,7 +177,7 @@ class ReviewServiceTest {
         assertThat(review.getDescription()).isEqualTo("test");
     }
 
-    @DisplayName("리뷰를 리스트를 출력한다.")
+    @DisplayName("리뷰 리스트를 출력한다.")
     @Test
     void getReviewList() {
         // given
@@ -198,5 +201,46 @@ class ReviewServiceTest {
         assertThat(reviewList.get(0).satisfactionReasons().get(0)).isEqualTo(FRIENDLY);
         assertThat(reviewList.get(0).description()).isEqualTo("test");
         assertThat(reviewList.get(0).goodsId()).isEqualTo(goods.getId());
+    }
+
+    @DisplayName("리뷰를 리스트를 출력한다.")
+    @Test
+    void getReviewRatingAll() {
+        // given
+        List<Review> reviewList = IntStream.range(2, 6)
+                .mapToObj(this::createReview)
+                .toList();
+
+        reviewRepository.saveAll(reviewList);
+
+        List<Review> reviewList2 = IntStream.range(2, 4)
+                .mapToObj(this::createReview)
+                .toList();
+
+        reviewRepository.saveAll(reviewList2);
+        ReviewRatingAllServiceRequest request = new ReviewRatingAllServiceRequest(goods.getId(), false);
+
+        // when
+        ReviewRatingSummaryDTO reviewRatingAll = reviewService.getReviewRatingAll(request);
+
+        // then
+        assertThat(reviewRatingAll).isNotNull();
+        assertThat(reviewRatingAll.averageRating()).isEqualTo(3.2);
+        assertThat(reviewRatingAll.totalCount()).isEqualTo(6);
+        assertThat(reviewRatingAll.rating2Count()).isEqualTo(2);
+    }
+
+    private Review createReview(int i) {
+        RegisterReviewDTO dto = new RegisterReviewDTO(
+                order.getId(),
+                i,
+                List.of(FRIENDLY, AFFORDABLE, ZERO),
+                "test",
+                List.of(),
+                user,
+                order
+        );
+
+        return Review.create(dto);
     }
 }
