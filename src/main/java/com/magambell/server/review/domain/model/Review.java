@@ -1,16 +1,14 @@
 package com.magambell.server.review.domain.model;
 
 import com.magambell.server.common.BaseTimeEntity;
+import com.magambell.server.common.enums.ErrorCode;
+import com.magambell.server.common.exception.InvalidRequestException;
 import com.magambell.server.order.domain.model.Order;
 import com.magambell.server.review.app.port.in.dto.RegisterReviewDTO;
-import com.magambell.server.review.domain.enums.SatisfactionReason;
-import com.magambell.server.review.domain.enums.ServiceSatisfaction;
 import com.magambell.server.user.domain.model.User;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -35,11 +33,7 @@ public class Review extends BaseTimeEntity {
     @Id
     private Long id;
 
-    @Enumerated(EnumType.STRING)
-    private ServiceSatisfaction serviceSatisfaction;
-
-    @Enumerated(EnumType.STRING)
-    private SatisfactionReason satisfactionReason;
+    private Integer rating;
 
     private String description;
 
@@ -54,26 +48,40 @@ public class Review extends BaseTimeEntity {
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL)
     private List<ReviewImage> reviewImages = new ArrayList<>();
 
+    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL)
+    private List<ReviewReason> reviewReasons = new ArrayList<>();
+
     @Builder(access = AccessLevel.PRIVATE)
-    private Review(final ServiceSatisfaction serviceSatisfaction, final SatisfactionReason satisfactionReason,
-                   final String description) {
-        this.serviceSatisfaction = serviceSatisfaction;
-        this.satisfactionReason = satisfactionReason;
+    private Review(final Integer rating, final String description) {
+        this.rating = rating;
         this.description = description;
     }
 
     public static Review create(final RegisterReviewDTO dto) {
+        if (dto.rating() < 2 || dto.rating() > 5) {
+            throw new InvalidRequestException(ErrorCode.INVALID_REVIEW_RATING);
+        }
+
         Review review = Review.builder()
-                .serviceSatisfaction(dto.serviceSatisfaction())
-                .satisfactionReason(dto.satisfactionReason())
+                .rating(dto.rating())
                 .description(dto.description())
                 .build();
 
+        List<ReviewReason> list = dto.satisfactionReasons().stream()
+                .map(ReviewReason::new)
+                .toList();
+
         review.addUser(dto.user());
         review.addOrder(dto.order());
+        review.addReviewReasons(list);
 
         return review;
 
+    }
+
+    private void addReviewReasons(final List<ReviewReason> reviewReasons) {
+        this.reviewReasons.addAll(reviewReasons);
+        reviewReasons.forEach(reviewReason -> reviewReason.addReview(this));
     }
 
     private void addOrder(final Order order) {
