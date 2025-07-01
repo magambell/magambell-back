@@ -5,15 +5,16 @@ import com.magambell.server.order.app.port.out.response.OrderListDTO;
 import com.magambell.server.order.app.port.out.response.OrderStoreListDTO;
 import com.magambell.server.order.domain.model.Order;
 import java.util.List;
+import org.springframework.data.domain.Pageable;
 
 public interface OrderQueryPort {
     Order findById(Long orderId);
 
-    List<OrderListDTO> getOrderList(Long userId);
+    List<OrderListDTO> getOrderList(Pageable pageable, Long userId);
 
     OrderDetailDTO getOrderDetail(Long orderId, Long userId);
 
-    List<OrderStoreListDTO> getOrderStoreList(Long userId);
+    List<OrderStoreListDTO> getOrderStoreList(Pageable pageable, Long userId);
 
     Order findWithAllById(Long orderId);
 }

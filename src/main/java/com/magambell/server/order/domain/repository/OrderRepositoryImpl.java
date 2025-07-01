@@ -24,6 +24,7 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 
 @RequiredArgsConstructor
 public class OrderRepositoryImpl implements OrderRepositoryCustom {
@@ -31,7 +32,7 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
     private final JPAQueryFactory queryFactory;
 
     @Override
-    public List<OrderListDTO> getOrderList(final Long userId) {
+    public List<OrderListDTO> getOrderList(final Pageable pageable, final Long userId) {
         return queryFactory
                 .select(order, orderGoods, goods, store, storeImage, user)
                 .from(order)
@@ -47,6 +48,8 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
                                 )
                 )
                 .orderBy(order.createdAt.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .transform(
                         groupBy(order.id)
                                 .list(
@@ -98,7 +101,7 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
     }
 
     @Override
-    public List<OrderStoreListDTO> getOrderStoreList(final Long userId) {
+    public List<OrderStoreListDTO> getOrderStoreList(final Pageable pageable, final Long userId) {
         QUser owner = new QUser("owner");
         QUser customer = new QUser("customer");
 
@@ -123,6 +126,8 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
                                 )
                 )
                 .orderBy(order.createdAt.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .transform(
                         groupBy(order.id)
                                 .list(

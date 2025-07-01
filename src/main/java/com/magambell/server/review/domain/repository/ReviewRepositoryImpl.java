@@ -19,6 +19,7 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 
 @RequiredArgsConstructor
 public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
@@ -27,7 +28,7 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
 
 
     @Override
-    public List<ReviewListDTO> getReviewList(final ReviewListServiceRequest request) {
+    public List<ReviewListDTO> getReviewList(final ReviewListServiceRequest request, final Pageable pageable) {
         BooleanBuilder conditions = new BooleanBuilder();
         conditions.and(goods.id.eq(request.goodsId()));
         conditions.and(user.userStatus.eq(UserStatus.ACTIVE));
@@ -47,6 +48,8 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
                 .innerJoin(user).on(user.id.eq(store.user.id))
                 .where(conditions)
                 .orderBy(review.createdAt.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
                 .transform(
                         groupBy(review.id)
                                 .list(

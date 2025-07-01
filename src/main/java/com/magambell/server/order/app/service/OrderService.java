@@ -9,6 +9,8 @@ import com.magambell.server.goods.app.port.out.GoodsQueryPort;
 import com.magambell.server.goods.domain.model.Goods;
 import com.magambell.server.order.app.port.in.OrderUseCase;
 import com.magambell.server.order.app.port.in.request.CreateOrderServiceRequest;
+import com.magambell.server.order.app.port.in.request.CustomerOrderListServiceRequest;
+import com.magambell.server.order.app.port.in.request.OwnerOrderListServiceRequest;
 import com.magambell.server.order.app.port.out.OrderCommandPort;
 import com.magambell.server.order.app.port.out.OrderQueryPort;
 import com.magambell.server.order.app.port.out.response.CreateOrderResponseDTO;
@@ -31,6 +33,7 @@ import com.magambell.server.user.domain.model.User;
 import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -72,9 +75,9 @@ public class OrderService implements OrderUseCase {
     }
 
     @Override
-    public List<OrderListDTO> getOrderList(final Long userId) {
+    public List<OrderListDTO> getOrderList(final CustomerOrderListServiceRequest request, final Long userId) {
         User user = userQueryPort.findById(userId);
-        return orderQueryPort.getOrderList(user.getId());
+        return orderQueryPort.getOrderList(PageRequest.of(request.page() - 1, request.size()), user.getId());
     }
 
     @Override
@@ -84,9 +87,9 @@ public class OrderService implements OrderUseCase {
     }
 
     @Override
-    public List<OrderStoreListDTO> getOrderStoreList(final Long userId) {
+    public List<OrderStoreListDTO> getOrderStoreList(final OwnerOrderListServiceRequest request, final Long userId) {
         User user = userQueryPort.findById(userId);
-        return orderQueryPort.getOrderStoreList(user.getId());
+        return orderQueryPort.getOrderStoreList(PageRequest.of(request.page() - 1, request.size()), user.getId());
     }
 
     @Transactional

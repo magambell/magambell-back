@@ -11,6 +11,7 @@ import com.magambell.server.order.domain.model.Order;
 import com.magambell.server.order.domain.repository.OrderRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
 
 @RequiredArgsConstructor
 @Adapter
@@ -25,8 +26,8 @@ public class OrderQueryAdapter implements OrderQueryPort {
     }
 
     @Override
-    public List<OrderListDTO> getOrderList(final Long userId) {
-        return orderRepository.getOrderList(userId);
+    public List<OrderListDTO> getOrderList(final Pageable pageable, final Long userId) {
+        return orderRepository.getOrderList(pageable, userId);
     }
 
     @Override
@@ -36,8 +37,8 @@ public class OrderQueryAdapter implements OrderQueryPort {
     }
 
     @Override
-    public List<OrderStoreListDTO> getOrderStoreList(final Long userId) {
-        return orderRepository.getOrderStoreList(userId);
+    public List<OrderStoreListDTO> getOrderStoreList(final Pageable pageable, final Long userId) {
+        return orderRepository.getOrderStoreList(pageable, userId);
     }
 
     @Override

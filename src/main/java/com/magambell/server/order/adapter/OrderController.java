@@ -4,6 +4,8 @@ import com.magambell.server.common.Response;
 import com.magambell.server.common.security.CustomUserDetails;
 import com.magambell.server.common.swagger.BaseResponse;
 import com.magambell.server.order.adapter.in.web.CreateOrderRequest;
+import com.magambell.server.order.adapter.in.web.CustomerOrderListRequest;
+import com.magambell.server.order.adapter.in.web.OwnerOrderListRequest;
 import com.magambell.server.order.adapter.out.persistence.CreateOrderResponse;
 import com.magambell.server.order.adapter.out.persistence.OrderDetailResponse;
 import com.magambell.server.order.adapter.out.persistence.OrderListResponse;
@@ -25,6 +27,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -58,9 +61,10 @@ public class OrderController {
             @Content(schema = @Schema(implementation = OrderListResponse.class))})
     @GetMapping("")
     public Response<OrderListResponse> getOrderList(
+            @ModelAttribute @Validated final CustomerOrderListRequest request,
             @AuthenticationPrincipal final CustomUserDetails customUserDetails
     ) {
-        List<OrderListDTO> orderList = orderUseCase.getOrderList(customUserDetails.userId());
+        List<OrderListDTO> orderList = orderUseCase.getOrderList(request.toService(), customUserDetails.userId());
         return new Response<>(new OrderListResponse(orderList));
     }
 
@@ -83,9 +87,11 @@ public class OrderController {
             @Content(schema = @Schema(implementation = OrderStoreListResponse.class))})
     @GetMapping("/store")
     public Response<OrderStoreListResponse> getOrderStoreList(
+            @ModelAttribute @Validated final OwnerOrderListRequest request,
             @AuthenticationPrincipal final CustomUserDetails customUserDetails
     ) {
-        List<OrderStoreListDTO> orderStoreList = orderUseCase.getOrderStoreList(customUserDetails.userId());
+        List<OrderStoreListDTO> orderStoreList = orderUseCase.getOrderStoreList(request.toService(),
+                customUserDetails.userId());
         return new Response<>(new OrderStoreListResponse(orderStoreList));
     }
 
