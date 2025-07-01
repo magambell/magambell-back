@@ -5,6 +5,7 @@ import static com.magambell.server.order.domain.model.QOrder.order;
 import static com.magambell.server.order.domain.model.QOrderGoods.orderGoods;
 import static com.magambell.server.review.domain.model.QReview.review;
 import static com.magambell.server.review.domain.model.QReviewImage.reviewImage;
+import static com.magambell.server.review.domain.model.QReviewReason.reviewReason;
 import static com.magambell.server.store.domain.model.QStore.store;
 import static com.magambell.server.user.domain.model.QUser.user;
 import static com.querydsl.core.group.GroupBy.groupBy;
@@ -41,6 +42,7 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
                 .select(review, reviewImage, order, orderGoods, goods, store, user)
                 .from(review)
                 .leftJoin(reviewImage).on(reviewImage.review.id.eq(review.id))
+                .leftJoin(reviewReason).on(reviewReason.review.id.eq(review.id))
                 .innerJoin(order).on(order.id.eq(review.order.id))
                 .innerJoin(orderGoods).on(orderGoods.order.id.eq(order.id))
                 .innerJoin(goods).on(goods.id.eq(orderGoods.goods.id))
@@ -56,8 +58,8 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
                                         Projections.constructor(
                                                 ReviewListDTO.class,
                                                 review.id,
-                                                review.serviceSatisfaction,
-                                                review.satisfactionReason,
+                                                review.rating,
+                                                list(reviewReason.satisfactionReason),
                                                 review.description,
                                                 review.createdAt,
                                                 list(reviewImage.name),

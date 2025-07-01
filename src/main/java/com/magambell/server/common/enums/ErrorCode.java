@@ -31,6 +31,7 @@ public enum ErrorCode {
     INVALID_EASY_PAY_PROVIDER("간편 결제 수단을 선택해 주세요."),
     INVALID_GOODS_OWNER("잘못된 접근입니다."),
     INVALID_PAYMENT_STATUS("사용하지 않는 값 입니다."),
+    INVALID_REVIEW_RATING("아쉬워요, 적당해요, 좋아요, 최고예요 중 선택해 주세요.."),
 
     INVALID_PORT_ONE_ACCESS_TOKEN("토큰 발급 실패"),
     INVALID_PAYMENT_STATUS_PAID("결제가 완료되지 않았습니다."),

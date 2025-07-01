@@ -1,8 +1,9 @@
 package com.magambell.server.review.app.service;
 
 
+import static com.magambell.server.review.domain.enums.SatisfactionReason.AFFORDABLE;
 import static com.magambell.server.review.domain.enums.SatisfactionReason.FRIENDLY;
-import static com.magambell.server.review.domain.enums.ServiceSatisfaction.BAD;
+import static com.magambell.server.review.domain.enums.SatisfactionReason.ZERO;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.magambell.server.auth.domain.ProviderType;
@@ -20,6 +21,7 @@ import com.magambell.server.review.app.port.in.request.ReviewListServiceRequest;
 import com.magambell.server.review.app.port.out.response.ReviewListDTO;
 import com.magambell.server.review.domain.model.Review;
 import com.magambell.server.review.domain.repository.ReviewImageRepository;
+import com.magambell.server.review.domain.repository.ReviewReasonRepository;
 import com.magambell.server.review.domain.repository.ReviewRepository;
 import com.magambell.server.stock.domain.repository.StockHistoryRepository;
 import com.magambell.server.stock.domain.repository.StockRepository;
@@ -66,6 +68,8 @@ class ReviewServiceTest {
     private ReviewRepository reviewRepository;
     @Autowired
     private ReviewImageRepository reviewImageRepository;
+    @Autowired
+    private ReviewReasonRepository reviewReasonRepository;
     @Autowired
     private ReviewService reviewService;
     @Autowired
@@ -135,6 +139,7 @@ class ReviewServiceTest {
 
     @AfterEach
     void tearDown() {
+        reviewReasonRepository.deleteAllInBatch();
         reviewImageRepository.deleteAllInBatch();
         reviewRepository.deleteAllInBatch();
         stockHistoryRepository.deleteAllInBatch();
@@ -154,8 +159,8 @@ class ReviewServiceTest {
         // given
         RegisterReviewServiceRequest request = new RegisterReviewServiceRequest(
                 order.getId(),
-                BAD,
-                FRIENDLY,
+                2,
+                List.of(FRIENDLY),
                 "test",
                 List.of()
         );
@@ -175,8 +180,8 @@ class ReviewServiceTest {
         // given
         RegisterReviewDTO dto = new RegisterReviewDTO(
                 order.getId(),
-                BAD,
-                FRIENDLY,
+                2,
+                List.of(FRIENDLY, AFFORDABLE, ZERO),
                 "test",
                 List.of(),
                 user,
@@ -190,6 +195,7 @@ class ReviewServiceTest {
 
         // then
         assertThat(reviewList).isNotNull();
+        assertThat(reviewList.get(0).satisfactionReasons().get(0)).isEqualTo(FRIENDLY);
         assertThat(reviewList.get(0).description()).isEqualTo("test");
         assertThat(reviewList.get(0).goodsId()).isEqualTo(goods.getId());
     }
