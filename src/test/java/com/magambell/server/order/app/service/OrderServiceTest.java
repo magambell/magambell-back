@@ -274,10 +274,11 @@ class OrderServiceTest {
         );
         orderService.createOrder(request, user.getId());
 
-        // when
         Order order = orderRepository.findAll().get(0);
         order.paid();
         orderRepository.save(order);
+
+        // when
         orderService.rejectOrder(order.getId(), owner.getId());
 
         // then
@@ -289,6 +290,37 @@ class OrderServiceTest {
 
         verify(portOnePort, times(1))
                 .cancelPayment(eq(order.getPayment().getMerchantUid()), eq(18000), eq("사장님 주문 취소"));
+    }
+
+    @DisplayName("고객이 주문을 취소하면 재고가 복구되며 결제 취소 요청이 호출된다.")
+    @Test
+    void cancelOrder() {
+        // given
+        CreateOrderServiceRequest request = new CreateOrderServiceRequest(
+                goods.getId(),
+                2,
+                18000,
+                LocalDateTime.now().plusMinutes(30),
+                "빨리 주세요"
+        );
+        orderService.createOrder(request, user.getId());
+
+        Order order = orderRepository.findAll().get(0);
+        order.paid();
+        orderRepository.save(order);
+
+        // when
+        orderService.cancelOrder(order.getId(), user.getId());
+
+        // then
+        Order result = orderRepository.findById(order.getId()).orElseThrow();
+        assertThat(result.getOrderStatus()).isEqualTo(OrderStatus.CANCELED);
+
+        Stock updatedStock = stockRepository.findAll().get(0);
+        assertThat(updatedStock.getQuantity()).isEqualTo(120);
+
+        verify(portOnePort, times(1))
+                .cancelPayment(eq(order.getPayment().getMerchantUid()), eq(18000), eq("고객님 주문 취소"));
     }
 
     private Order createOrder(int i) {

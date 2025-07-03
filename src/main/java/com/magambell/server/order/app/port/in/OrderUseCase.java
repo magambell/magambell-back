@@ -22,4 +22,6 @@ public interface OrderUseCase {
     void approveOrder(Long orderId, Long userId, LocalDateTime now);
 
     void rejectOrder(Long orderId, Long userId);
+
+    void cancelOrder(Long orderId, Long userId);
 }

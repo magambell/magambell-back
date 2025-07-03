@@ -16,5 +16,7 @@ public interface OrderQueryPort {
 
     List<OrderStoreListDTO> getOrderStoreList(Pageable pageable, Long userId);
 
+    Order findOwnerWithAllById(Long orderId);
+
     Order findWithAllById(Long orderId);
 }
