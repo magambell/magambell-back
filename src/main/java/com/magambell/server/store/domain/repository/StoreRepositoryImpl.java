@@ -11,7 +11,9 @@ import static com.querydsl.core.group.GroupBy.list;
 
 import com.magambell.server.store.app.port.in.request.SearchStoreListServiceRequest;
 import com.magambell.server.store.app.port.out.dto.StoreDetailDTO;
+import com.magambell.server.store.app.port.out.response.OwnerStoreDetailDTO;
 import com.magambell.server.store.app.port.out.response.StoreListDTOResponse;
+import com.magambell.server.store.domain.enums.Approved;
 import com.magambell.server.store.domain.enums.SearchSortType;
 import com.magambell.server.user.domain.enums.UserStatus;
 import com.querydsl.core.BooleanBuilder;
@@ -135,6 +137,44 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                         )
                 );
         return Optional.ofNullable(result.get(storeId));
+    }
+
+    @Override
+    public Optional<OwnerStoreDetailDTO> getOwnerStoreInfo(final Long userId) {
+        Map<Long, OwnerStoreDetailDTO> result = queryFactory
+                .from(store)
+                .innerJoin(user).on(user.id.eq(store.user.id))
+                .leftJoin(storeImage).on(storeImage.store.id.eq(store.id))
+                .leftJoin(goods).on(goods.store.id.eq(store.id))
+                .innerJoin(stock).on(stock.goods.id.eq(goods.id))
+                .where(
+                        store.user.id.eq(userId),
+                        store.approved.eq(Approved.APPROVED),
+                        user.userStatus.eq(UserStatus.ACTIVE)
+                )
+                .transform(
+                        groupBy(store.id).as(
+                                Projections.constructor(OwnerStoreDetailDTO.class,
+                                        store.id,
+                                        store.name,
+                                        list(storeImage.name),
+                                        list(Projections.constructor(OwnerStoreDetailDTO.GoodsInfo.class,
+                                                goods.id,
+                                                goods.name,
+                                                goods.originalPrice,
+                                                goods.discount,
+                                                goods.salePrice,
+                                                goods.description,
+                                                goods.startTime,
+                                                goods.endTime,
+                                                goods.saleStatus,
+                                                stock.quantity
+                                        ))
+                                )
+                        )
+                );
+
+        return result.values().stream().findFirst();
     }
 
     private BooleanExpression keywordCondition(final String keyword) {

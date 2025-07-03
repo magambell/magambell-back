@@ -6,6 +6,7 @@ import com.magambell.server.common.exception.NotFoundException;
 import com.magambell.server.store.app.port.in.request.SearchStoreListServiceRequest;
 import com.magambell.server.store.app.port.out.StoreQueryPort;
 import com.magambell.server.store.app.port.out.dto.StoreDetailDTO;
+import com.magambell.server.store.app.port.out.response.OwnerStoreDetailDTO;
 import com.magambell.server.store.app.port.out.response.StoreListDTOResponse;
 import com.magambell.server.store.domain.model.Store;
 import com.magambell.server.store.domain.repository.StoreRepository;
@@ -46,6 +47,12 @@ public class StoreQueryAdapter implements StoreQueryPort {
     @Override
     public Store findById(final Long storeId) {
         return storeRepository.findById(storeId)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.STORE_NOT_FOUND));
+    }
+
+    @Override
+    public OwnerStoreDetailDTO getOwnerStoreInfo(final User user) {
+        return storeRepository.getOwnerStoreInfo(user.getId())
                 .orElseThrow(() -> new NotFoundException(ErrorCode.STORE_NOT_FOUND));
     }
 }

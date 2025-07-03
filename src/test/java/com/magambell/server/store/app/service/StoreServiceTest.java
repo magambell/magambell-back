@@ -15,6 +15,7 @@ import com.magambell.server.store.app.port.in.dto.RegisterStoreDTO;
 import com.magambell.server.store.app.port.in.request.RegisterStoreServiceRequest;
 import com.magambell.server.store.app.port.in.request.SearchStoreListServiceRequest;
 import com.magambell.server.store.app.port.out.dto.StoreDetailDTO;
+import com.magambell.server.store.app.port.out.response.OwnerStoreDetailDTO;
 import com.magambell.server.store.app.port.out.response.StoreListDTOResponse;
 import com.magambell.server.store.domain.enums.Approved;
 import com.magambell.server.store.domain.enums.Bank;
@@ -152,7 +153,7 @@ class StoreServiceTest {
     @Test
     void getStoreDetail() {
         // given
-        Store store = createStore(1); // storeId = 1L
+        Store store = createStore(1);
         storeRepository.save(store);
 
         // when
@@ -165,6 +166,23 @@ class StoreServiceTest {
         Assertions.assertThat(result.description()).isEqualTo("상품설명");
         Assertions.assertThat(result.salePrice()).isEqualTo(9000);
         Assertions.assertThat(result.images()).isEmpty();
+    }
+
+    @DisplayName("관리자 매장 상세 정보를 조회한다")
+    @Test
+    void getOwnerStoreInfo() {
+        // given
+        Store store = createStore(1); // storeId = 1L
+        storeRepository.save(store);
+
+        // when
+        OwnerStoreDetailDTO ownerStoreInfo = storeService.getOwnerStoreInfo(user.getId());
+
+        // then
+        Assertions.assertThat(ownerStoreInfo).isNotNull();
+        Assertions.assertThat(ownerStoreInfo.storeName()).isEqualTo("테스트 매장1");
+        Assertions.assertThat(ownerStoreInfo.goodsList().get(0).description()).isEqualTo("상품설명");
+        Assertions.assertThat(ownerStoreInfo.goodsList().get(0).salePrice()).isEqualTo(9000);
     }
 
     private Store createStore(int i) {

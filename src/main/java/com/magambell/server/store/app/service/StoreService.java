@@ -11,6 +11,7 @@ import com.magambell.server.store.app.port.in.request.StoreApproveServiceRequest
 import com.magambell.server.store.app.port.out.StoreCommandPort;
 import com.magambell.server.store.app.port.out.StoreQueryPort;
 import com.magambell.server.store.app.port.out.dto.StoreDetailDTO;
+import com.magambell.server.store.app.port.out.response.OwnerStoreDetailDTO;
 import com.magambell.server.store.app.port.out.response.StoreRegisterResponseDTO;
 import com.magambell.server.store.domain.enums.Approved;
 import com.magambell.server.user.app.port.out.UserQueryPort;
@@ -56,6 +57,12 @@ public class StoreService implements StoreUseCase {
     @Override
     public StoreDetailDTO getStoreDetail(final Long storeId) {
         return storeQueryPort.getStoreDetail(storeId);
+    }
+
+    @Override
+    public OwnerStoreDetailDTO getOwnerStoreInfo(final Long userId) {
+        User user = userQueryPort.findById(userId);
+        return storeQueryPort.getOwnerStoreInfo(user);
     }
 
     private void checkDuplicateStore(final User user) {

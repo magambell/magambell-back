@@ -6,11 +6,13 @@ import com.magambell.server.common.swagger.BaseResponse;
 import com.magambell.server.store.adapter.in.web.RegisterStoreRequest;
 import com.magambell.server.store.adapter.in.web.SearchStoreListRequest;
 import com.magambell.server.store.adapter.in.web.StoreApproveRequest;
+import com.magambell.server.store.adapter.out.persistence.OwnerStoreDetailResponse;
 import com.magambell.server.store.adapter.out.persistence.StoreDetailResponse;
 import com.magambell.server.store.adapter.out.persistence.StoreImagesResponse;
 import com.magambell.server.store.adapter.out.persistence.StoreListResponse;
 import com.magambell.server.store.app.port.in.StoreUseCase;
 import com.magambell.server.store.app.port.out.dto.StoreDetailDTO;
+import com.magambell.server.store.app.port.out.response.OwnerStoreDetailDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -80,5 +82,17 @@ public class StoreController {
         //todo 배포시 관리자만 가능하게 변경 예정
         storeUseCase.storeApprove(request.toService());
         return new Response<>();
+    }
+
+    @PreAuthorize("hasRole('OWNER')")
+    @Operation(summary = "사장님 매장 정보 조회")
+    @ApiResponse(responseCode = "200", content = {
+            @Content(schema = @Schema(implementation = OwnerStoreDetailResponse.class))})
+    @GetMapping("/owner")
+    public Response<OwnerStoreDetailResponse> getOwnerStoreInfo(
+            @AuthenticationPrincipal final CustomUserDetails customUserDetails
+    ) {
+        OwnerStoreDetailDTO ownerStoreInfo = storeUseCase.getOwnerStoreInfo(customUserDetails.userId());
+        return new Response<>(new OwnerStoreDetailResponse(ownerStoreInfo));
     }
 }
