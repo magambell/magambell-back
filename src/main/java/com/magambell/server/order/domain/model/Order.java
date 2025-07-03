@@ -32,9 +32,9 @@ import lombok.NoArgsConstructor;
 @Entity
 public class Order extends BaseTimeEntity {
 
-    @Id
-    @Tsid
     @Column(name = "order_id")
+    @Tsid
+    @Id
     private Long id;
 
     @Enumerated(EnumType.STRING)

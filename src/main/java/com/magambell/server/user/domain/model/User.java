@@ -1,6 +1,7 @@
 package com.magambell.server.user.domain.model;
 
 import com.magambell.server.common.BaseTimeEntity;
+import com.magambell.server.favorite.domain.model.Favorite;
 import com.magambell.server.order.domain.model.Order;
 import com.magambell.server.review.domain.model.Review;
 import com.magambell.server.store.domain.model.Store;
@@ -64,6 +65,9 @@ public class User extends BaseTimeEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Review> reviews = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Favorite> favorites = new ArrayList<>();
+
     @Builder(access = AccessLevel.PRIVATE)
     private User(final String email, final String password, final String name, final String nickName,
                  final String phoneNumber,
@@ -120,5 +124,9 @@ public class User extends BaseTimeEntity {
 
     public void addReview(final Review review) {
         this.reviews.add(review);
+    }
+
+    public void addFavorite(final Favorite favorite) {
+        this.favorites.add(favorite);
     }
 }

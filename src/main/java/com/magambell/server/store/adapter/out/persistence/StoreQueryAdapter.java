@@ -42,4 +42,10 @@ public class StoreQueryAdapter implements StoreQueryPort {
         return storeRepository.getStoreDetail(storeId)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.STORE_NOT_FOUND));
     }
+
+    @Override
+    public Store findById(final Long storeId) {
+        return storeRepository.findById(storeId)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.STORE_NOT_FOUND));
+    }
 }
