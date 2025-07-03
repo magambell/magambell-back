@@ -12,6 +12,7 @@ public enum ErrorCode {
     DUPLICATE_NICKNAME("중복된 닉네임 입니다."),
     DUPLICATE_GOODS("이미 등록된 마감백입니다."),
     DUPLICATE_REVIEW("이미 등록된 리뷰입니다."),
+    DUPLICATE_FAVORITE("이미 즐겨찾기한 매장입니다."),
 
     USER_VALID_PASSWORD("비밀번호는 8~16자리의 영문 대문자와 소문자, 특수문자 숫자의 조합이어야 합니다."),
     USER_VALID_EMAIL("유효한 이메일 주소가 아닙니다."),

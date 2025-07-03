@@ -17,4 +17,6 @@ public interface StoreQueryPort {
     List<StoreListDTOResponse> getStoreList(SearchStoreListServiceRequest request, Pageable pageable);
 
     StoreDetailDTO getStoreDetail(Long storeId);
+
+    Store findById(Long storeId);
 }

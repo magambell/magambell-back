@@ -1,6 +1,7 @@
 package com.magambell.server.store.domain.model;
 
 import com.magambell.server.common.BaseTimeEntity;
+import com.magambell.server.favorite.domain.model.Favorite;
 import com.magambell.server.goods.domain.model.Goods;
 import com.magambell.server.store.app.port.in.dto.RegisterStoreDTO;
 import com.magambell.server.store.domain.enums.Approved;
@@ -60,6 +61,9 @@ public class Store extends BaseTimeEntity {
     @OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
     private List<StoreImage> storeImages = new ArrayList<>();
 
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
+    private List<Favorite> favorites = new ArrayList<>();
+
     @Builder(access = AccessLevel.PRIVATE)
     private Store(final String name, final String address, final Double latitude, final Double longitude,
                   final String ownerName, final String ownerPhone,
@@ -111,5 +115,9 @@ public class Store extends BaseTimeEntity {
 
     public boolean isOwnedBy(final User user) {
         return this.user.getId().equals(user.getId()) && user.getUserRole() == UserRole.OWNER;
+    }
+
+    public void addFavorite(final Favorite favorite) {
+        this.favorites.add(favorite);
     }
 }
