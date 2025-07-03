@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Value;
 @Adapter
 public class S3Adapter implements S3InputPort {
 
+    private static final String SSL = "https://";
     private final S3Client s3Client;
 
     @Value("${spring.aws.cf}")
@@ -49,6 +50,6 @@ public class S3Adapter implements S3InputPort {
     }
 
     private String getCloudFrontSignedUrl(final String imageKey) {
-        return AWS_CF_DISTRIBUTION + "/" + imageKey;
+        return SSL + AWS_CF_DISTRIBUTION + "/" + imageKey;
     }
 }
