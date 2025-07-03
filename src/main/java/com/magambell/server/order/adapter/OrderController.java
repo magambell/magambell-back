@@ -134,4 +134,17 @@ public class OrderController {
         orderUseCase.rejectOrder(orderId, customUserDetails.userId());
         return new Response<>();
     }
+
+    @PreAuthorize("hasRole('OWNER')")
+    @Operation(summary = "사장님 주문 픽업 완료")
+    @ApiResponse(responseCode = "200", content = {
+            @Content(schema = @Schema(implementation = BaseResponse.class))})
+    @PatchMapping("/completed/{orderId}")
+    public Response<BaseResponse> completedOrder(
+            @PathVariable final Long orderId,
+            @AuthenticationPrincipal final CustomUserDetails customUserDetails
+    ) {
+        orderUseCase.completedOrder(orderId, customUserDetails.userId());
+        return new Response<>();
+    }
 }

@@ -41,6 +41,7 @@ public enum ErrorCode {
     INVALID_ORDER_STATUS("주문이 완료되지 않았습니다."),
     ORDER_ALREADY_ACCEPTED("주문이 이미 승인됐습니다."),
     ORDER_ALREADY_REJECTED("주문이 이미 거절됐습니다."),
+    ORDER_NOT_APPROVED("주문이 승인되지 않았습니다."),
 
     TOTAL_PRICE_NOT_EQUALS("결제 금액이 일치하지 않습니다."),
     PAYMENT_ALREADY_PROCESSED("이미 처리된 결제입니다."),

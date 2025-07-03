@@ -240,7 +240,7 @@ class OrderServiceTest {
                 );
     }
 
-    @DisplayName("주문을 승인하면 상태가 ACCEPTED로 변경된다.")
+    @DisplayName("사장님이 주문을 승인하면 상태가 ACCEPTED로 변경된다.")
     @Test
     void approveOrder() {
         // given
@@ -261,7 +261,7 @@ class OrderServiceTest {
         assertThat(result.getOrderStatus()).isEqualTo(OrderStatus.ACCEPTED);
     }
 
-    @DisplayName("주문을 거절하면 상태가 REJECTED로 변경되고 재고가 복구되며 결제 취소 요청이 호출된다.")
+    @DisplayName("사장님이 주문을 거절하면 상태가 REJECTED로 변경되고 재고가 복구되며 결제 취소 요청이 호출된다.")
     @Test
     void rejectOrder() {
         // given
@@ -321,6 +321,27 @@ class OrderServiceTest {
 
         verify(portOnePort, times(1))
                 .cancelPayment(eq(order.getPayment().getMerchantUid()), eq(18000), eq("고객님 주문 취소"));
+    }
+
+    @DisplayName("주문을 승인하면 상태가 ACCEPTED로 변경된다.")
+    @Test
+    void completedOrder() {
+        // given
+        CreateOrderDTO createOrderDTO = new CreateOrderDTO(user, goods, 1, 9000, LocalDateTime.of(2025, 6, 30, 17, 30),
+                "test");
+        Order order = createOrderDTO.toOrder();
+        order.accepted();
+        orderRepository.save(order);
+        CreatePaymentDTO createPaymentDTO = new CreatePaymentDTO(order, order.getTotalPrice(), PaymentStatus.PAID);
+        Payment payment = createPaymentDTO.toPayment();
+        paymentRepository.save(payment);
+
+        // when
+        orderService.completedOrder(order.getId(), owner.getId());
+
+        // then
+        Order result = orderRepository.findById(order.getId()).orElseThrow();
+        assertThat(result.getOrderStatus()).isEqualTo(COMPLETED);
     }
 
     private Order createOrder(int i) {

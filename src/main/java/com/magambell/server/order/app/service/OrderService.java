@@ -130,6 +130,16 @@ public class OrderService implements OrderUseCase {
         portOnePort.cancelPayment(payment.getMerchantUid(), order.getTotalPrice(), "고객님 주문 취소");
     }
 
+    @Transactional
+    @Override
+    public void completedOrder(final Long orderId, final Long userId) {
+        User user = userQueryPort.findById(userId);
+        Order order = orderQueryPort.findOwnerWithAllById(orderId);
+
+        validateCompletedOrder(user, order);
+        order.completed();
+    }
+
     private void validateOrderRequest(final CreateOrderServiceRequest request, final Goods goods) {
         if (request.totalPrice() != goods.getSalePrice() * request.quantity()) {
             throw new InvalidRequestException(ErrorCode.INVALID_TOTAL_PRICE);
@@ -166,6 +176,16 @@ public class OrderService implements OrderUseCase {
         }
 
         validateOrderForDecision(order);
+    }
+
+    private void validateCompletedOrder(final User user, final Order order) {
+        if (!order.isOwner(user)) {
+            throw new UnauthorizedException(ErrorCode.ORDER_NO_ACCESS);
+        }
+
+        if (order.getOrderStatus() != OrderStatus.ACCEPTED) {
+            throw new InvalidRequestException(ErrorCode.ORDER_NOT_APPROVED);
+        }
     }
 
     private void validateOrderForDecision(final Order order) {
