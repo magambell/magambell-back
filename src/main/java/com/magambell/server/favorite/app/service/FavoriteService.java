@@ -5,6 +5,7 @@ import com.magambell.server.common.exception.DuplicateException;
 import com.magambell.server.favorite.app.port.in.FavoriteUseCase;
 import com.magambell.server.favorite.app.port.out.FavoriteCommandPort;
 import com.magambell.server.favorite.app.port.out.FavoriteQueryPort;
+import com.magambell.server.favorite.domain.model.Favorite;
 import com.magambell.server.store.app.port.out.StoreQueryPort;
 import com.magambell.server.store.domain.model.Store;
 import com.magambell.server.user.app.port.out.UserQueryPort;
@@ -34,5 +35,14 @@ public class FavoriteService implements FavoriteUseCase {
         }
 
         favoriteCommandPort.registerFavorite(store, user);
+    }
+
+    @Transactional
+    @Override
+    public void deleteFavorite(final Long storeId, final Long userId) {
+        User user = userQueryPort.findById(userId);
+        Store store = storeQueryPort.findById(storeId);
+        Favorite favorite = favoriteQueryPort.findByUserAndStore(user, store);
+        favoriteCommandPort.deleteFavorite(favorite);
     }
 }

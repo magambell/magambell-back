@@ -102,4 +102,28 @@ class FavoriteServiceTest {
         assertThat(favorite.getStore().getId()).isEqualTo(store.getId());
         assertThat(favorite.getUser().getId()).isEqualTo(user.getId());
     }
+
+    @DisplayName("고객 즐겨찾기 매장 삭제")
+    @Test
+    void deleteFavorite() {
+        // given
+        UserSocialAccountDTO accountDTO = new UserSocialAccountDTO(
+                "order@test.com", "주문자", "주문자닉", "01011112222",
+                ProviderType.KAKAO,
+                "socialId", UserRole.CUSTOMER
+        );
+        User user = accountDTO.toUser();
+        user.addUserSocialAccount(accountDTO.toUserSocialAccount());
+        user = userRepository.save(user);
+
+        Favorite saveFavorite = Favorite.create(store, user);
+        favoriteRepository.save(saveFavorite);
+
+        // when
+        favoriteService.deleteFavorite(store.getId(), user.getId());
+
+        // then
+        List<Favorite> favorites = favoriteRepository.findAll();
+        assertThat(favorites).isEmpty();
+    }
 }

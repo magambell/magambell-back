@@ -64,6 +64,7 @@ public enum ErrorCode {
     PAYMENT_NOT_FOUND("주문을 찾을 수 없습니다."),
     STOCK_NOT_FOUND("재고를 찾을 수 없습니다."),
     EMAIL_NOT_FOUND("이메일을 찾을 수 없습니다."),
+    FAVORITE_NOT_FOUND("즐겨찾기한 매장을 찾을 수 없습니다."),
 
     JWT_VERIFY_EXPIRED("인증정보가 만료 됐습니다."),
     JWT_VALIDATE_ERROR("유효한 인증정보가 아닙니다."),

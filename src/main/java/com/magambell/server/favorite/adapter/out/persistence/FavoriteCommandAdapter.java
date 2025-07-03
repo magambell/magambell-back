@@ -17,4 +17,9 @@ public class FavoriteCommandAdapter implements FavoriteCommandPort {
     public void registerFavorite(final Store store, final User user) {
         favoriteRepository.save(Favorite.create(store, user));
     }
+
+    @Override
+    public void deleteFavorite(final Favorite favorite) {
+        favoriteRepository.delete(favorite);
+    }
 }
