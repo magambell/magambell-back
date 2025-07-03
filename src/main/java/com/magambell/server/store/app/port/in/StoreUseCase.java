@@ -6,6 +6,7 @@ import com.magambell.server.store.app.port.in.request.RegisterStoreServiceReques
 import com.magambell.server.store.app.port.in.request.SearchStoreListServiceRequest;
 import com.magambell.server.store.app.port.in.request.StoreApproveServiceRequest;
 import com.magambell.server.store.app.port.out.dto.StoreDetailDTO;
+import com.magambell.server.store.app.port.out.response.OwnerStoreDetailDTO;
 
 public interface StoreUseCase {
     StoreImagesResponse registerStore(RegisterStoreServiceRequest request, Long userId);
@@ -15,4 +16,6 @@ public interface StoreUseCase {
     void storeApprove(StoreApproveServiceRequest request);
 
     StoreDetailDTO getStoreDetail(Long storeId);
+
+    OwnerStoreDetailDTO getOwnerStoreInfo(Long userId);
 }
