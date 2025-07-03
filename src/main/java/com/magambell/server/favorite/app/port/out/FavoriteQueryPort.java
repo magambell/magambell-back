@@ -8,7 +8,7 @@ import java.util.List;
 import org.springframework.data.domain.Pageable;
 
 public interface FavoriteQueryPort {
-    boolean existsUserIdAndStoreId(User user, Store store);
+    boolean existsFavoriteUserAndStore(User user, Store store);
 
     Favorite findByUserAndStore(User user, Store store);
 
