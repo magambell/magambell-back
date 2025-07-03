@@ -67,6 +67,11 @@ public class AuthService implements AuthUseCase {
         userCommandPort.deleteBySocial(request.providerType(), userId);
     }
 
+    @Override
+    public JwtToken reissueAccessToken(final String refreshToken) {
+        return jwtService.reissueAccessToken(refreshToken);
+    }
+
     private User oAuthSignUp(final OAuthUserInfo userInfo, final SocialLoginServiceRequest request) {
         validateSignUpFields(request.nickName(), request.userRole(), request.phoneNumber());
         validateUserRole(request.userRole());

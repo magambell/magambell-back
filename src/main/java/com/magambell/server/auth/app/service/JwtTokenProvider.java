@@ -3,6 +3,7 @@ package com.magambell.server.auth.app.service;
 import com.magambell.server.auth.app.port.in.dto.RefreshTokenDTO;
 import com.magambell.server.auth.app.port.out.RefreshTokenQueryPort;
 import com.magambell.server.auth.domain.model.JwtToken;
+import com.magambell.server.auth.domain.model.RefreshToken;
 import com.magambell.server.common.enums.ErrorCode;
 import com.magambell.server.common.exception.TokenExpiredException;
 import com.magambell.server.user.domain.enums.UserRole;
@@ -96,5 +97,9 @@ public class JwtTokenProvider {
     private void saveRefreshToken(final Long userId, final String refreshToken) {
         RefreshTokenDTO refreshTokenDTO = new RefreshTokenDTO(refreshToken, userId);
         refreshTokenQueryPort.saveRefreshToken(refreshTokenDTO);
+    }
+
+    public RefreshToken getRefreshTokenByUserId(Long userId) {
+        return refreshTokenQueryPort.findByUserId(userId);
     }
 }

@@ -9,4 +9,6 @@ public interface AuthUseCase {
     JwtToken loginOrSignUp(SocialLoginServiceRequest request);
 
     void withdrawUser(SocialWithdrawServiceRequest request, CustomUserDetails customUserDetails);
+
+    JwtToken reissueAccessToken(String refreshToken);
 }
