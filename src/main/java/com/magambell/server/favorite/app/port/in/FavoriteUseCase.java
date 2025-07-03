@@ -10,4 +10,6 @@ public interface FavoriteUseCase {
     void deleteFavorite(Long storeId, Long userId);
 
     List<FavoriteStoreListDTOResponse> getFavoriteStoreList(FavoriteStoreListServiceRequest request);
+
+    boolean checkFavoriteStore(Long storeId, Long userId);
 }

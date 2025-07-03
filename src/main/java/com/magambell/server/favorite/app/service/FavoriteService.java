@@ -34,7 +34,7 @@ public class FavoriteService implements FavoriteUseCase {
         User user = userQueryPort.findById(userId);
         Store store = storeQueryPort.findById(storeId);
 
-        if (favoriteQueryPort.existsUserIdAndStoreId(user, store)) {
+        if (existsUserAndStore(user, store)) {
             throw new DuplicateException(ErrorCode.DUPLICATE_FAVORITE);
         }
 
@@ -54,5 +54,16 @@ public class FavoriteService implements FavoriteUseCase {
     public List<FavoriteStoreListDTOResponse> getFavoriteStoreList(final FavoriteStoreListServiceRequest request) {
         User user = userQueryPort.findById(request.userId());
         return favoriteQueryPort.getFavoriteStoreList(PageRequest.of(request.page() - 1, request.size()), user);
+    }
+
+    @Override
+    public boolean checkFavoriteStore(final Long storeId, final Long userId) {
+        User user = userQueryPort.findById(userId);
+        Store store = storeQueryPort.findById(storeId);
+        return existsUserAndStore(user, store);
+    }
+
+    private boolean existsUserAndStore(final User user, final Store store) {
+        return favoriteQueryPort.existsFavoriteUserAndStore(user, store);
     }
 }

@@ -61,4 +61,14 @@ public class FavoriteController {
                 request.toService(customUserDetails.userId()));
         return new Response<>(new FavoriteStoreListResponse(favoriteStoreList));
     }
+
+    @Operation(summary = "매장 즐겨찾기 확인")
+    @ApiResponse(responseCode = "200", content = {
+            @Content(schema = @Schema(implementation = Boolean.class))})
+    @GetMapping("/{storeId}")
+    public Response<Boolean> checkFavoriteStore(
+            @PathVariable final Long storeId,
+            @AuthenticationPrincipal final CustomUserDetails customUserDetails) {
+        return new Response<>(favoriteUseCase.checkFavoriteStore(storeId, customUserDetails.userId()));
+    }
 }

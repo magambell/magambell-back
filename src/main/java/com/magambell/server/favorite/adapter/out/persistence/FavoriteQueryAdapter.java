@@ -19,7 +19,7 @@ public class FavoriteQueryAdapter implements FavoriteQueryPort {
     private final FavoriteRepository favoriteRepository;
 
     @Override
-    public boolean existsUserIdAndStoreId(final User user, final Store store) {
+    public boolean existsFavoriteUserAndStore(final User user, final Store store) {
         return favoriteRepository.existsByUserIdAndStoreId(user.getId(), store.getId());
     }
 
