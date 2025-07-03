@@ -1,5 +1,6 @@
 package com.magambell.server.auth.adapter;
 
+import com.magambell.server.auth.adapter.in.web.ReissueAccessToken;
 import com.magambell.server.auth.adapter.in.web.SocialLoginRequest;
 import com.magambell.server.auth.adapter.in.web.SocialWithdrawRequest;
 import com.magambell.server.auth.app.port.in.AuthUseCase;
@@ -48,5 +49,18 @@ public class AuthController {
     public void withdraw(@RequestBody @Validated final SocialWithdrawRequest request,
                          @AuthenticationPrincipal final CustomUserDetails customUserDetails) {
         authUseCase.withdrawUser(request.toService(), customUserDetails);
+    }
+
+    @Operation(summary = "고객 토큰 재발행")
+    @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(
+            implementation = BaseResponse.class))})
+    @PostMapping("/token/reissue")
+    public Response<BaseResponse> reissueAccessToken(
+            @RequestBody @Validated ReissueAccessToken reissueAccessToken,
+            HttpServletResponse res) {
+        JwtToken jwtToken = authUseCase.reissueAccessToken(reissueAccessToken.refreshToken());
+        res.setHeader("Authorization", jwtToken.accessToken());
+        res.setHeader("RefreshToken", jwtToken.refreshToken());
+        return new Response<>();
     }
 }

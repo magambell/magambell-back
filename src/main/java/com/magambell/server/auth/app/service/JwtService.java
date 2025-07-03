@@ -4,6 +4,9 @@ import static com.magambell.server.auth.app.service.JwtTokenProvider.ACCESS_PREF
 import static com.magambell.server.auth.app.service.JwtTokenProvider.CLAIMS_USER_ROLE;
 
 import com.magambell.server.auth.domain.model.JwtToken;
+import com.magambell.server.auth.domain.model.RefreshToken;
+import com.magambell.server.common.enums.ErrorCode;
+import com.magambell.server.common.exception.TokenExpiredException;
 import com.magambell.server.user.domain.enums.UserRole;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jws;
@@ -19,6 +22,7 @@ public class JwtService {
 
     private final JwtTokenProvider jwtTokenProvider;
 
+    @Transactional
     public JwtToken createJwtToken(Long userId, UserRole userRole) {
         return jwtTokenProvider.createJwtToken(userId, userRole);
     }
@@ -40,6 +44,24 @@ public class JwtService {
         Jws<Claims> jwt = getJwt(tokenWithoutBearer);
 
         return jwt.getBody().getSubject() != null;
+    }
+
+    @Transactional
+    public JwtToken reissueAccessToken(String token) {
+        Long userId = getJwtUserId(token);
+        UserRole userRole = getJwtUserRole(token);
+
+        RefreshToken refreshToken = jwtTokenProvider.getRefreshTokenByUserId(userId);
+
+        if (!refreshToken.getRefreshToken().equals(token)) {
+            throw new TokenExpiredException(ErrorCode.JWT_VALIDATE_ERROR);
+        }
+
+        if (!refreshToken.getUserId().equals(userId)) {
+            throw new TokenExpiredException(ErrorCode.JWT_VALIDATE_ERROR);
+        }
+
+        return jwtTokenProvider.createJwtToken(refreshToken.getUserId(), userRole);
     }
 
     private Jws<Claims> getJwt(final String token) {
