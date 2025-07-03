@@ -32,6 +32,7 @@ import com.magambell.server.user.app.port.out.UserQueryPort;
 import com.magambell.server.user.domain.model.User;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
@@ -96,7 +97,7 @@ public class OrderService implements OrderUseCase {
     @Override
     public void approveOrder(final Long orderId, final Long userId, final LocalDateTime now) {
         User user = userQueryPort.findById(userId);
-        Order order = orderQueryPort.findWithAllById(orderId);
+        Order order = orderQueryPort.findOwnerWithAllById(orderId);
         validateApproveOrder(user, order, now);
         order.accepted();
     }
@@ -105,7 +106,7 @@ public class OrderService implements OrderUseCase {
     @Override
     public void rejectOrder(final Long orderId, final Long userId) {
         User user = userQueryPort.findById(userId);
-        Order order = orderQueryPort.findWithAllById(orderId);
+        Order order = orderQueryPort.findOwnerWithAllById(orderId);
 
         validateRejectOrder(user, order);
         order.rejected();
@@ -113,6 +114,20 @@ public class OrderService implements OrderUseCase {
         Payment payment = order.getPayment();
         stockUseCase.restoreStockIfNecessary(payment);
         portOnePort.cancelPayment(payment.getMerchantUid(), order.getTotalPrice(), "사장님 주문 취소");
+    }
+
+    @Transactional
+    @Override
+    public void cancelOrder(final Long orderId, final Long userId) {
+        User user = userQueryPort.findById(userId);
+        Order order = orderQueryPort.findWithAllById(orderId);
+
+        validateCancelOrder(user, order);
+        order.cancelled();
+
+        Payment payment = order.getPayment();
+        stockUseCase.restoreStockIfNecessary(payment);
+        portOnePort.cancelPayment(payment.getMerchantUid(), order.getTotalPrice(), "고객님 주문 취소");
     }
 
     private void validateOrderRequest(final CreateOrderServiceRequest request, final Goods goods) {
@@ -126,7 +141,11 @@ public class OrderService implements OrderUseCase {
     }
 
     private void validateApproveOrder(final User user, final Order order, final LocalDateTime now) {
-        validateOrderForDecision(user, order);
+        if (!order.isOwner(user)) {
+            throw new UnauthorizedException(ErrorCode.ORDER_NO_ACCESS);
+        }
+
+        validateOrderForDecision(order);
 
         if (order.getPickupTime().isBefore(now)) {
             throw new InvalidRequestException(ErrorCode.INVALID_PICKUP_TIME);
@@ -134,14 +153,22 @@ public class OrderService implements OrderUseCase {
     }
 
     private void validateRejectOrder(final User user, final Order order) {
-        validateOrderForDecision(user, order);
-    }
-
-    private void validateOrderForDecision(final User user, final Order order) {
         if (!order.isOwner(user)) {
             throw new UnauthorizedException(ErrorCode.ORDER_NO_ACCESS);
         }
 
+        validateOrderForDecision(order);
+    }
+
+    private void validateCancelOrder(final User user, final Order order) {
+        if (!Objects.equals(order.getUser().getId(), user.getId())) {
+            throw new UnauthorizedException(ErrorCode.ORDER_NO_ACCESS);
+        }
+
+        validateOrderForDecision(order);
+    }
+
+    private void validateOrderForDecision(final Order order) {
         if (order.getOrderStatus() == OrderStatus.ACCEPTED) {
             throw new InvalidRequestException(ErrorCode.ORDER_ALREADY_ACCEPTED);
         }

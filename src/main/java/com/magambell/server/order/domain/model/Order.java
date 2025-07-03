@@ -111,6 +111,7 @@ public class Order extends BaseTimeEntity {
 
     public void cancelled() {
         this.orderStatus = OrderStatus.CANCELED;
+        this.payment.cancel();
     }
 
     public void failed() {

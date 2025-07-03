@@ -81,6 +81,19 @@ public class OrderController {
         return new Response<>(orderDetail.toResponse());
     }
 
+    @PreAuthorize("hasRole('CUSTOMER')")
+    @Operation(summary = "고객 주문 취소")
+    @ApiResponse(responseCode = "200", content = {
+            @Content(schema = @Schema(implementation = BaseResponse.class))})
+    @PatchMapping("/cancel/{orderId}")
+    public Response<BaseResponse> cancelOrder(
+            @PathVariable final Long orderId,
+            @AuthenticationPrincipal final CustomUserDetails customUserDetails
+    ) {
+        orderUseCase.cancelOrder(orderId, customUserDetails.userId());
+        return new Response<>();
+    }
+
     @PreAuthorize("hasRole('OWNER')")
     @Operation(summary = "사장님 주문내역")
     @ApiResponse(responseCode = "200", content = {

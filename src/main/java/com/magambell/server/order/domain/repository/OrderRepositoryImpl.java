@@ -153,7 +153,7 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
     }
 
     @Override
-    public Optional<Order> findWithAllById(final Long orderId) {
+    public Optional<Order> findOwnerWithAllById(final Long orderId) {
         return Optional.ofNullable(
                 queryFactory
                         .selectFrom(order)
@@ -165,6 +165,26 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
                         .where(
                                 order.id.eq(orderId)
                                         .and(user.userRole.eq(UserRole.OWNER))
+                                        .and(user.userStatus.eq(UserStatus.ACTIVE))
+                                        .and(store.approved.eq(Approved.APPROVED))
+                        )
+                        .fetchOne()
+        );
+    }
+
+    @Override
+    public Optional<Order> findWithAllById(final Long orderId) {
+        return Optional.ofNullable(
+                queryFactory
+                        .selectFrom(order)
+                        .innerJoin(orderGoods).on(orderGoods.order.id.eq(order.id)).fetchJoin()
+                        .innerJoin(goods).on(goods.id.eq(orderGoods.goods.id)).fetchJoin()
+                        .innerJoin(store).on(store.id.eq(goods.store.id)).fetchJoin()
+                        .innerJoin(payment).on(payment.order.id.eq(order.id)).fetchJoin()
+                        .innerJoin(user).on(user.id.eq(order.user.id)).fetchJoin()
+                        .where(
+                                order.id.eq(orderId)
+                                        .and(user.userRole.eq(UserRole.CUSTOMER))
                                         .and(user.userStatus.eq(UserStatus.ACTIVE))
                                         .and(store.approved.eq(Approved.APPROVED))
                         )

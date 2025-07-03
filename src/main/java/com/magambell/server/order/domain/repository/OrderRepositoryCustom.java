@@ -15,5 +15,7 @@ public interface OrderRepositoryCustom {
 
     List<OrderStoreListDTO> getOrderStoreList(Pageable pageable, Long userId);
 
+    Optional<Order> findOwnerWithAllById(Long orderId);
+
     Optional<Order> findWithAllById(Long orderId);
 }

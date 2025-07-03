@@ -42,6 +42,12 @@ public class OrderQueryAdapter implements OrderQueryPort {
     }
 
     @Override
+    public Order findOwnerWithAllById(final Long orderId) {
+        return orderRepository.findOwnerWithAllById(orderId)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.ORDER_NOT_FOUND));
+    }
+
+    @Override
     public Order findWithAllById(final Long orderId) {
         return orderRepository.findWithAllById(orderId)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.ORDER_NOT_FOUND));
