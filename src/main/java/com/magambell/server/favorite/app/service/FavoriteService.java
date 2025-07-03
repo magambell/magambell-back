@@ -3,14 +3,18 @@ package com.magambell.server.favorite.app.service;
 import com.magambell.server.common.enums.ErrorCode;
 import com.magambell.server.common.exception.DuplicateException;
 import com.magambell.server.favorite.app.port.in.FavoriteUseCase;
+import com.magambell.server.favorite.app.port.in.request.FavoriteStoreListServiceRequest;
 import com.magambell.server.favorite.app.port.out.FavoriteCommandPort;
 import com.magambell.server.favorite.app.port.out.FavoriteQueryPort;
+import com.magambell.server.favorite.app.port.out.response.FavoriteStoreListDTOResponse;
 import com.magambell.server.favorite.domain.model.Favorite;
 import com.magambell.server.store.app.port.out.StoreQueryPort;
 import com.magambell.server.store.domain.model.Store;
 import com.magambell.server.user.app.port.out.UserQueryPort;
 import com.magambell.server.user.domain.model.User;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -44,5 +48,11 @@ public class FavoriteService implements FavoriteUseCase {
         Store store = storeQueryPort.findById(storeId);
         Favorite favorite = favoriteQueryPort.findByUserAndStore(user, store);
         favoriteCommandPort.deleteFavorite(favorite);
+    }
+
+    @Override
+    public List<FavoriteStoreListDTOResponse> getFavoriteStoreList(final FavoriteStoreListServiceRequest request) {
+        User user = userQueryPort.findById(request.userId());
+        return favoriteQueryPort.getFavoriteStoreList(PageRequest.of(request.page() - 1, request.size()), user);
     }
 }
