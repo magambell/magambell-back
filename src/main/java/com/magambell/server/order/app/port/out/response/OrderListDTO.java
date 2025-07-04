@@ -8,14 +8,19 @@ public record OrderListDTO(
         Long orderId,
         OrderStatus orderStatus,
         LocalDateTime createdAt,
-        Integer quantity,
-        Integer salePrice,
         Long storeId,
         String storeName,
         List<String> imageUrls,
-        String goodsName,
-        Long reviewId
+        List<OrderGoodsInfo> goodsList,
+        List<Long> reviewIds
 ) {
+    public record OrderGoodsInfo(
+            String goodsName,
+            Integer quantity,
+            Integer salePrice
+    ) {
+    }
+
     public String getOrderId() {
         return String.valueOf(orderId);
     }
@@ -24,7 +29,9 @@ public record OrderListDTO(
         return String.valueOf(storeId);
     }
 
-    public String getReviewId() {
-        return String.valueOf(reviewId);
+    public List<String> getReviewIds() {
+        return reviewIds.stream()
+                .map(String::valueOf)
+                .toList();
     }
 }

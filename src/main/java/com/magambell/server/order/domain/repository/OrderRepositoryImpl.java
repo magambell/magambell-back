@@ -55,18 +55,19 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
                 .transform(
                         groupBy(order.id)
                                 .list(
-                                        Projections.constructor(
-                                                OrderListDTO.class,
+                                        Projections.constructor(OrderListDTO.class,
                                                 order.id,
                                                 order.orderStatus,
                                                 order.createdAt,
-                                                orderGoods.quantity,
-                                                orderGoods.salePrice,
                                                 store.id,
                                                 store.name,
                                                 list(storeImage.name),
-                                                goods.name,
-                                                review.id.min()
+                                                list(Projections.constructor(OrderListDTO.OrderGoodsInfo.class,
+                                                        goods.name,
+                                                        orderGoods.quantity,
+                                                        orderGoods.salePrice
+                                                )),
+                                                list(review.id)
                                         )
                                 )
                 );
