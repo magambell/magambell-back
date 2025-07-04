@@ -39,3 +39,4 @@ out/
 .vscode/
 /src/main/generated/
 /data/magambell-db.mv.db
+/config/firebase-service-account.json

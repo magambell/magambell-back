@@ -64,6 +64,9 @@ dependencies {
 
     // apple jwt 관련
     implementation 'com.nimbusds:nimbus-jose-jwt:9.38'
+
+    // fcm
+    implementation 'com.google.firebase:firebase-admin:9.5.0'
 }
 
 tasks.named('test') {

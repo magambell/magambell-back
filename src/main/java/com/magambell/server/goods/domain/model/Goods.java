@@ -28,6 +28,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AccessLevel;
@@ -122,7 +123,7 @@ public class Goods extends BaseTimeEntity {
         stockHistory.addGoods(this);
     }
 
-    public void changeStatus(final User user, final SaleStatus saleStatus, final LocalDate today) {
+    public void changeStatus(final User user, final SaleStatus saleStatus, final LocalDateTime today) {
         if (!this.store.isOwnedBy(user)) {
             throw new InvalidRequestException(ErrorCode.INVALID_GOODS_OWNER);
         }
@@ -162,13 +163,18 @@ public class Goods extends BaseTimeEntity {
         }
     }
 
-    private void adjustDatesToTodayIfNeeded(final LocalDate today) {
-        if (!this.startTime.toLocalDate().equals(today)) {
-            this.startTime = LocalDateTime.of(today, this.startTime.toLocalTime());
+    private void adjustDatesToTodayIfNeeded(final LocalDateTime today) {
+        LocalTime currentTime = today.toLocalTime();
+        LocalDate baseDate = today.toLocalDate();
+
+        LocalTime start = this.startTime.toLocalTime();
+        LocalTime end = this.endTime.toLocalTime();
+
+        if (currentTime.isAfter(end)) {
+            baseDate = today.toLocalDate().plusDays(1);
         }
 
-        if (!this.endTime.toLocalDate().equals(today)) {
-            this.endTime = LocalDateTime.of(today, this.endTime.toLocalTime());
-        }
+        this.startTime = LocalDateTime.of(baseDate, start);
+        this.endTime = LocalDateTime.of(baseDate, end);
     }
 }

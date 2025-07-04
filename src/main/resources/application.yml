@@ -35,6 +35,11 @@ portone:
     api-key: ${PORT_ONE_API_KEY:test-api-key}
     web-hook: ${PORT_ONE_WEB_HOOK:test-web-hook}
 
+firebase:
+  config:
+    path: config/firebase-service-account.json
+    json: ${FIREBASE_CONFIG_JSON:test}
+
 ---
 spring:
   config:
@@ -93,3 +98,7 @@ spring:
     database-platform: org.hibernate.dialect.MariaDBDialect
     hibernate:
       ddl-auto: none
+
+firebase:
+  config:
+    json: ${FIREBASE_CONFIG_JSON}

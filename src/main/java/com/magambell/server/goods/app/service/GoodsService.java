@@ -9,16 +9,21 @@ import com.magambell.server.goods.app.port.in.request.EditGoodsServiceRequest;
 import com.magambell.server.goods.app.port.in.request.RegisterGoodsServiceRequest;
 import com.magambell.server.goods.app.port.out.GoodsCommandPort;
 import com.magambell.server.goods.app.port.out.GoodsQueryPort;
+import com.magambell.server.goods.domain.enums.SaleStatus;
 import com.magambell.server.goods.domain.model.Goods;
+import com.magambell.server.notification.app.port.in.NotificationUseCase;
+import com.magambell.server.notification.app.port.in.request.NotifyStoreOpenRequest;
 import com.magambell.server.store.app.port.out.StoreQueryPort;
 import com.magambell.server.store.domain.model.Store;
 import com.magambell.server.user.app.port.out.UserQueryPort;
 import com.magambell.server.user.domain.model.User;
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
@@ -28,6 +33,7 @@ public class GoodsService implements GoodsUseCase {
     private final StoreQueryPort storeQueryPort;
     private final GoodsCommandPort goodsCommandPort;
     private final GoodsQueryPort goodsQueryPort;
+    private final NotificationUseCase notificationUseCase;
 
     @Transactional
     @Override
@@ -40,10 +46,18 @@ public class GoodsService implements GoodsUseCase {
 
     @Transactional
     @Override
-    public void changeGoodsStatus(final ChangeGoodsStatusServiceRequest request, final LocalDate today) {
+    public void changeGoodsStatus(final ChangeGoodsStatusServiceRequest request, final LocalDateTime today) {
         User user = userQueryPort.findById(request.userId());
         Goods goods = goodsQueryPort.findWithStoreAndUserById(request.goodsId());
         goods.changeStatus(user, request.saleStatus(), today);
+
+        if (request.saleStatus() == SaleStatus.ON) {
+            notificationUseCase.notifyStoreOpen(new NotifyStoreOpenRequest(
+                    goods.getStore(),
+                    goods.getStore().getName() + " 매장이 오픈했습니다.",
+                    goods.getStore().getName() + " 매장이 오픈했습니다."
+            ));
+        }
     }
 
     @Transactional

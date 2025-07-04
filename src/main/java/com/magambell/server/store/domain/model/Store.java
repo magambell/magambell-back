@@ -3,6 +3,7 @@ package com.magambell.server.store.domain.model;
 import com.magambell.server.common.BaseTimeEntity;
 import com.magambell.server.favorite.domain.model.Favorite;
 import com.magambell.server.goods.domain.model.Goods;
+import com.magambell.server.notification.domain.model.FcmToken;
 import com.magambell.server.store.app.port.in.dto.RegisterStoreDTO;
 import com.magambell.server.store.domain.enums.Approved;
 import com.magambell.server.store.domain.enums.Bank;
@@ -64,6 +65,9 @@ public class Store extends BaseTimeEntity {
     @OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
     private List<Favorite> favorites = new ArrayList<>();
 
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
+    private List<FcmToken> fcmTokens = new ArrayList<>();
+
     @Builder(access = AccessLevel.PRIVATE)
     private Store(final String name, final String address, final Double latitude, final Double longitude,
                   final String ownerName, final String ownerPhone,
@@ -119,5 +123,9 @@ public class Store extends BaseTimeEntity {
 
     public void addFavorite(final Favorite favorite) {
         this.favorites.add(favorite);
+    }
+
+    public void addFcmToken(final FcmToken fcmToken) {
+        this.fcmTokens.add(fcmToken);
     }
 }

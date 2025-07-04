@@ -2,6 +2,7 @@ package com.magambell.server.user.domain.model;
 
 import com.magambell.server.common.BaseTimeEntity;
 import com.magambell.server.favorite.domain.model.Favorite;
+import com.magambell.server.notification.domain.model.FcmToken;
 import com.magambell.server.order.domain.model.Order;
 import com.magambell.server.review.domain.model.Review;
 import com.magambell.server.store.domain.model.Store;
@@ -68,6 +69,9 @@ public class User extends BaseTimeEntity {
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
     private List<Favorite> favorites = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<FcmToken> fcmTokens = new ArrayList<>();
+
     @Builder(access = AccessLevel.PRIVATE)
     private User(final String email, final String password, final String name, final String nickName,
                  final String phoneNumber,
@@ -132,5 +136,9 @@ public class User extends BaseTimeEntity {
 
     public void editNickName(final String nickName) {
         this.nickName = nickName;
+    }
+
+    public void addFcmToken(final FcmToken fcmToken) {
+        this.fcmTokens.add(fcmToken);
     }
 }
