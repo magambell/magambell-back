@@ -32,6 +32,7 @@ public class FirebaseConfig {
     @PostConstruct
     public void init() {
         try {
+            log.info("Loading Firebase config");
             InputStream serviceAccount;
 
             if (isProdProfile() && !firebaseConfigJson.isBlank()) {

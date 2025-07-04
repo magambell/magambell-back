@@ -1,13 +1,18 @@
 package com.magambell.server.goods.app.service;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.doNothing;
 
+import com.google.firebase.messaging.FirebaseMessagingException;
 import com.magambell.server.auth.domain.ProviderType;
 import com.magambell.server.goods.app.port.in.dto.RegisterGoodsDTO;
+import com.magambell.server.goods.app.port.in.request.ChangeGoodsStatusServiceRequest;
 import com.magambell.server.goods.app.port.in.request.EditGoodsServiceRequest;
 import com.magambell.server.goods.app.port.in.request.RegisterGoodsServiceRequest;
+import com.magambell.server.goods.domain.enums.SaleStatus;
 import com.magambell.server.goods.domain.model.Goods;
 import com.magambell.server.goods.domain.repository.GoodsRepository;
+import com.magambell.server.notification.infra.FirebaseNotificationSender;
 import com.magambell.server.stock.domain.repository.StockHistoryRepository;
 import com.magambell.server.stock.domain.repository.StockRepository;
 import com.magambell.server.store.app.port.in.dto.RegisterStoreDTO;
@@ -28,6 +33,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles("test")
@@ -54,6 +60,9 @@ class GoodsServiceTest {
 
     @Autowired
     private StockHistoryRepository stockHistoryRepository;
+
+    @MockBean
+    private FirebaseNotificationSender firebaseNotificationSender;
 
     private User user;
     private Store store;
@@ -162,5 +171,37 @@ class GoodsServiceTest {
         assertThat(goods.getStockQuantity()).isEqualTo(5);
         assertThat(stockHistoryRepository.findAll()).hasSize(2);
         assertThat(stockHistoryRepository.findAll().get(1).getResultQuantity()).isEqualTo(5);
+    }
+
+    @DisplayName("사장님 판매 상태 변경")
+    @Test
+    void changeGoodsStatus() throws FirebaseMessagingException {
+        // given
+        RegisterGoodsDTO dto = new RegisterGoodsDTO(
+                LocalDateTime.of(2025, 1, 1, 9, 0),
+                LocalDateTime.of(2025, 1, 1, 18, 0),
+                3, 10000, 10, 9000,
+                "상품설명",
+                store);
+        Store store = dto.store();
+        Goods dtoGoods = dto.toGoods();
+
+        store.addGoods(dtoGoods);
+        Goods saveGoods = goodsRepository.save(dtoGoods);
+        ChangeGoodsStatusServiceRequest request = new ChangeGoodsStatusServiceRequest(
+                saveGoods.getId(), SaleStatus.ON, user.getId());
+
+        LocalDateTime localDateTime = LocalDateTime.of(2025, 1, 1, 19, 0);
+
+        // when
+        doNothing().when(firebaseNotificationSender)
+                .send("testToken", "테스트 매장", "테스트 매장");
+        goodsService.changeGoodsStatus(request, localDateTime);
+
+        // then
+        List<Goods> goodsList = goodsRepository.findAll();
+        assertThat(goodsList).hasSize(1);
+        assertThat(goodsList.get(0).getSaleStatus()).isEqualTo(SaleStatus.ON);
+        assertThat(goodsList.get(0).getStartTime()).isEqualTo(LocalDateTime.of(2025, 1, 2, 9, 0));
     }
 }

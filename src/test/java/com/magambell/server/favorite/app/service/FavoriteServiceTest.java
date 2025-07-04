@@ -25,7 +25,6 @@ import com.magambell.server.user.domain.enums.UserRole;
 import com.magambell.server.user.domain.model.User;
 import com.magambell.server.user.domain.repository.UserRepository;
 import com.magambell.server.user.domain.repository.UserSocialAccountRepository;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
 import org.junit.jupiter.api.AfterEach;
@@ -223,7 +222,7 @@ class FavoriteServiceTest {
         goods.addStock(stock);
 
         userRepository.save(owner);
-        goods.changeStatus(owner, ON, LocalDate.of(2025, 1, 1));
+        goods.changeStatus(owner, ON, LocalDateTime.of(2025, 1, 1, 8, 0));
         return store;
     }
 }

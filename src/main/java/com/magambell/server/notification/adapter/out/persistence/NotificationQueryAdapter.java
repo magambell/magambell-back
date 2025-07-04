@@ -2,9 +2,11 @@ package com.magambell.server.notification.adapter.out.persistence;
 
 import com.magambell.server.common.annotation.Adapter;
 import com.magambell.server.notification.app.port.out.NotificationQueryPort;
+import com.magambell.server.notification.domain.model.FcmToken;
 import com.magambell.server.notification.domain.repository.FcmTokenRepository;
 import com.magambell.server.store.domain.model.Store;
 import com.magambell.server.user.domain.model.User;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -16,5 +18,10 @@ public class NotificationQueryAdapter implements NotificationQueryPort {
     @Override
     public boolean existsByUserAndStore(final User user, final Store store) {
         return fcmTokenRepository.existsByUserIdAndStoreId(user.getId(), store.getId());
+    }
+
+    @Override
+    public List<FcmToken> findByStoreId(final Long storeId) {
+        return fcmTokenRepository.findByStoreId(storeId);
     }
 }

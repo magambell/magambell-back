@@ -71,6 +71,8 @@ public enum ErrorCode {
     JWT_VERIFY_EXPIRED("인증정보가 만료 됐습니다."),
     JWT_VALIDATE_ERROR("유효한 인증정보가 아닙니다."),
 
-    FIREBASE_INIT_FAILED("Firebase 초기화에 실패했습니다.");
+    FIREBASE_INIT_FAILED("Firebase 초기화에 실패했습니다."),
+    FIREBASE_SEND_FAILED("Firebase 메세지 발송에 실패했습니다.."),
+    ;
     private final String message;
 }
