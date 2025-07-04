@@ -98,7 +98,3 @@ spring:
     database-platform: org.hibernate.dialect.MariaDBDialect
     hibernate:
       ddl-auto: none
-
-firebase:
-  config:
-    json: ${FIREBASE_CONFIG_JSON}
