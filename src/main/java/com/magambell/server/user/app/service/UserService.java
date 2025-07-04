@@ -15,6 +15,7 @@ import com.magambell.server.user.app.port.in.UserUseCase;
 import com.magambell.server.user.app.port.in.dto.UserEmailDTO;
 import com.magambell.server.user.app.port.in.request.LoginServiceRequest;
 import com.magambell.server.user.app.port.in.request.RegisterServiceRequest;
+import com.magambell.server.user.app.port.in.request.UserEditServiceRequest;
 import com.magambell.server.user.app.port.out.UserCommandPort;
 import com.magambell.server.user.app.port.out.UserEmailQueryPort;
 import com.magambell.server.user.app.port.out.UserQueryPort;
@@ -57,6 +58,13 @@ public class UserService implements UserUseCase {
         UserInfoDTO userInfoDTO = userQueryPort.getUserInfo(customUserDetails.userId());
         validateOwner(userInfoDTO.userRole(), userInfoDTO.approved());
         return userInfoDTO.toResponse();
+    }
+
+    @Transactional
+    @Override
+    public void userEdit(final UserEditServiceRequest request) {
+        User user = userQueryPort.findById(request.userId());
+        user.editNickName(request.nickName());
     }
 
     private void validateEmailAndAuthCode(final String email, final String authCode) {

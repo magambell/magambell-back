@@ -129,4 +129,8 @@ public class User extends BaseTimeEntity {
     public void addFavorite(final Favorite favorite) {
         this.favorites.add(favorite);
     }
+
+    public void editNickName(final String nickName) {
+        this.nickName = nickName;
+    }
 }
