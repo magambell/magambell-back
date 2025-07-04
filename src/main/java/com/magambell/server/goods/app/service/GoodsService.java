@@ -18,6 +18,7 @@ import com.magambell.server.store.domain.model.Store;
 import com.magambell.server.user.app.port.out.UserQueryPort;
 import com.magambell.server.user.domain.model.User;
 import java.time.LocalDateTime;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -65,6 +66,13 @@ public class GoodsService implements GoodsUseCase {
     public void editGoods(final EditGoodsServiceRequest request) {
         Goods goods = goodsQueryPort.findOwnedGoodsWithRelations(request.goodsId(), request.userId());
         goods.edit(request.toDTO());
+    }
+
+    @Transactional
+    @Override
+    public void changeSaleStatusToOff(final LocalDateTime now) {
+        List<Goods> expiredGoods = goodsQueryPort.findExpiredGoods(now);
+        expiredGoods.forEach(Goods::changeSaleStatusToOffBySystem);
     }
 
     private Store getStore(final User user) {

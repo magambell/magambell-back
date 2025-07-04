@@ -11,4 +11,6 @@ public interface GoodsUseCase {
     void changeGoodsStatus(ChangeGoodsStatusServiceRequest request, LocalDateTime today);
 
     void editGoods(EditGoodsServiceRequest request);
+
+    void changeSaleStatusToOff(LocalDateTime now);
 }

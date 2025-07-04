@@ -6,6 +6,8 @@ import com.magambell.server.common.exception.NotFoundException;
 import com.magambell.server.goods.app.port.out.GoodsQueryPort;
 import com.magambell.server.goods.domain.model.Goods;
 import com.magambell.server.goods.domain.repository.GoodsRepository;
+import java.time.LocalDateTime;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -34,5 +36,10 @@ public class GoodsQueryAdapter implements GoodsQueryPort {
     public Goods findOwnedGoodsWithRelations(final Long goodsId, final Long userId) {
         return goodsRepository.findOwnedGoodsWithRelations(goodsId, userId)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.GOODS_NOT_FOUND));
+    }
+
+    @Override
+    public List<Goods> findExpiredGoods(final LocalDateTime now) {
+        return goodsRepository.findExpiredGoods(now);
     }
 }

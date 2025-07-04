@@ -204,4 +204,30 @@ class GoodsServiceTest {
         assertThat(goodsList.get(0).getSaleStatus()).isEqualTo(SaleStatus.ON);
         assertThat(goodsList.get(0).getStartTime()).isEqualTo(LocalDateTime.of(2025, 1, 2, 9, 0));
     }
+
+    @DisplayName("자동 판매 종료")
+    @Test
+    void changeSaleStatusToOff() {
+        // given
+        RegisterGoodsDTO dto = new RegisterGoodsDTO(
+                LocalDateTime.of(2025, 1, 1, 9, 0),
+                LocalDateTime.of(2025, 1, 1, 18, 0),
+                3, 10000, 10, 9000,
+                "상품설명",
+                store);
+        Store store = dto.store();
+        Goods dtoGoods = dto.toGoods();
+
+        store.addGoods(dtoGoods);
+        Goods saveGoods = goodsRepository.save(dtoGoods);
+        LocalDateTime localDateTime = LocalDateTime.of(2025, 1, 1, 19, 0);
+
+        // when
+        goodsService.changeSaleStatusToOff(localDateTime);
+
+        // then
+        List<Goods> goodsList = goodsRepository.findAll();
+        assertThat(goodsList).hasSize(1);
+        assertThat(goodsList.get(0).getSaleStatus()).isEqualTo(SaleStatus.OFF);
+    }
 }
