@@ -231,6 +231,11 @@ class ReviewServiceTest {
     }
 
     private Review createReview(int i) {
+        CreateOrderDTO createOrderDTO = new CreateOrderDTO(user, goods, 1, 9000, LocalDateTime.now(), "test");
+        Order createOrder = createOrderDTO.toOrder();
+        createOrder.completed();
+        order = orderRepository.save(createOrder);
+
         RegisterReviewDTO dto = new RegisterReviewDTO(
                 order.getId(),
                 i,

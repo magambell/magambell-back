@@ -1,6 +1,7 @@
 package com.magambell.server.order.app.service;
 
 import static com.magambell.server.order.domain.enums.OrderStatus.COMPLETED;
+import static com.magambell.server.order.domain.enums.OrderStatus.PAID;
 import static com.magambell.server.payment.app.service.PaymentService.MERCHANT_UID_PREFIX;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
@@ -186,16 +187,21 @@ class OrderServiceTest {
         createOrder.completed();
         orderRepository.save(createOrder);
 
+        CreateOrderDTO createOrderDTO2 = new CreateOrderDTO(user, goods, 1, 9000, LocalDateTime.now(), "test");
+        Order createOrder2 = createOrderDTO2.toOrder();
+        createOrder2.paid();
+        orderRepository.save(createOrder2);
+
         CustomerOrderListServiceRequest pageRequest = new CustomerOrderListServiceRequest(1, 10);
 
         // when
         List<OrderListDTO> orderList = orderService.getOrderList(pageRequest, user.getId());
 
         // then
-        assertThat(orderList.size()).isEqualTo(1);
+        assertThat(orderList.size()).isEqualTo(2);
         OrderListDTO orderListDTO = orderList.get(0);
-        assertThat(orderListDTO.orderStatus()).isEqualTo(COMPLETED);
-        assertThat(orderListDTO.salePrice()).isEqualTo(9000);
+        assertThat(orderListDTO.orderStatus()).isEqualTo(PAID);
+        assertThat(orderListDTO.goodsList().get(0).salePrice()).isEqualTo(9000);
     }
 
     @DisplayName("고객 주문상세")
