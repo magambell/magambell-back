@@ -151,6 +151,10 @@ public class Goods extends BaseTimeEntity {
         this.addStockHistory(stockHistory);
     }
 
+    public void changeSaleStatusToOffBySystem() {
+        this.saleStatus = OFF;
+    }
+
     private void validateTime(final LocalDateTime start, final LocalDateTime end) {
         if (!start.isBefore(end)) {
             throw new InvalidRequestException(ErrorCode.TIME_VALID);
