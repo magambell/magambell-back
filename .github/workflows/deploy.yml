@@ -68,6 +68,7 @@ jobs:
             --build-arg PORT_ONE_STORE_ID=${{ secrets.PORT_ONE_STORE_ID }} \
             --build-arg PORT_ONE_API_KEY=${{ secrets.PORT_ONE_API_KEY }} \
             --build-arg PORT_ONE_WEB_HOOK=${{ secrets.PORT_ONE_WEB_HOOK }} \
+            --build-arg FIREBASE_CONFIG_JSON=${{ secrets.FIREBASE_CONFIG_JSON }} \
             --build-arg SPRING_PROFILES_ACTIVE=prod \
             .
           
@@ -98,6 +99,7 @@ jobs:
             export PORT_ONE_STORE_ID=${{ secrets.PORT_ONE_STORE_ID }}
             export PORT_ONE_API_KEY=${{ secrets.PORT_ONE_API_KEY }}
             export PORT_ONE_WEB_HOOK=${{ secrets.PORT_ONE_WEB_HOOK }}
+            export FIREBASE_CONFIG_JSON=${{ secrets.FIREBASE_CONFIG_JSON }}
             export SPRING_PROFILES_ACTIVE=prod
             sudo -E bash /home/ubuntu/deploy.sh
             
