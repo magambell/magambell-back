@@ -8,7 +8,7 @@ import com.magambell.server.common.exception.InternalServerException;
 import jakarta.annotation.PostConstruct;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
-import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
@@ -31,7 +31,8 @@ public class FirebaseConfig {
                 log.warn("Firebase config JSON is missing or invalid. Skipping Firebase initialization.");
                 return;
             }
-            InputStream serviceAccount = new ByteArrayInputStream(firebaseConfigJson.getBytes(StandardCharsets.UTF_8));
+            byte[] decoded = Base64.getDecoder().decode(firebaseConfigJson);
+            InputStream serviceAccount = new ByteArrayInputStream(decoded);
 
             FirebaseOptions options = FirebaseOptions.builder()
                     .setCredentials(GoogleCredentials.fromStream(serviceAccount))
