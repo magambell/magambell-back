@@ -11,6 +11,7 @@ public record ReviewListDTO(
         String description,
         LocalDateTime createdAt,
         List<String> imageUrls,
+        String nickName,
         Long goodsId,
         Long storeId
 ) {

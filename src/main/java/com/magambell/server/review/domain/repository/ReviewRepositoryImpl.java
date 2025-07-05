@@ -52,7 +52,7 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
                 .innerJoin(orderGoods).on(orderGoods.order.id.eq(order.id))
                 .innerJoin(goods).on(goods.id.eq(orderGoods.goods.id))
                 .innerJoin(store).on(store.id.eq(goods.store.id))
-                .innerJoin(user).on(user.id.eq(store.user.id))
+                .innerJoin(user).on(user.id.eq(review.user.id))
                 .where(conditions)
                 .orderBy(review.createdAt.desc())
                 .offset(pageable.getOffset())
@@ -68,6 +68,7 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
                                                 review.description,
                                                 review.createdAt,
                                                 list(reviewImage.name),
+                                                user.nickName,
                                                 goods.id,
                                                 store.id
                                         )
@@ -95,7 +96,7 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
                 .innerJoin(orderGoods).on(orderGoods.order.id.eq(order.id))
                 .innerJoin(goods).on(goods.id.eq(orderGoods.goods.id))
                 .innerJoin(store).on(store.id.eq(goods.store.id))
-                .innerJoin(user).on(user.id.eq(store.user.id))
+                .innerJoin(user).on(user.id.eq(review.user.id))
                 .where(conditions)
                 .groupBy(review.rating)
                 .fetch();
@@ -120,7 +121,7 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
                 }
             }
         }
-        
+
         double averageRating = totalCount > 0 ? Math.round(((double) ratingSum / totalCount) * 10.0) / 10.0 : 0.0;
 
         return new ReviewRatingSummaryDTO(
