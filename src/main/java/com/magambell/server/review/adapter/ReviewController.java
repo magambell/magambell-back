@@ -6,9 +6,11 @@ import com.magambell.server.review.adapter.in.web.RegisterReviewRequest;
 import com.magambell.server.review.adapter.in.web.ReviewListRequest;
 import com.magambell.server.review.adapter.in.web.ReviewRatingAllRequest;
 import com.magambell.server.review.adapter.out.persistence.ReviewListResponse;
+import com.magambell.server.review.adapter.out.persistence.ReviewRatingSummaryResponse;
 import com.magambell.server.review.adapter.out.persistence.ReviewRegisterResponse;
 import com.magambell.server.review.app.port.in.ReviewUseCase;
 import com.magambell.server.review.app.port.out.response.ReviewListDTO;
+import com.magambell.server.review.app.port.out.response.ReviewRatingSummaryDTO;
 import com.magambell.server.review.app.port.out.response.ReviewRegisterResponseDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -61,14 +63,14 @@ public class ReviewController {
         return new Response<>(new ReviewListResponse(reviewList));
     }
 
-    @Operation(summary = "리뷰 리스트")
+    @Operation(summary = "리뷰 리스트 평점별 조회")
     @ApiResponse(responseCode = "200", content = {
-            @Content(schema = @Schema(implementation = ReviewListResponse.class))})
+            @Content(schema = @Schema(implementation = ReviewRatingSummaryResponse.class))})
     @GetMapping("/rating")
-    public Response<ReviewListResponse> getReviewRatingAll(
+    public Response<ReviewRatingSummaryResponse> getReviewRatingAll(
             @ModelAttribute @Validated final ReviewRatingAllRequest request
     ) {
-        reviewUseCase.getReviewRatingAll(request.toServiceRequest());
-        return new Response<>();
+        ReviewRatingSummaryDTO reviewRatingAll = reviewUseCase.getReviewRatingAll(request.toServiceRequest());
+        return new Response<>(reviewRatingAll.toResponse());
     }
 }
