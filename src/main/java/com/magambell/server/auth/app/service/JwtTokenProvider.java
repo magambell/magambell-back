@@ -69,11 +69,10 @@ public class JwtTokenProvider {
     }
 
     private String createRefreshToken(Long userId, UserRole userRole) {
-        String token =
-                REFRESH_PREFIX_STRING + createToken(refreshTokenValiditySeconds, String.valueOf(userId), userRole);
+        String token = createToken(refreshTokenValiditySeconds, String.valueOf(userId), userRole);
         deleteRefreshToken(userId);
         saveRefreshToken(userId, token);
-        return token;
+        return REFRESH_PREFIX_STRING + token;
     }
 
     private String createToken(Long validityTime, String subject, UserRole userRole) {
