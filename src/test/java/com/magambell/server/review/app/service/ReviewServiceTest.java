@@ -18,6 +18,7 @@ import com.magambell.server.payment.domain.repository.PaymentRepository;
 import com.magambell.server.review.app.port.in.dto.RegisterReviewDTO;
 import com.magambell.server.review.app.port.in.request.RegisterReviewServiceRequest;
 import com.magambell.server.review.app.port.in.request.ReviewListServiceRequest;
+import com.magambell.server.review.app.port.in.request.ReviewMyServiceRequest;
 import com.magambell.server.review.app.port.in.request.ReviewRatingAllServiceRequest;
 import com.magambell.server.review.app.port.out.response.ReviewListDTO;
 import com.magambell.server.review.app.port.out.response.ReviewRatingSummaryDTO;
@@ -203,7 +204,7 @@ class ReviewServiceTest {
         assertThat(reviewList.get(0).goodsId()).isEqualTo(goods.getId());
     }
 
-    @DisplayName("리뷰를 리스트를 출력한다.")
+    @DisplayName("리뷰를 리스트 평점별 조회")
     @Test
     void getReviewRatingAll() {
         // given
@@ -228,6 +229,32 @@ class ReviewServiceTest {
         assertThat(reviewRatingAll.averageRating()).isEqualTo(3.2);
         assertThat(reviewRatingAll.totalCount()).isEqualTo(6);
         assertThat(reviewRatingAll.rating2Count()).isEqualTo(2);
+    }
+
+    @DisplayName("내가 작성한 리뷰 목록")
+    @Test
+    void getReviewListByUser() {
+        // given
+        RegisterReviewDTO dto = new RegisterReviewDTO(
+                order.getId(),
+                2,
+                List.of(FRIENDLY, AFFORDABLE, ZERO),
+                "test",
+                List.of(),
+                user,
+                order
+        );
+        reviewRepository.save(Review.create(dto));
+        ReviewMyServiceRequest request = new ReviewMyServiceRequest(1, 10, user.getId());
+
+        // when
+        List<ReviewListDTO> reviewList = reviewService.getReviewListByUser(request);
+
+        // then
+        assertThat(reviewList).isNotNull();
+        assertThat(reviewList.get(0).satisfactionReasons().get(0)).isEqualTo(FRIENDLY);
+        assertThat(reviewList.get(0).description()).isEqualTo("test");
+        assertThat(reviewList.get(0).nickName()).isEqualTo(user.getNickName());
     }
 
     private Review createReview(int i) {

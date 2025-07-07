@@ -11,4 +11,6 @@ public interface ReviewRepositoryCustom {
     List<ReviewListDTO> getReviewList(ReviewListServiceRequest request, Pageable pageable);
 
     ReviewRatingSummaryDTO getReviewRatingAll(ReviewRatingAllServiceRequest request);
+
+    List<ReviewListDTO> getReviewListByUser(Long userId, Pageable pageable);
 }

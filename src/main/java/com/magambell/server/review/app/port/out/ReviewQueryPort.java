@@ -15,4 +15,6 @@ public interface ReviewQueryPort {
     List<ReviewListDTO> getReviewList(ReviewListServiceRequest request, Pageable pageable);
 
     ReviewRatingSummaryDTO getReviewRatingAll(ReviewRatingAllServiceRequest request);
+
+    List<ReviewListDTO> getReviewListByUser(User user, Pageable pageable);
 }
