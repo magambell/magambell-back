@@ -9,6 +9,7 @@ import com.magambell.server.order.domain.model.Order;
 import com.magambell.server.review.app.port.in.ReviewUseCase;
 import com.magambell.server.review.app.port.in.request.RegisterReviewServiceRequest;
 import com.magambell.server.review.app.port.in.request.ReviewListServiceRequest;
+import com.magambell.server.review.app.port.in.request.ReviewMyServiceRequest;
 import com.magambell.server.review.app.port.in.request.ReviewRatingAllServiceRequest;
 import com.magambell.server.review.app.port.out.ReviewCommandPort;
 import com.magambell.server.review.app.port.out.ReviewQueryPort;
@@ -53,6 +54,12 @@ public class ReviewService implements ReviewUseCase {
     @Override
     public ReviewRatingSummaryDTO getReviewRatingAll(final ReviewRatingAllServiceRequest request) {
         return reviewQueryPort.getReviewRatingAll(request);
+    }
+
+    @Override
+    public List<ReviewListDTO> getReviewListByUser(final ReviewMyServiceRequest request) {
+        User user = userQueryPort.findById(request.userId());
+        return reviewQueryPort.getReviewListByUser(user, PageRequest.of(request.page() - 1, request.size()));
     }
 
     private void validateOrderStatus(final Order order) {

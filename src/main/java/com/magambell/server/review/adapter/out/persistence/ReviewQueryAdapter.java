@@ -33,4 +33,9 @@ public class ReviewQueryAdapter implements ReviewQueryPort {
     public ReviewRatingSummaryDTO getReviewRatingAll(final ReviewRatingAllServiceRequest request) {
         return reviewRepository.getReviewRatingAll(request);
     }
+
+    @Override
+    public List<ReviewListDTO> getReviewListByUser(final User user, final Pageable pageable) {
+        return reviewRepository.getReviewListByUser(user.getId(), pageable);
+    }
 }

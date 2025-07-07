@@ -43,37 +43,7 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
             conditions.and(reviewImage.isNotNull());
         }
 
-        return queryFactory
-                .select(review, reviewImage, order, orderGoods, goods, store, user)
-                .from(review)
-                .leftJoin(reviewImage).on(reviewImage.review.id.eq(review.id))
-                .leftJoin(reviewReason).on(reviewReason.review.id.eq(review.id))
-                .innerJoin(order).on(order.id.eq(review.order.id))
-                .innerJoin(orderGoods).on(orderGoods.order.id.eq(order.id))
-                .innerJoin(goods).on(goods.id.eq(orderGoods.goods.id))
-                .innerJoin(store).on(store.id.eq(goods.store.id))
-                .innerJoin(user).on(user.id.eq(review.user.id))
-                .where(conditions)
-                .orderBy(review.createdAt.desc())
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
-                .transform(
-                        groupBy(review.id)
-                                .list(
-                                        Projections.constructor(
-                                                ReviewListDTO.class,
-                                                review.id,
-                                                review.rating,
-                                                list(reviewReason.satisfactionReason),
-                                                review.description,
-                                                review.createdAt,
-                                                list(reviewImage.name),
-                                                user.nickName,
-                                                goods.id,
-                                                store.id
-                                        )
-                                )
-                );
+        return getReviewListDTOS(pageable, conditions);
     }
 
     @Override
@@ -132,5 +102,46 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
                 rating4,
                 rating5
         );
+    }
+
+    @Override
+    public List<ReviewListDTO> getReviewListByUser(final Long userId, final Pageable pageable) {
+        BooleanBuilder conditions = new BooleanBuilder();
+        conditions.and(user.id.eq(userId));
+        return getReviewListDTOS(pageable, conditions);
+    }
+
+    private List<ReviewListDTO> getReviewListDTOS(final Pageable pageable, final BooleanBuilder conditions) {
+        return queryFactory
+                .select(review, reviewImage, order, orderGoods, goods, store, user)
+                .from(review)
+                .leftJoin(reviewImage).on(reviewImage.review.id.eq(review.id))
+                .leftJoin(reviewReason).on(reviewReason.review.id.eq(review.id))
+                .innerJoin(order).on(order.id.eq(review.order.id))
+                .innerJoin(orderGoods).on(orderGoods.order.id.eq(order.id))
+                .innerJoin(goods).on(goods.id.eq(orderGoods.goods.id))
+                .innerJoin(store).on(store.id.eq(goods.store.id))
+                .innerJoin(user).on(user.id.eq(review.user.id))
+                .where(conditions)
+                .orderBy(review.createdAt.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .transform(
+                        groupBy(review.id)
+                                .list(
+                                        Projections.constructor(
+                                                ReviewListDTO.class,
+                                                review.id,
+                                                review.rating,
+                                                list(reviewReason.satisfactionReason),
+                                                review.description,
+                                                review.createdAt,
+                                                list(reviewImage.name),
+                                                user.nickName,
+                                                goods.id,
+                                                store.id
+                                        )
+                                )
+                );
     }
 }
