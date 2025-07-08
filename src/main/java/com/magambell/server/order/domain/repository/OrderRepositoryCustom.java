@@ -3,6 +3,7 @@ package com.magambell.server.order.domain.repository;
 import com.magambell.server.order.app.port.out.response.OrderDetailDTO;
 import com.magambell.server.order.app.port.out.response.OrderListDTO;
 import com.magambell.server.order.app.port.out.response.OrderStoreListDTO;
+import com.magambell.server.order.domain.enums.OrderStatus;
 import com.magambell.server.order.domain.model.Order;
 import java.util.List;
 import java.util.Optional;
@@ -13,7 +14,7 @@ public interface OrderRepositoryCustom {
 
     Optional<OrderDetailDTO> getOrderDetail(Long orderId, Long userId);
 
-    List<OrderStoreListDTO> getOrderStoreList(Pageable pageable, Long userId);
+    List<OrderStoreListDTO> getOrderStoreList(Pageable pageable, Long userId, OrderStatus orderStatus);
 
     Optional<Order> findOwnerWithAllById(Long orderId);
 

@@ -20,6 +20,7 @@ import com.magambell.server.store.domain.enums.Approved;
 import com.magambell.server.user.domain.enums.UserRole;
 import com.magambell.server.user.domain.enums.UserStatus;
 import com.magambell.server.user.domain.model.QUser;
+import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
@@ -108,9 +109,16 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
     }
 
     @Override
-    public List<OrderStoreListDTO> getOrderStoreList(final Pageable pageable, final Long userId) {
+    public List<OrderStoreListDTO> getOrderStoreList(final Pageable pageable, final Long userId,
+                                                     final OrderStatus orderStatus) {
         QUser owner = new QUser("owner");
         QUser customer = new QUser("customer");
+
+        BooleanBuilder where = new BooleanBuilder();
+        where.and(owner.id.eq(userId))
+                .and(owner.userRole.eq(UserRole.OWNER))
+                .and(owner.userStatus.eq(UserStatus.ACTIVE))
+                .and(buildOrderStatusCondition(orderStatus));
 
         return queryFactory
                 .select(order, orderGoods, goods, store, customer)
@@ -120,18 +128,7 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
                 .innerJoin(orderGoods).on(orderGoods.goods.id.eq(goods.id))
                 .innerJoin(order).on(order.id.eq(orderGoods.order.id))
                 .innerJoin(customer).on(customer.id.eq(order.user.id))
-                .where(
-                        owner.id.eq(userId)
-                                .and(owner.userRole.eq(UserRole.OWNER))
-                                .and(owner.userStatus.eq(UserStatus.ACTIVE))
-                                .and(
-                                        order.orderStatus.notIn(
-                                                OrderStatus.PENDING,
-                                                OrderStatus.CANCELED,
-                                                OrderStatus.FAILED
-                                        )
-                                )
-                )
+                .where(where)
                 .orderBy(order.createdAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
@@ -191,5 +188,19 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
                         )
                         .fetchOne()
         );
+    }
+
+    private BooleanBuilder buildOrderStatusCondition(OrderStatus orderStatus) {
+        BooleanBuilder builder = new BooleanBuilder();
+
+        if (orderStatus != null) {
+            return builder.and(order.orderStatus.eq(orderStatus));
+        }
+
+        return builder.and(order.orderStatus.notIn(
+                OrderStatus.PENDING,
+                OrderStatus.CANCELED,
+                OrderStatus.FAILED
+        ));
     }
 }
