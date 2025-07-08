@@ -13,16 +13,13 @@ import io.jsonwebtoken.Jws;
 import java.util.Arrays;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 @RequiredArgsConstructor
-@Transactional(readOnly = true)
 @Service
 public class JwtService {
 
     private final JwtTokenProvider jwtTokenProvider;
 
-    @Transactional
     public JwtToken createJwtToken(Long userId, UserRole userRole) {
         return jwtTokenProvider.createJwtToken(userId, userRole);
     }
@@ -46,7 +43,6 @@ public class JwtService {
         return jwt.getBody().getSubject() != null;
     }
 
-    @Transactional
     public JwtToken reissueAccessToken(String token) {
         Long userId = getJwtUserId(token);
         UserRole userRole = getJwtUserRole(token);
