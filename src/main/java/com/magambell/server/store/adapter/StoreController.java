@@ -3,6 +3,7 @@ package com.magambell.server.store.adapter;
 import com.magambell.server.common.Response;
 import com.magambell.server.common.security.CustomUserDetails;
 import com.magambell.server.common.swagger.BaseResponse;
+import com.magambell.server.store.adapter.in.web.CloseStoreListRequest;
 import com.magambell.server.store.adapter.in.web.RegisterStoreRequest;
 import com.magambell.server.store.adapter.in.web.SearchStoreListRequest;
 import com.magambell.server.store.adapter.in.web.StoreApproveRequest;
@@ -94,5 +95,15 @@ public class StoreController {
     ) {
         OwnerStoreDetailDTO ownerStoreInfo = storeUseCase.getOwnerStoreInfo(customUserDetails.userId());
         return new Response<>(new OwnerStoreDetailResponse(ownerStoreInfo));
+    }
+
+    @Operation(summary = "내 주변 매장 리스트")
+    @ApiResponse(responseCode = "200", content = {
+            @Content(schema = @Schema(implementation = StoreListResponse.class))})
+    @GetMapping("/close")
+    public Response<StoreListResponse> getCloseStoreList(
+            @ModelAttribute @Validated final CloseStoreListRequest request
+    ) {
+        return new Response<>(storeUseCase.getCloseStoreList(request.toService()));
     }
 }

@@ -9,6 +9,7 @@ import static com.magambell.server.user.domain.model.QUser.user;
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.group.GroupBy.list;
 
+import com.magambell.server.store.app.port.in.request.CloseStoreListServiceRequest;
 import com.magambell.server.store.app.port.in.request.SearchStoreListServiceRequest;
 import com.magambell.server.store.app.port.out.dto.StoreDetailDTO;
 import com.magambell.server.store.app.port.out.response.OwnerStoreDetailDTO;
@@ -53,7 +54,7 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
         }
 
         BooleanBuilder conditions = new BooleanBuilder();
-        Optional.ofNullable(radiusCondition(request, distance)).ifPresent(conditions::and);
+        Optional.ofNullable(radiusCondition(distance)).ifPresent(conditions::and);
         Optional.ofNullable(availableNowCondition(request)).ifPresent(conditions::and);
         Optional.ofNullable(keywordCondition(request.keyword())).ifPresent(conditions::and);
         conditions.and(store.approved.eq(APPROVED));
@@ -177,6 +178,56 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
         return result.values().stream().findFirst();
     }
 
+    @Override
+    public List<StoreListDTOResponse> getCloseStoreList(final CloseStoreListServiceRequest request) {
+        NumberExpression<Double> distance = Expressions.numberTemplate(
+                Double.class,
+                "6371 * acos(cos(radians({0})) * cos(radians({1})) * cos(radians({2}) - radians({3})) + sin(radians({0})) * sin(radians({1})))",
+                request.latitude(),
+                store.latitude,
+                request.longitude(),
+                store.longitude
+        );
+
+        List<Long> storeIds = queryFactory
+                .select(store.id)
+                .from(store)
+                .leftJoin(goods).on(goods.store.id.eq(store.id))
+                .innerJoin(stock).on(stock.goods.id.eq(goods.id))
+                .innerJoin(user).on(user.id.eq(store.user.id))
+                .orderBy(distance.asc())
+                .fetch();
+
+        if (storeIds.isEmpty()) {
+            return List.of();
+        }
+
+        return queryFactory.select(store, storeImage, goods, stock)
+                .from(store)
+                .leftJoin(storeImage).on(storeImage.store.id.eq(store.id))
+                .leftJoin(goods).on(goods.store.id.eq(store.id))
+                .innerJoin(stock).on(stock.goods.id.eq(goods.id))
+                .where(store.id.in(storeIds))
+                .orderBy(distance.asc())
+                .transform(
+                        groupBy(store.id)
+                                .list(Projections.constructor(StoreListDTOResponse.class,
+                                        store.id,
+                                        store.name,
+                                        list(storeImage.name),
+                                        goods.name,
+                                        goods.startTime,
+                                        goods.endTime,
+                                        goods.originalPrice,
+                                        goods.discount,
+                                        goods.salePrice,
+                                        stock.quantity,
+                                        distance != null ? distance : Expressions.nullExpression(Double.class),
+                                        goods.saleStatus
+                                ))
+                );
+    }
+
     private BooleanExpression keywordCondition(final String keyword) {
         if (keyword != null && !keyword.isBlank()) {
             return store.name.containsIgnoreCase(keyword);
@@ -184,8 +235,7 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
         return null;
     }
 
-    private BooleanExpression radiusCondition(SearchStoreListServiceRequest request,
-                                              NumberExpression<Double> distance) {
+    private BooleanExpression radiusCondition(NumberExpression<Double> distance) {
         if (distance != null) {
             return distance.loe(LIMIT_KM);
         }

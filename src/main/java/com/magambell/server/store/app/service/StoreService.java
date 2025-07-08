@@ -5,6 +5,7 @@ import com.magambell.server.common.exception.DuplicateException;
 import com.magambell.server.store.adapter.out.persistence.StoreImagesResponse;
 import com.magambell.server.store.adapter.out.persistence.StoreListResponse;
 import com.magambell.server.store.app.port.in.StoreUseCase;
+import com.magambell.server.store.app.port.in.request.CloseStoreListServiceRequest;
 import com.magambell.server.store.app.port.in.request.RegisterStoreServiceRequest;
 import com.magambell.server.store.app.port.in.request.SearchStoreListServiceRequest;
 import com.magambell.server.store.app.port.in.request.StoreApproveServiceRequest;
@@ -63,6 +64,11 @@ public class StoreService implements StoreUseCase {
     public OwnerStoreDetailDTO getOwnerStoreInfo(final Long userId) {
         User user = userQueryPort.findById(userId);
         return storeQueryPort.getOwnerStoreInfo(user);
+    }
+
+    @Override
+    public StoreListResponse getCloseStoreList(final CloseStoreListServiceRequest request) {
+        return new StoreListResponse(storeQueryPort.getCloseStoreList(request));
     }
 
     private void checkDuplicateStore(final User user) {
