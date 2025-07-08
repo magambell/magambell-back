@@ -10,16 +10,34 @@ import com.magambell.server.common.exception.InvalidRequestException;
 import com.magambell.server.common.exception.NotEqualException;
 import com.magambell.server.common.exception.NotFoundException;
 import com.magambell.server.common.security.CustomUserDetails;
+import com.magambell.server.goods.app.port.in.dto.RegisterGoodsDTO;
+import com.magambell.server.goods.domain.model.Goods;
+import com.magambell.server.goods.domain.repository.GoodsRepository;
+import com.magambell.server.order.app.port.in.dto.CreateOrderDTO;
+import com.magambell.server.order.domain.model.Order;
+import com.magambell.server.order.domain.repository.OrderGoodsRepository;
+import com.magambell.server.order.domain.repository.OrderRepository;
+import com.magambell.server.payment.domain.repository.PaymentRepository;
+import com.magambell.server.stock.domain.repository.StockHistoryRepository;
+import com.magambell.server.stock.domain.repository.StockRepository;
+import com.magambell.server.store.app.port.in.dto.RegisterStoreDTO;
+import com.magambell.server.store.domain.enums.Approved;
+import com.magambell.server.store.domain.enums.Bank;
+import com.magambell.server.store.domain.model.Store;
+import com.magambell.server.store.domain.repository.StoreRepository;
 import com.magambell.server.user.adapter.out.persistence.UserInfoResponse;
 import com.magambell.server.user.app.port.in.dto.UserEmailDTO;
 import com.magambell.server.user.app.port.in.dto.UserSocialAccountDTO;
 import com.magambell.server.user.app.port.in.request.RegisterServiceRequest;
+import com.magambell.server.user.app.port.out.dto.MyPageStatsDTO;
 import com.magambell.server.user.domain.enums.UserRole;
 import com.magambell.server.user.domain.enums.VerificationStatus;
 import com.magambell.server.user.domain.model.User;
 import com.magambell.server.user.domain.repository.UserEmailRepository;
 import com.magambell.server.user.domain.repository.UserRepository;
 import com.magambell.server.user.domain.repository.UserSocialAccountRepository;
+import java.time.LocalDateTime;
+import java.util.List;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -35,21 +53,39 @@ class UserServiceTest {
 
     @Autowired
     private UserService userService;
-
     @Autowired
     private UserRepository userRepository;
-
     @Autowired
     private UserEmailRepository userEmailRepository;
-
     @Autowired
     private UserSocialAccountRepository userSocialAccountRepository;
+    @Autowired
+    private StoreRepository storeRepository;
+    @Autowired
+    private GoodsRepository goodsRepository;
+    @Autowired
+    private OrderGoodsRepository orderGoodsRepository;
+    @Autowired
+    private OrderRepository orderRepository;
+    @Autowired
+    private StockHistoryRepository stockHistoryRepository;
+    @Autowired
+    private StockRepository stockRepository;
+    @Autowired
+    private PaymentRepository paymentRepository;
 
     @Autowired
     private JwtService jwtService;
 
     @BeforeEach
     public void setUp() {
+        stockHistoryRepository.deleteAllInBatch();
+        stockRepository.deleteAllInBatch();
+        orderGoodsRepository.deleteAllInBatch();
+        paymentRepository.deleteAllInBatch();
+        orderRepository.deleteAllInBatch();
+        goodsRepository.deleteAllInBatch();
+        storeRepository.deleteAllInBatch();
         userSocialAccountRepository.deleteAllInBatch();
         userEmailRepository.deleteAllInBatch();
         userRepository.deleteAllInBatch();
@@ -187,5 +223,78 @@ class UserServiceTest {
         assertThatThrownBy(() -> userService.getUserInfo(customUserDetails))
                 .isInstanceOf(NotFoundException.class)
                 .hasMessage(ErrorCode.STORE_NOT_FOUND.getMessage());
+    }
+
+    @DisplayName("마이페이지 이용횟수, 탄소, 절약한 금액 조회")
+    @Test
+    void getMyPage() {
+        // given
+        UserSocialAccountDTO ownerAccountDTO = new UserSocialAccountDTO(
+                "test@test.com", "사장님", "사장님닉네임", "01077771111",
+                ProviderType.KAKAO,
+                "123974",
+                UserRole.OWNER
+        );
+        User owner = ownerAccountDTO.toUser();
+        owner.addUserSocialAccount(ownerAccountDTO.toUserSocialAccount());
+
+        // 매장 생성
+        RegisterStoreDTO registerStoreDTO = new RegisterStoreDTO(
+                "테스트매장",
+                "서울시",
+                1.0, 2.0,
+                "대표",
+                "01099998888",
+                "123123",
+                Bank.IBK기업은행,
+                "9876543210",
+                List.of(),
+                Approved.APPROVED,
+                owner);
+        Store store = registerStoreDTO.toEntity();
+
+        // 상품 생성
+        RegisterGoodsDTO registerGoodsDTO = new RegisterGoodsDTO(
+                LocalDateTime.now().minusHours(1),
+                LocalDateTime.now().plusHours(2),
+                120, 10000, 10, 9000, "",
+                store
+        );
+        Goods goods = Goods.create(registerGoodsDTO);
+        store.addGoods(goods);
+
+        owner.addStore(store);
+        userRepository.save(owner);
+
+        UserSocialAccountDTO userSocialAccountDTO = new UserSocialAccountDTO(
+                "test@test.com",
+                "테스트 이름",
+                "닉네임",
+                "01012341234",
+                ProviderType.KAKAO,
+                "testId",
+                UserRole.OWNER
+        );
+        User saveUser = userRepository.save(userSocialAccountDTO.toUser());
+        userSocialAccountRepository.save(userSocialAccountDTO.toUserSocialAccount());
+        Order order = createOrder(saveUser, goods, 1);
+        orderRepository.save(order);
+
+        // when
+        MyPageStatsDTO dto = userService.getMyPage(saveUser.getId());
+
+        // then
+        assertThat(dto.purchaseCount()).isEqualTo(1);
+        assertThat(dto.savedKg()).isEqualTo(2.7);
+        assertThat(dto.savedPrice()).isEqualTo(1000);
+    }
+
+    private Order createOrder(User user, Goods goods, int i) {
+
+        CreateOrderDTO createOrderDTO = new CreateOrderDTO(user, goods, i, 9000, LocalDateTime.of(2025, 6, 30, 17, 30),
+                "test");
+        Order createOrder = createOrderDTO.toOrder();
+        createOrder.completed();
+        return createOrder;
     }
 }

@@ -7,6 +7,7 @@ import com.magambell.server.common.annotation.Adapter;
 import com.magambell.server.common.enums.ErrorCode;
 import com.magambell.server.common.exception.NotFoundException;
 import com.magambell.server.user.app.port.out.UserQueryPort;
+import com.magambell.server.user.app.port.out.dto.MyPageStatsDTO;
 import com.magambell.server.user.app.port.out.dto.UserInfoDTO;
 import com.magambell.server.user.domain.model.User;
 import com.magambell.server.user.domain.repository.UserRepository;
@@ -54,5 +55,10 @@ public class UserQueryAdapter implements UserQueryPort {
     @Override
     public boolean existsByNickName(final String nickName) {
         return userRepository.existsByNickNameAndUserStatus(nickName, ACTIVE);
+    }
+
+    @Override
+    public MyPageStatsDTO getMyPageData(final User user) {
+        return userRepository.getMyPageData(user.getId());
     }
 }
