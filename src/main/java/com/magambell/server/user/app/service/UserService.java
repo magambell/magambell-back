@@ -19,6 +19,7 @@ import com.magambell.server.user.app.port.in.request.UserEditServiceRequest;
 import com.magambell.server.user.app.port.out.UserCommandPort;
 import com.magambell.server.user.app.port.out.UserEmailQueryPort;
 import com.magambell.server.user.app.port.out.UserQueryPort;
+import com.magambell.server.user.app.port.out.dto.MyPageStatsDTO;
 import com.magambell.server.user.app.port.out.dto.UserInfoDTO;
 import com.magambell.server.user.domain.enums.UserRole;
 import com.magambell.server.user.domain.model.User;
@@ -65,6 +66,12 @@ public class UserService implements UserUseCase {
     public void userEdit(final UserEditServiceRequest request) {
         User user = userQueryPort.findById(request.userId());
         user.editNickName(request.nickName());
+    }
+
+    @Override
+    public MyPageStatsDTO getMyPage(final Long userId) {
+        User user = userQueryPort.findById(userId);
+        return userQueryPort.getMyPageData(user);
     }
 
     private void validateEmailAndAuthCode(final String email, final String authCode) {

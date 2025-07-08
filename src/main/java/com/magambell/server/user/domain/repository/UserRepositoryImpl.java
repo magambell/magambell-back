@@ -1,16 +1,22 @@
 package com.magambell.server.user.domain.repository;
 
 import static com.magambell.server.goods.domain.model.QGoods.goods;
+import static com.magambell.server.order.domain.model.QOrder.order;
+import static com.magambell.server.order.domain.model.QOrderGoods.orderGoods;
 import static com.magambell.server.store.domain.model.QStore.store;
 import static com.magambell.server.user.domain.model.QUser.user;
 import static com.magambell.server.user.domain.model.QUserSocialAccount.userSocialAccount;
 
 import com.magambell.server.auth.domain.ProviderType;
+import com.magambell.server.order.domain.enums.OrderStatus;
+import com.magambell.server.user.app.port.out.dto.MyPageStatsDTO;
 import com.magambell.server.user.app.port.out.dto.UserInfoDTO;
 import com.magambell.server.user.domain.enums.UserStatus;
 import com.magambell.server.user.domain.model.User;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 
@@ -69,5 +75,37 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
                 )
                 .fetchFirst();
         return result != null;
+    }
+
+    @Override
+    public MyPageStatsDTO getMyPageData(final Long userId) {
+
+        List<Tuple> tuples = queryFactory
+                .select(order.id.count(), order.totalPrice.sum(), orderGoods.originalPrice.sum(),
+                        orderGoods.salePrice.sum())
+                .from(orderGoods)
+                .innerJoin(order).on(order.id.eq(orderGoods.order.id))
+                .innerJoin(user).on(user.id.eq(order.user.id))
+                .where(
+                        order.user.id.eq(userId)
+                                .and(user.userStatus.eq(UserStatus.ACTIVE))
+                                .and(order.orderStatus.eq(OrderStatus.COMPLETED))
+                )
+                .fetch();
+
+        Tuple result = tuples.get(0);
+
+        if (result == null) {
+            return new MyPageStatsDTO(0, 0.0, 0L);
+        }
+
+        int purchaseCount = result.get(order.id.count()).intValue();
+        long totalPaid = result.get(order.totalPrice.sum());
+        long originalTotal = result.get(orderGoods.originalPrice.sum());
+        long saleTotal = result.get(orderGoods.salePrice.sum());
+        long savedPrice = originalTotal - saleTotal;
+        double savedKg = Math.round(totalPaid * 0.0003 * 10.0) / 10.0;
+
+        return new MyPageStatsDTO(purchaseCount, savedKg, savedPrice);
     }
 }
