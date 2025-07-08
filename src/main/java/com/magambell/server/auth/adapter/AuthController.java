@@ -44,11 +44,12 @@ public class AuthController {
     }
 
     @Operation(summary = "회원 탈퇴")
-    @ApiResponse(responseCode = "204")
+    @ApiResponse(responseCode = "204", content = {@Content(schema = @Schema(implementation = BaseResponse.class))})
     @DeleteMapping("/withdraw")
-    public void withdraw(@RequestBody @Validated final SocialWithdrawRequest request,
-                         @AuthenticationPrincipal final CustomUserDetails customUserDetails) {
+    public Response<BaseResponse> withdraw(@RequestBody @Validated final SocialWithdrawRequest request,
+                                           @AuthenticationPrincipal final CustomUserDetails customUserDetails) {
         authUseCase.withdrawUser(request.toService(), customUserDetails);
+        return new Response<>();
     }
 
     @Operation(summary = "고객 토큰 재발행")
