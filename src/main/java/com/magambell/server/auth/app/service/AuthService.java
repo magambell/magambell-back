@@ -67,6 +67,7 @@ public class AuthService implements AuthUseCase {
         userCommandPort.deleteBySocial(request.providerType(), userId);
     }
 
+    @Transactional
     @Override
     public JwtToken reissueAccessToken(final String refreshToken) {
         return jwtService.reissueAccessToken(refreshToken);
