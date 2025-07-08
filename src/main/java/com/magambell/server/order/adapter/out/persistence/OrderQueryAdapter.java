@@ -7,6 +7,7 @@ import com.magambell.server.order.app.port.out.OrderQueryPort;
 import com.magambell.server.order.app.port.out.response.OrderDetailDTO;
 import com.magambell.server.order.app.port.out.response.OrderListDTO;
 import com.magambell.server.order.app.port.out.response.OrderStoreListDTO;
+import com.magambell.server.order.domain.enums.OrderStatus;
 import com.magambell.server.order.domain.model.Order;
 import com.magambell.server.order.domain.repository.OrderRepository;
 import java.util.List;
@@ -37,8 +38,9 @@ public class OrderQueryAdapter implements OrderQueryPort {
     }
 
     @Override
-    public List<OrderStoreListDTO> getOrderStoreList(final Pageable pageable, final Long userId) {
-        return orderRepository.getOrderStoreList(pageable, userId);
+    public List<OrderStoreListDTO> getOrderStoreList(final Pageable pageable, final Long userId,
+                                                     final OrderStatus orderStatus) {
+        return orderRepository.getOrderStoreList(pageable, userId, orderStatus);
     }
 
     @Override

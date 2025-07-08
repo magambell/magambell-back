@@ -39,7 +39,9 @@ public enum ErrorCode {
     INVALID_PAYMENT_STATUS_PAID("결제가 완료되지 않았습니다."),
     INVALID_PAYMENT_STATUS_CANCEL("결제가 취소되지 않았습니다."),
     INVALID_PAYMENT_STATUS_FAILED("결제가 실패하지 않았습니다."),
-    INVALID_ORDER_STATUS("주문이 완료되지 않았습니다."),
+    INVALID_ORDER_STATUS_COMPLETED("주문이 완료되지 않았습니다."),
+    INVALID_ORDER_STATUS("요청할 수 없는 주문 상태입니다."),
+
     ORDER_ALREADY_ACCEPTED("주문이 이미 승인됐습니다."),
     ORDER_ALREADY_REJECTED("주문이 이미 거절됐습니다."),
     ORDER_NOT_APPROVED("주문이 승인되지 않았습니다."),

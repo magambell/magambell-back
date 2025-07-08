@@ -64,7 +64,7 @@ public class ReviewService implements ReviewUseCase {
 
     private void validateOrderStatus(final Order order) {
         if (order.getOrderStatus() != OrderStatus.COMPLETED) {
-            throw new InvalidRequestException(ErrorCode.INVALID_ORDER_STATUS);
+            throw new InvalidRequestException(ErrorCode.INVALID_ORDER_STATUS_COMPLETED);
         }
     }
 

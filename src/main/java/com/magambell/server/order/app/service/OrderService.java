@@ -43,6 +43,12 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class OrderService implements OrderUseCase {
 
+    private static final List<OrderStatus> OWNER_LIST_VALID_STATUSES = List.of(
+            OrderStatus.PAID,
+            OrderStatus.ACCEPTED,
+            OrderStatus.COMPLETED
+    );
+
     private final OrderCommandPort orderCommandPort;
     private final OrderQueryPort orderQueryPort;
     private final GoodsQueryPort goodsQueryPort;
@@ -89,8 +95,12 @@ public class OrderService implements OrderUseCase {
 
     @Override
     public List<OrderStoreListDTO> getOrderStoreList(final OwnerOrderListServiceRequest request, final Long userId) {
+        if (request.orderStatus() != null && !OWNER_LIST_VALID_STATUSES.contains(request.orderStatus())) {
+            throw new InvalidRequestException(ErrorCode.INVALID_ORDER_STATUS);
+        }
         User user = userQueryPort.findById(userId);
-        return orderQueryPort.getOrderStoreList(PageRequest.of(request.page() - 1, request.size()), user.getId());
+        return orderQueryPort.getOrderStoreList(PageRequest.of(request.page() - 1, request.size()), user.getId()
+                , request.orderStatus());
     }
 
     @Transactional

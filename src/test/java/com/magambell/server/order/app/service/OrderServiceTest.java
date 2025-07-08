@@ -222,7 +222,7 @@ class OrderServiceTest {
         assertThat(orderDetail.totalPrice()).isEqualTo(9000);
     }
 
-    @DisplayName("사장님 주문목록")
+    @DisplayName("사장님 전체 주문 목록")
     @Test
     void getOrderStoreList() {
         // given
@@ -230,7 +230,7 @@ class OrderServiceTest {
                 .mapToObj(this::createOrder)
                 .toList();
         orderRepository.saveAll(orderList);
-        OwnerOrderListServiceRequest request = new OwnerOrderListServiceRequest(1, 10);
+        OwnerOrderListServiceRequest request = new OwnerOrderListServiceRequest(1, 10, null);
 
         // when
         List<OrderStoreListDTO> orderStoreList = orderService.getOrderStoreList(request, owner.getId());
@@ -240,6 +240,30 @@ class OrderServiceTest {
         assertThat(orderStoreList.get(0)).extracting("orderStatus", "pickupTime", "quantity", "totalPrice")
                 .contains(
                         COMPLETED,
+                        LocalDateTime.of(2025, 6, 30, 17, 30),
+                        30,
+                        9000
+                );
+    }
+
+    @DisplayName("사장님 주문 목록 - 대기(PAID)")
+    @Test
+    void getOrderStoreListByStatusPaid() {
+        // given
+        List<Order> orderList = IntStream.range(1, 31)
+                .mapToObj(this::createOrderPaid)
+                .toList();
+        orderRepository.saveAll(orderList);
+        OwnerOrderListServiceRequest request = new OwnerOrderListServiceRequest(1, 10, PAID);
+
+        // when
+        List<OrderStoreListDTO> orderStoreList = orderService.getOrderStoreList(request, owner.getId());
+
+        // then
+        assertThat(orderStoreList.size()).isEqualTo(10);
+        assertThat(orderStoreList.get(0)).extracting("orderStatus", "pickupTime", "quantity", "totalPrice")
+                .contains(
+                        PAID,
                         LocalDateTime.of(2025, 6, 30, 17, 30),
                         30,
                         9000
@@ -355,6 +379,14 @@ class OrderServiceTest {
                 "test");
         Order createOrder = createOrderDTO.toOrder();
         createOrder.completed();
+        return createOrder;
+    }
+
+    private Order createOrderPaid(int i) {
+        CreateOrderDTO createOrderDTO = new CreateOrderDTO(user, goods, i, 9000, LocalDateTime.of(2025, 6, 30, 17, 30),
+                "test");
+        Order createOrder = createOrderDTO.toOrder();
+        createOrder.paid();
         return createOrder;
     }
 }
