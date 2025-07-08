@@ -1,5 +1,6 @@
 package com.magambell.server.store.domain.repository;
 
+import com.magambell.server.store.app.port.in.request.CloseStoreListServiceRequest;
 import com.magambell.server.store.app.port.in.request.SearchStoreListServiceRequest;
 import com.magambell.server.store.app.port.out.dto.StoreDetailDTO;
 import com.magambell.server.store.app.port.out.response.OwnerStoreDetailDTO;
@@ -15,4 +16,6 @@ public interface StoreRepositoryCustom {
     Optional<StoreDetailDTO> getStoreDetail(Long storeId);
 
     Optional<OwnerStoreDetailDTO> getOwnerStoreInfo(Long userId);
+
+    List<StoreListDTOResponse> getCloseStoreList(CloseStoreListServiceRequest request);
 }

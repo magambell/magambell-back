@@ -1,6 +1,7 @@
 package com.magambell.server.store.app.service;
 
 import static com.magambell.server.goods.domain.enums.SaleStatus.ON;
+import static org.assertj.core.api.Assertions.assertThat;
 
 import com.magambell.server.auth.domain.ProviderType;
 import com.magambell.server.goods.app.port.in.dto.RegisterGoodsDTO;
@@ -12,6 +13,7 @@ import com.magambell.server.stock.domain.repository.StockRepository;
 import com.magambell.server.store.adapter.in.web.StoreImagesRegister;
 import com.magambell.server.store.adapter.out.persistence.StoreListResponse;
 import com.magambell.server.store.app.port.in.dto.RegisterStoreDTO;
+import com.magambell.server.store.app.port.in.request.CloseStoreListServiceRequest;
 import com.magambell.server.store.app.port.in.request.RegisterStoreServiceRequest;
 import com.magambell.server.store.app.port.in.request.SearchStoreListServiceRequest;
 import com.magambell.server.store.app.port.out.dto.StoreDetailDTO;
@@ -31,7 +33,6 @@ import com.magambell.server.user.domain.repository.UserSocialAccountRepository;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.IntStream;
-import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -106,7 +107,7 @@ class StoreServiceTest {
 
         // then
         Store store = storeRepository.findAll().get(0);
-        Assertions.assertThat(store).extracting("name", "address", "ownerPhone")
+        assertThat(store).extracting("name", "address", "ownerPhone")
                 .contains(
                         "테스트 매장",
                         "서울 강서구 테스트 211",
@@ -115,7 +116,7 @@ class StoreServiceTest {
 
     @DisplayName("매장 리스트를 가져온다.")
     @Test
-    void getStoreDetailList() {
+    void getStoreList() {
         // given
         SearchStoreListServiceRequest request = new SearchStoreListServiceRequest(
                 37.5665, 37.5665, "", SearchSortType.RECENT_DESC, true, 1, 30
@@ -134,7 +135,7 @@ class StoreServiceTest {
 
         // then
         StoreListDTOResponse store = storeListResponse.storeListDTOResponses().get(0);
-        Assertions.assertThat(store)
+        assertThat(store)
                 .extracting("storeName", "startTime", "endTime", "originPrice", "discount", "salePrice",
                         "quantity")
                 .contains(
@@ -159,12 +160,12 @@ class StoreServiceTest {
         StoreDetailDTO result = storeService.getStoreDetail(store.getId());
 
         // then
-        Assertions.assertThat(result).isNotNull();
-        Assertions.assertThat(result.storeId()).isEqualTo(store.getId());
-        Assertions.assertThat(result.storeName()).isEqualTo("테스트 매장1");
-        Assertions.assertThat(result.description()).isEqualTo("상품설명");
-        Assertions.assertThat(result.salePrice()).isEqualTo(9000);
-        Assertions.assertThat(result.images()).isEmpty();
+        assertThat(result).isNotNull();
+        assertThat(result.storeId()).isEqualTo(store.getId());
+        assertThat(result.storeName()).isEqualTo("테스트 매장1");
+        assertThat(result.description()).isEqualTo("상품설명");
+        assertThat(result.salePrice()).isEqualTo(9000);
+        assertThat(result.images()).isEmpty();
     }
 
     @DisplayName("관리자 매장 상세 정보를 조회한다")
@@ -178,10 +179,29 @@ class StoreServiceTest {
         OwnerStoreDetailDTO ownerStoreInfo = storeService.getOwnerStoreInfo(user.getId());
 
         // then
-        Assertions.assertThat(ownerStoreInfo).isNotNull();
-        Assertions.assertThat(ownerStoreInfo.storeName()).isEqualTo("테스트 매장1");
-        Assertions.assertThat(ownerStoreInfo.goodsList().get(0).description()).isEqualTo("상품설명");
-        Assertions.assertThat(ownerStoreInfo.goodsList().get(0).salePrice()).isEqualTo(9000);
+        assertThat(ownerStoreInfo).isNotNull();
+        assertThat(ownerStoreInfo.storeName()).isEqualTo("테스트 매장1");
+        assertThat(ownerStoreInfo.goodsList().get(0).description()).isEqualTo("상품설명");
+        assertThat(ownerStoreInfo.goodsList().get(0).salePrice()).isEqualTo(9000);
+    }
+
+    @DisplayName("내 주변 매장 리스트")
+    @Test
+    void getCloseStoreList() {
+        // given
+        CloseStoreListServiceRequest request = new CloseStoreListServiceRequest(37.515, 37.515);
+
+        List<Store> storeList = IntStream.range(1, 31)
+                .mapToObj(this::createStore)
+                .toList();
+
+        storeRepository.saveAll(storeList);
+
+        // when
+        StoreListResponse closeStoreList = storeService.getCloseStoreList(request);
+
+        // then
+        assertThat(closeStoreList.storeListDTOResponses()).hasSize(30);
     }
 
     private Store createStore(int i) {

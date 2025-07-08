@@ -1,5 +1,6 @@
 package com.magambell.server.store.app.port.out;
 
+import com.magambell.server.store.app.port.in.request.CloseStoreListServiceRequest;
 import com.magambell.server.store.app.port.in.request.SearchStoreListServiceRequest;
 import com.magambell.server.store.app.port.out.dto.StoreDetailDTO;
 import com.magambell.server.store.app.port.out.response.OwnerStoreDetailDTO;
@@ -22,4 +23,6 @@ public interface StoreQueryPort {
     Store findById(Long storeId);
 
     OwnerStoreDetailDTO getOwnerStoreInfo(User user);
+
+    List<StoreListDTOResponse> getCloseStoreList(CloseStoreListServiceRequest request);
 }
