@@ -36,6 +36,7 @@ public class PaymentService implements PaymentUseCase {
     @Override
     public void redirectPaid(final PaymentRedirectPaidServiceRequest request) {
         PortOnePaymentResponse portOnePaymentResponse = portOnePort.getPaymentById(request.paymentId());
+        log.info("PortOnePaymentResponse: {}", portOnePaymentResponse);
         Payment payment = paymentQueryPort.findByMerchantUidJoinOrder(portOnePaymentResponse.id());
         validatePaid(portOnePaymentResponse, payment);
         payment.paid(portOnePaymentResponse);
