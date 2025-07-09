@@ -14,6 +14,7 @@ public record OrderDetailDTO(
         Integer totalPrice,
         LocalDateTime pickupTime,
         String memo,
+        LocalDateTime createdAt,
         Long storeId,
         Long reviewId
 ) {
@@ -28,6 +29,7 @@ public record OrderDetailDTO(
                 totalPrice,
                 pickupTime,
                 memo,
+                createdAt,
                 String.valueOf(storeId),
                 String.valueOf(reviewId)
         );

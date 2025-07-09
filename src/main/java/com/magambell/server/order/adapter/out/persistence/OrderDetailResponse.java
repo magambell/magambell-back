@@ -13,6 +13,7 @@ public record OrderDetailResponse(
         Integer totalPrice,
         LocalDateTime pickupTime,
         String memo,
+        LocalDateTime createdAt,
         String storeId,
         String reviewId
 ) {

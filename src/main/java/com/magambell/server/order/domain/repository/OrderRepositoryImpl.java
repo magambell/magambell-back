@@ -89,6 +89,7 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
                                 order.totalPrice,
                                 order.pickupTime,
                                 order.memo,
+                                order.createdAt,
                                 store.id,
                                 review.id.min()
                         ))
