@@ -36,7 +36,6 @@ public class PaymentService implements PaymentUseCase {
     @Override
     public void redirectPaid(final PaymentRedirectPaidServiceRequest request) {
         PortOnePaymentResponse portOnePaymentResponse = portOnePort.getPaymentById(request.paymentId());
-        log.info("PortOnePaymentResponse: {}", portOnePaymentResponse);
         Payment payment = paymentQueryPort.findByMerchantUidJoinOrder(portOnePaymentResponse.id());
         validatePaid(portOnePaymentResponse, payment);
         payment.paid(portOnePaymentResponse);
@@ -79,10 +78,6 @@ public class PaymentService implements PaymentUseCase {
         }
         if (!payment.getAmount().equals(response.amount().total())) {
             throw new InvalidRequestException(ErrorCode.TOTAL_PRICE_NOT_EQUALS);
-        }
-
-        if (response.method().provider() == null) {
-            throw new InvalidRequestException(ErrorCode.INVALID_EASY_PAY_PROVIDER);
         }
     }
 
