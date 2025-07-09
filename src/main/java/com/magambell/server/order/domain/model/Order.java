@@ -67,6 +67,7 @@ public class Order extends BaseTimeEntity {
                 .orderStatus(orderStatus)
                 .totalPrice(dto.totalPrice())
                 .pickupTime(dto.pickupTime())
+                .memo(dto.memo())
                 .build();
 
         OrderGoods orderGoods = dto.toOrderGoods();
