@@ -1,6 +1,5 @@
 package com.magambell.server.payment.infra;
 
-import com.magambell.server.payment.domain.enums.EasyPayProvider;
 import com.magambell.server.payment.domain.enums.PaymentStatus;
 import java.time.OffsetDateTime;
 
@@ -24,8 +23,7 @@ public record PortOnePaymentResponse(
     public record Method(
             String type,
             EasyPayMethod easyPayMethod,
-
-            EasyPayProvider provider
+            String provider
     ) {
     }
 
