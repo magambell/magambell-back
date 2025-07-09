@@ -90,7 +90,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
                                 .and(user.userStatus.eq(UserStatus.ACTIVE))
                                 .and(order.orderStatus.eq(OrderStatus.COMPLETED))
                 )
-                .fetchFirst(); // fetchFirst가 더 명시적일 수 있음
+                .fetchFirst();
 
         if (result == null) {
             return new MyPageStatsDTO(0, 0.0, 0L);
