@@ -97,3 +97,6 @@ spring:
     database-platform: org.hibernate.dialect.MariaDBDialect
     hibernate:
       ddl-auto: none
+
+LOG_PATH: /logs
+APP_NAME: magambell
