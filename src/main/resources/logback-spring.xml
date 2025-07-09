@@ -1,6 +1,6 @@
 <configuration>
-    <property name="LOG_PATH" value="/home/ec2-user/app/logs"/>
-    <property name="APP_NAME" value="magambell"/>
+    <springProperty scope="context" name="LOG_PATH" source="LOG_PATH" defaultValue="/home/ec2-user/app/logs"/>
+    <springProperty scope="context" name="APP_NAME" source="APP_NAME" defaultValue="magambell"/>
 
     <appender name="FILE"
               class="ch.qos.logback.core.rolling.RollingFileAppender">
