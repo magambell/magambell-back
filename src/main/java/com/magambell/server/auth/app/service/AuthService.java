@@ -98,12 +98,12 @@ public class AuthService implements AuthUseCase {
         if (userRole == null) {
             throw new InvalidRequestException(ErrorCode.INVALID_USER_ROLE);
         }
-        if (phoneNumber == null) {
-            throw new InvalidRequestException(ErrorCode.INVALID_PHONE_NUMBER);
-        }
-        if (!phoneNumber.matches("^(?!.*-)[0-9]{10,11}$")) {
-            throw new InvalidRequestException(ErrorCode.USER_VALID_PHONE);
-        }
+//        if (phoneNumber == null) {
+//            throw new InvalidRequestException(ErrorCode.INVALID_PHONE_NUMBER);
+//        }
+//        if (!phoneNumber.matches("^(?!.*-)[0-9]{10,11}$")) {
+//            throw new InvalidRequestException(ErrorCode.USER_VALID_PHONE);
+//        }
     }
 
     private void validateUserRole(final UserRole userRole) {
