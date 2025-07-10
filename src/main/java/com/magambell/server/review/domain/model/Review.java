@@ -19,6 +19,7 @@ import jakarta.persistence.OneToMany;
 import jakarta.persistence.OneToOne;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -68,13 +69,17 @@ public class Review extends BaseTimeEntity {
                 .description(dto.description())
                 .build();
 
-        List<ReviewReason> list = dto.satisfactionReasons().stream()
+        List<ReviewReason> list = Optional.ofNullable(dto.satisfactionReasons())
+                .orElse(List.of())
+                .stream()
                 .map(ReviewReason::new)
                 .toList();
 
         review.addUser(dto.user());
         review.addOrderGoods(dto.orderGoods());
-        review.addReviewReasons(list);
+        if (!list.isEmpty()) {
+            review.addReviewReasons(list);
+        }
 
         return review;
 
