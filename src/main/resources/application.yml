@@ -39,6 +39,9 @@ firebase:
   config:
     json: ${FIREBASE_CONFIG_JSON:test}
 
+LOG_PATH: /logs
+APP_NAME: magambell
+
 ---
 spring:
   config:
@@ -97,6 +100,3 @@ spring:
     database-platform: org.hibernate.dialect.MariaDBDialect
     hibernate:
       ddl-auto: none
-
-LOG_PATH: /logs
-APP_NAME: magambell
