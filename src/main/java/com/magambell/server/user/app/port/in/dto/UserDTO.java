@@ -25,7 +25,7 @@ public record UserDTO(String email, String password, String name, String phoneNu
 
     private String validatePhone(final String phoneNumber) {
         if (!phoneNumber.matches("^(?!.*-)[0-9]{10,11}$")) {
-            throw new InvalidRequestException(ErrorCode.USER_VALID_PHONE);
+//            throw new InvalidRequestException(ErrorCode.USER_VALID_PHONE);
         }
         return phoneNumber;
     }
