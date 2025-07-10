@@ -8,6 +8,8 @@ public record StoreListDTOResponse(
         Long storeId,
         String storeName,
         List<String> ImageUrl,
+        Double latitude,
+        Double longitude,
         String goodsName,
         LocalDateTime startTime,
         LocalDateTime endTime,
