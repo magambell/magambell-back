@@ -1,6 +1,8 @@
 package com.magambell.server.store.domain.repository;
 
 import static com.magambell.server.goods.domain.model.QGoods.goods;
+import static com.magambell.server.order.domain.model.QOrderGoods.orderGoods;
+import static com.magambell.server.review.domain.model.QReview.review;
 import static com.magambell.server.stock.domain.model.QStock.stock;
 import static com.magambell.server.store.domain.enums.Approved.APPROVED;
 import static com.magambell.server.store.domain.model.QStore.store;
@@ -8,6 +10,7 @@ import static com.magambell.server.store.domain.model.QStoreImage.storeImage;
 import static com.magambell.server.user.domain.model.QUser.user;
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.group.GroupBy.list;
+import static com.querydsl.core.types.ExpressionUtils.count;
 
 import com.magambell.server.store.app.port.in.request.CloseStoreListServiceRequest;
 import com.magambell.server.store.app.port.in.request.SearchStoreListServiceRequest;
@@ -109,6 +112,8 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                 .leftJoin(storeImage).on(storeImage.store.id.eq(store.id))
                 .leftJoin(goods).on(goods.store.id.eq(store.id))
                 .leftJoin(stock).on(stock.goods.id.eq(goods.id))
+                .leftJoin(orderGoods).on(orderGoods.goods.id.eq(goods.id))
+                .leftJoin(review).on(review.orderGoods.id.eq(orderGoods.id))
                 .innerJoin(user).on(user.id.eq(store.user.id))
                 .where(
                         store.id.eq(storeId)
@@ -133,7 +138,9 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                                         goods.discount,
                                         goods.description,
                                         stock.quantity,
-                                        goods.saleStatus
+                                        goods.saleStatus,
+                                        count(review.id),
+                                        review.rating.avg()
                                 )
                         )
                 );

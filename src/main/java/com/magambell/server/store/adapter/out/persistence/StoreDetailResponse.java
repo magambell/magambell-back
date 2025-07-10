@@ -17,6 +17,8 @@ public record StoreDetailResponse(
         Integer discount,
         String description,
         Integer quantity,
-        SaleStatus saleStatus
+        SaleStatus saleStatus,
+        Long reviewCount,
+        Double averageRating
 ) {
 }
