@@ -9,6 +9,7 @@ import com.magambell.server.order.app.port.out.response.OrderListDTO;
 import com.magambell.server.order.app.port.out.response.OrderStoreListDTO;
 import com.magambell.server.order.domain.enums.OrderStatus;
 import com.magambell.server.order.domain.model.Order;
+import com.magambell.server.order.domain.model.OrderGoods;
 import com.magambell.server.order.domain.repository.OrderRepository;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -52,6 +53,12 @@ public class OrderQueryAdapter implements OrderQueryPort {
     @Override
     public Order findWithAllById(final Long orderId) {
         return orderRepository.findWithAllById(orderId)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.ORDER_NOT_FOUND));
+    }
+
+    @Override
+    public OrderGoods findOrderGoodsById(final Long orderGoodsId) {
+        return orderRepository.findOrderGoodsWithOrderById(orderGoodsId)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.ORDER_NOT_FOUND));
     }
 }

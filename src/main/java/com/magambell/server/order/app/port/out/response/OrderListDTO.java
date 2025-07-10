@@ -15,10 +15,14 @@ public record OrderListDTO(
         List<Long> reviewIds
 ) {
     public record OrderGoodsInfo(
+            Long orderGoodsId,
             String goodsName,
             Integer quantity,
             Integer salePrice
     ) {
+        public String getOrderGoodsId() {
+            return String.valueOf(orderGoodsId);
+        }
     }
 
     public String getOrderId() {

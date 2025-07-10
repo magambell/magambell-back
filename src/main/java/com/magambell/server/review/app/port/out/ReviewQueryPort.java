@@ -1,6 +1,6 @@
 package com.magambell.server.review.app.port.out;
 
-import com.magambell.server.order.domain.model.Order;
+import com.magambell.server.order.domain.model.OrderGoods;
 import com.magambell.server.review.app.port.in.request.ReviewListServiceRequest;
 import com.magambell.server.review.app.port.in.request.ReviewRatingAllServiceRequest;
 import com.magambell.server.review.app.port.out.response.ReviewListDTO;
@@ -10,7 +10,7 @@ import java.util.List;
 import org.springframework.data.domain.Pageable;
 
 public interface ReviewQueryPort {
-    boolean existsOrderAndReview(Order order, User user);
+    boolean existsOrderAndReview(OrderGoods orderGoods, User user);
 
     List<ReviewListDTO> getReviewList(ReviewListServiceRequest request, Pageable pageable);
 

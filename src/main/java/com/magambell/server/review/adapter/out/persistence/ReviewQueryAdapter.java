@@ -1,7 +1,7 @@
 package com.magambell.server.review.adapter.out.persistence;
 
 import com.magambell.server.common.annotation.Adapter;
-import com.magambell.server.order.domain.model.Order;
+import com.magambell.server.order.domain.model.OrderGoods;
 import com.magambell.server.review.app.port.in.request.ReviewListServiceRequest;
 import com.magambell.server.review.app.port.in.request.ReviewRatingAllServiceRequest;
 import com.magambell.server.review.app.port.out.ReviewQueryPort;
@@ -20,8 +20,8 @@ public class ReviewQueryAdapter implements ReviewQueryPort {
     private final ReviewRepository reviewRepository;
 
     @Override
-    public boolean existsOrderAndReview(final Order order, final User user) {
-        return reviewRepository.existsByOrderIdAndUserId(order.getId(), user.getId());
+    public boolean existsOrderAndReview(final OrderGoods orderGoods, final User user) {
+        return reviewRepository.existsByOrderGoodsIdAndUserId(orderGoods.getId(), user.getId());
     }
 
     @Override

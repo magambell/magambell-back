@@ -12,6 +12,7 @@ import com.magambell.server.goods.domain.model.Goods;
 import com.magambell.server.goods.domain.repository.GoodsRepository;
 import com.magambell.server.order.app.port.in.dto.CreateOrderDTO;
 import com.magambell.server.order.domain.model.Order;
+import com.magambell.server.order.domain.model.OrderGoods;
 import com.magambell.server.order.domain.repository.OrderGoodsRepository;
 import com.magambell.server.order.domain.repository.OrderRepository;
 import com.magambell.server.payment.domain.repository.PaymentRepository;
@@ -85,7 +86,7 @@ class ReviewServiceTest {
     private User user;
     private Goods goods;
     private Order order;
-
+    private OrderGoods orderGoods;
 
     @BeforeEach
     void setUp() {
@@ -139,6 +140,7 @@ class ReviewServiceTest {
         Order createOrder = createOrderDTO.toOrder();
         createOrder.completed();
         order = orderRepository.save(createOrder);
+        orderGoods = order.getOrderGoodsList().get(0);
     }
 
     @AfterEach
@@ -162,7 +164,7 @@ class ReviewServiceTest {
     void registerReview() {
         // given
         RegisterReviewServiceRequest request = new RegisterReviewServiceRequest(
-                order.getId(),
+                orderGoods.getId(),
                 2,
                 List.of(FRIENDLY),
                 "test",
@@ -183,13 +185,13 @@ class ReviewServiceTest {
     void getReviewList() {
         // given
         RegisterReviewDTO dto = new RegisterReviewDTO(
-                order.getId(),
+                orderGoods.getId(),
                 2,
                 List.of(FRIENDLY, AFFORDABLE, ZERO),
                 "test",
                 List.of(),
                 user,
-                order
+                orderGoods
         );
         reviewRepository.save(Review.create(dto));
         ReviewListServiceRequest request = new ReviewListServiceRequest(goods.getId(), false, 1, 10);
@@ -242,7 +244,7 @@ class ReviewServiceTest {
                 "test",
                 List.of(),
                 user,
-                order
+                orderGoods
         );
         reviewRepository.save(Review.create(dto));
         ReviewMyServiceRequest request = new ReviewMyServiceRequest(1, 10, user.getId());
@@ -262,15 +264,16 @@ class ReviewServiceTest {
         Order createOrder = createOrderDTO.toOrder();
         createOrder.completed();
         order = orderRepository.save(createOrder);
+        orderGoods = order.getOrderGoodsList().get(0);
 
         RegisterReviewDTO dto = new RegisterReviewDTO(
-                order.getId(),
+                order.getOrderGoodsList().get(0).getId(),
                 i,
                 List.of(FRIENDLY, AFFORDABLE, ZERO),
                 "test",
                 List.of(),
                 user,
-                order
+                orderGoods
         );
 
         return Review.create(dto);
