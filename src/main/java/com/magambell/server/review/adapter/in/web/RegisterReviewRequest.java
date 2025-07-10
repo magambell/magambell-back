@@ -2,6 +2,7 @@ package com.magambell.server.review.adapter.in.web;
 
 import com.magambell.server.review.app.port.in.request.RegisterReviewServiceRequest;
 import com.magambell.server.review.domain.enums.SatisfactionReason;
+import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -15,9 +16,9 @@ public record RegisterReviewRequest(
         @Positive(message = "서비스는 어떠셨을까요를 선택해 주세요.")
         Integer rating,
 
-        @NotEmpty(message = "만족스러웠던 점을 선택해 주세요.")
         List<SatisfactionReason> satisfactionReasons,
 
+        @NotBlank(message = "구매 후기를 작성해 주세요.")
         String description,
 
         @NotEmpty(message = "대표 이미지는 필수입니다.")
