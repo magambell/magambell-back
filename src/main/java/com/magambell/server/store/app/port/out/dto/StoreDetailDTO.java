@@ -18,11 +18,17 @@ public record StoreDetailDTO(
         Integer discount,
         String description,
         Integer quantity,
-        SaleStatus saleStatus
+        SaleStatus saleStatus,
+        Long reviewCount,
+        Double averageRating
 ) {
     public StoreDetailResponse toResponse() {
+        Double roundedRating = averageRating != null
+                ? Math.round(averageRating * 10.0) / 10.0
+                : 0.0;
+
         return new StoreDetailResponse(String.valueOf(storeId), String.valueOf(goodsId), storeName, address, images,
                 startTime, endTime, originalPrice,
-                salePrice, discount, description, quantity, saleStatus);
+                salePrice, discount, description, quantity, saleStatus, reviewCount, roundedRating);
     }
 }
