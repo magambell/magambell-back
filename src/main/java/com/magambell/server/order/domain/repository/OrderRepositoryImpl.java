@@ -83,7 +83,7 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
                         .select(Projections.constructor(
                                 OrderDetailDTO.class,
                                 order.id,
-                                list(orderGoods.id),
+                                orderGoods.id,
                                 order.orderStatus,
                                 store.name,
                                 store.address,
