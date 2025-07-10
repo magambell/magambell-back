@@ -2,11 +2,10 @@ package com.magambell.server.order.adapter.out.persistence;
 
 import com.magambell.server.order.domain.enums.OrderStatus;
 import java.time.LocalDateTime;
-import java.util.List;
 
 public record OrderDetailResponse(
         String orderId,
-        List<String> orderGoodsIds,
+        String orderGoodsId,
         OrderStatus orderStatus,
         String storeName,
         String storeAddress,

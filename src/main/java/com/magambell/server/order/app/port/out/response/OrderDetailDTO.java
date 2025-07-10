@@ -3,11 +3,10 @@ package com.magambell.server.order.app.port.out.response;
 import com.magambell.server.order.adapter.out.persistence.OrderDetailResponse;
 import com.magambell.server.order.domain.enums.OrderStatus;
 import java.time.LocalDateTime;
-import java.util.List;
 
 public record OrderDetailDTO(
         Long orderId,
-        List<Long> orderGoodsIds,
+        Long orderGoodsId,
         OrderStatus orderStatus,
         String storeName,
         String storeAddress,
@@ -24,9 +23,7 @@ public record OrderDetailDTO(
 
         return new OrderDetailResponse(
                 String.valueOf(orderId),
-                orderGoodsIds.stream()
-                        .map(String::valueOf)
-                        .toList(),
+                String.valueOf(orderGoodsId),
                 orderStatus,
                 storeName,
                 storeAddress,
