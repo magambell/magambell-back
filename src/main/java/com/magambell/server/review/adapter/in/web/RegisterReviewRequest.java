@@ -10,7 +10,7 @@ import java.util.List;
 public record RegisterReviewRequest(
 
         @NotNull(message = "주문을 선택해 주세요.")
-        Long orderId,
+        Long orderGoodsId,
 
         @Positive(message = "서비스는 어떠셨을까요를 선택해 주세요.")
         Integer rating,
@@ -25,7 +25,7 @@ public record RegisterReviewRequest(
 ) {
 
     public RegisterReviewServiceRequest toServiceRequest() {
-        return new RegisterReviewServiceRequest(orderId, rating, satisfactionReasons, description,
+        return new RegisterReviewServiceRequest(orderGoodsId, rating, satisfactionReasons, description,
                 reviewImageRegisters);
     }
 }

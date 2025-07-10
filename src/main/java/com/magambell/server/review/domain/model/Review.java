@@ -3,7 +3,7 @@ package com.magambell.server.review.domain.model;
 import com.magambell.server.common.BaseTimeEntity;
 import com.magambell.server.common.enums.ErrorCode;
 import com.magambell.server.common.exception.InvalidRequestException;
-import com.magambell.server.order.domain.model.Order;
+import com.magambell.server.order.domain.model.OrderGoods;
 import com.magambell.server.review.app.port.in.dto.RegisterReviewDTO;
 import com.magambell.server.user.domain.model.User;
 import jakarta.persistence.CascadeType;
@@ -43,8 +43,8 @@ public class Review extends BaseTimeEntity {
     private User user;
 
     @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "order_id")
-    private Order order;
+    @JoinColumn(name = "order_goods_id")
+    private OrderGoods orderGoods;
 
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL)
     private List<ReviewImage> reviewImages = new ArrayList<>();
@@ -73,7 +73,7 @@ public class Review extends BaseTimeEntity {
                 .toList();
 
         review.addUser(dto.user());
-        review.addOrder(dto.order());
+        review.addOrderGoods(dto.orderGoods());
         review.addReviewReasons(list);
 
         return review;
@@ -85,8 +85,8 @@ public class Review extends BaseTimeEntity {
         reviewReasons.forEach(reviewReason -> reviewReason.addReview(this));
     }
 
-    private void addOrder(final Order order) {
-        this.order = order;
+    private void addOrderGoods(final OrderGoods orderGoods) {
+        this.orderGoods = orderGoods;
     }
 
     private void addUser(final User user) {

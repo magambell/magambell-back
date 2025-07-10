@@ -5,7 +5,7 @@ import com.magambell.server.common.exception.DuplicateException;
 import com.magambell.server.common.exception.InvalidRequestException;
 import com.magambell.server.order.app.port.out.OrderQueryPort;
 import com.magambell.server.order.domain.enums.OrderStatus;
-import com.magambell.server.order.domain.model.Order;
+import com.magambell.server.order.domain.model.OrderGoods;
 import com.magambell.server.review.app.port.in.ReviewUseCase;
 import com.magambell.server.review.app.port.in.request.RegisterReviewServiceRequest;
 import com.magambell.server.review.app.port.in.request.ReviewListServiceRequest;
@@ -38,12 +38,12 @@ public class ReviewService implements ReviewUseCase {
     @Override
     public ReviewRegisterResponseDTO registerReview(final RegisterReviewServiceRequest request, final Long userId) {
         User user = userQueryPort.findById(userId);
-        Order order = orderQueryPort.findById(request.orderId());
+        OrderGoods orderGoods = orderQueryPort.findOrderGoodsById(request.orderGoodsId());
 
-        validateOrderStatus(order);
-        existsOrderReview(order, user);
+        validateOrderStatus(orderGoods);
+        existsOrderReview(orderGoods, user);
 
-        return reviewCommandPort.registerReview(request.toDto(user, order));
+        return reviewCommandPort.registerReview(request.toDto(user, orderGoods));
     }
 
     @Override
@@ -62,14 +62,14 @@ public class ReviewService implements ReviewUseCase {
         return reviewQueryPort.getReviewListByUser(user, PageRequest.of(request.page() - 1, request.size()));
     }
 
-    private void validateOrderStatus(final Order order) {
-        if (order.getOrderStatus() != OrderStatus.COMPLETED) {
+    private void validateOrderStatus(final OrderGoods orderGoods) {
+        if (orderGoods.getOrder().getOrderStatus() != OrderStatus.COMPLETED) {
             throw new InvalidRequestException(ErrorCode.INVALID_ORDER_STATUS_COMPLETED);
         }
     }
 
-    private void existsOrderReview(final Order order, final User user) {
-        if (reviewQueryPort.existsOrderAndReview(order, user)) {
+    private void existsOrderReview(final OrderGoods orderGoods, final User user) {
+        if (reviewQueryPort.existsOrderAndReview(orderGoods, user)) {
             throw new DuplicateException(ErrorCode.DUPLICATE_REVIEW);
         }
     }

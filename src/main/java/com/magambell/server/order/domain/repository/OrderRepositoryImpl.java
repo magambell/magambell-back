@@ -16,6 +16,7 @@ import com.magambell.server.order.app.port.out.response.OrderListDTO;
 import com.magambell.server.order.app.port.out.response.OrderStoreListDTO;
 import com.magambell.server.order.domain.enums.OrderStatus;
 import com.magambell.server.order.domain.model.Order;
+import com.magambell.server.order.domain.model.OrderGoods;
 import com.magambell.server.store.domain.enums.Approved;
 import com.magambell.server.user.domain.enums.UserRole;
 import com.magambell.server.user.domain.enums.UserStatus;
@@ -42,7 +43,7 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
                 .innerJoin(goods).on(goods.id.eq(orderGoods.goods.id))
                 .innerJoin(store).on(store.id.eq(goods.store.id))
                 .leftJoin(storeImage).on(storeImage.store.id.eq(store.id))
-                .leftJoin(review).on(review.order.id.eq(order.id))
+                .leftJoin(review).on(review.orderGoods.id.eq(orderGoods.id))
                 .innerJoin(user).on(user.id.eq(order.user.id))
                 .where(
                         user.userStatus.eq(UserStatus.ACTIVE)
@@ -64,6 +65,7 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
                                                 store.name,
                                                 list(storeImage.name),
                                                 list(Projections.constructor(OrderListDTO.OrderGoodsInfo.class,
+                                                        orderGoods.id,
                                                         goods.name,
                                                         orderGoods.quantity,
                                                         orderGoods.salePrice
@@ -81,6 +83,7 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
                         .select(Projections.constructor(
                                 OrderDetailDTO.class,
                                 order.id,
+                                list(orderGoods.id),
                                 order.orderStatus,
                                 store.name,
                                 store.address,
@@ -99,7 +102,7 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
                         .innerJoin(store).on(store.id.eq(goods.store.id))
                         .leftJoin(storeImage).on(storeImage.store.id.eq(store.id))
                         .innerJoin(payment).on(payment.order.id.eq(order.id))
-                        .leftJoin(review).on(review.order.id.eq(order.id))
+                        .leftJoin(review).on(review.orderGoods.id.eq(orderGoods.id))
                         .where(
                                 order.id.eq(orderId),
                                 order.user.id.eq(userId),
@@ -187,6 +190,16 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
                                         .and(user.userStatus.eq(UserStatus.ACTIVE))
                                         .and(store.approved.eq(Approved.APPROVED))
                         )
+                        .fetchOne()
+        );
+    }
+
+    @Override
+    public Optional<OrderGoods> findOrderGoodsWithOrderById(final Long orderGoodsId) {
+        return Optional.ofNullable(
+                queryFactory.selectFrom(orderGoods)
+                        .innerJoin(order).on(order.id.eq(orderGoods.order.id)).fetchJoin()
+                        .where(orderGoods.id.eq(orderGoodsId))
                         .fetchOne()
         );
     }
