@@ -60,11 +60,9 @@ public class NotificationService implements NotificationUseCase {
     @Override
     public void notifyApproveOrder(final User user, final LocalDateTime pickupTime) {
         FcmTokenDTO token = notificationQueryPort.findWithAllByUserIdAndStoreIsNull(user);
-        try {
+        if (token != null) {
             String message = "주문이 수락됐어요. " + pickupTime.toLocalTime() + "에 마감백을 픽업 해주세요!";
-            firebaseNotificationSender.send(token.token(), message, message);
-        } catch (FirebaseMessagingException e) {
-            fcmFail(e, token);
+            send(message, token);
         }
     }
 
@@ -73,17 +71,20 @@ public class NotificationService implements NotificationUseCase {
         List<FcmTokenDTO> tokens = notificationQueryPort.findWithAllByStoreId(request.store());
 
         tokens.forEach(token -> {
-            try {
-                String nickname = token.nickName();
-                String storeName = token.storeName();
+            String nickname = token.nickName();
+            String storeName = token.storeName();
+            String message = nickname + "님이 기다리던 " + storeName + "의 예약이 오픈되었어요!";
 
-                String message = nickname + "님이 기다리던 " + storeName + "의 예약이 오픈되었어요!";
-
-                firebaseNotificationSender.send(token.token(), message, message);
-            } catch (FirebaseMessagingException e) {
-                fcmFail(e, token);
-            }
+            send(message, token);
         });
+    }
+
+    private void send(final String message, final FcmTokenDTO token) {
+        try {
+            firebaseNotificationSender.send(token.token(), message, message);
+        } catch (FirebaseMessagingException e) {
+            fcmFail(e, token);
+        }
     }
 
     private void fcmFail(final FirebaseMessagingException e, final FcmTokenDTO token) {

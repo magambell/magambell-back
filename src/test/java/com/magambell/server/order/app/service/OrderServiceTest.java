@@ -5,13 +5,16 @@ import static com.magambell.server.order.domain.enums.OrderStatus.PAID;
 import static com.magambell.server.payment.app.service.PaymentService.MERCHANT_UID_PREFIX;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import com.google.firebase.messaging.FirebaseMessagingException;
 import com.magambell.server.auth.domain.ProviderType;
 import com.magambell.server.goods.app.port.in.dto.RegisterGoodsDTO;
 import com.magambell.server.goods.domain.model.Goods;
 import com.magambell.server.goods.domain.repository.GoodsRepository;
+import com.magambell.server.notification.infra.FirebaseNotificationSender;
 import com.magambell.server.order.app.port.in.dto.CreateOrderDTO;
 import com.magambell.server.order.app.port.in.request.CreateOrderServiceRequest;
 import com.magambell.server.order.app.port.in.request.CustomerOrderListServiceRequest;
@@ -81,6 +84,8 @@ class OrderServiceTest {
     private PaymentRepository paymentRepository;
     @MockBean
     private PortOnePort portOnePort;
+    @MockBean
+    private FirebaseNotificationSender firebaseNotificationSender;
     private User user;
     private Goods goods;
     private User owner;
@@ -272,7 +277,7 @@ class OrderServiceTest {
 
     @DisplayName("사장님이 주문을 승인하면 상태가 ACCEPTED로 변경된다.")
     @Test
-    void approveOrder() {
+    void approveOrder() throws FirebaseMessagingException {
         // given
         CreateOrderDTO createOrderDTO = new CreateOrderDTO(user, goods, 1, 9000, LocalDateTime.of(2025, 6, 30, 17, 30),
                 "test");
@@ -284,6 +289,8 @@ class OrderServiceTest {
         paymentRepository.save(payment);
 
         // when
+        doNothing().when(firebaseNotificationSender)
+                .send("testToken", "테스트 매장", "테스트 매장");
         orderService.approveOrder(order.getId(), owner.getId(), LocalDateTime.of(2025, 6, 30, 13, 30));
 
         // then

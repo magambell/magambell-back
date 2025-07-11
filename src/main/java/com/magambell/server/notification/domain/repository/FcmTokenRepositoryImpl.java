@@ -41,11 +41,13 @@ public class FcmTokenRepositoryImpl implements FcmTokenRepositoryCustom {
                         Projections.constructor(FcmTokenDTO.class,
                                 fcmToken.id,
                                 fcmToken.token,
-                                user.nickName
+                                user.nickName,
+                                store.name
                         )
                 )
                 .from(fcmToken)
                 .innerJoin(user).on(user.id.eq(fcmToken.user.id)).fetchJoin()
+                .leftJoin(store).on(store.id.eq(fcmToken.store.id)).fetchJoin()
                 .where(fcmToken.user.id.eq(userId)
                         .and(fcmToken.store.isNull()))
                 .fetchOne();
