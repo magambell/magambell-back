@@ -11,6 +11,7 @@ import static com.magambell.server.user.domain.model.QUser.user;
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.group.GroupBy.list;
 import static com.querydsl.core.types.ExpressionUtils.count;
+import static com.querydsl.core.types.dsl.Expressions.set;
 
 import com.magambell.server.store.adapter.out.persistence.StoreDetailResponse;
 import com.magambell.server.store.app.port.in.request.CloseStoreListServiceRequest;
@@ -134,7 +135,7 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                                         goods.id,
                                         store.name,
                                         store.address,
-                                        list(storeImage.name),
+                                        set(storeImage.name),
                                         goods.startTime,
                                         goods.endTime,
                                         goods.originalPrice,
