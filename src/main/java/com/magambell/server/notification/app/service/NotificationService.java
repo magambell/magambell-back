@@ -8,6 +8,7 @@ import com.magambell.server.notification.app.port.in.request.NotifyStoreOpenRequ
 import com.magambell.server.notification.app.port.in.request.SaveFcmTokenServiceRequest;
 import com.magambell.server.notification.app.port.out.NotificationCommandPort;
 import com.magambell.server.notification.app.port.out.NotificationQueryPort;
+import com.magambell.server.notification.app.port.out.dto.FcmTokenDTO;
 import com.magambell.server.notification.domain.model.FcmToken;
 import com.magambell.server.notification.infra.FirebaseNotificationSender;
 import com.magambell.server.store.app.port.out.StoreQueryPort;
@@ -47,15 +48,19 @@ public class NotificationService implements NotificationUseCase {
 
     @Override
     public void notifyStoreOpen(final NotifyStoreOpenRequest request) {
-        List<FcmToken> tokens = notificationQueryPort.findByStoreId(request.store().getId());
+        List<FcmTokenDTO> tokens = notificationQueryPort.findWithAllByStoreId(request.store().getId());
 
         tokens.forEach(token -> {
             try {
-                firebaseNotificationSender.send(token.getToken(), request.title(), request.body());
+                String nickname = token.nickName();
+                String storeName = token.storeName();
+
+                String message = nickname + "님이 기다리던 " + storeName + "의 예약이 오픈되었어요!";
+
+                firebaseNotificationSender.send(token.token(), message, message);
             } catch (FirebaseMessagingException e) {
-                log.warn("FCM 알림 전송 실패. userId={}, storeId={}, reason={}", token.getUser().getId(),
-                        token.getStore().getId(), e.getMessage());
-                notificationCommandPort.removeToken(token);
+                log.warn("FCM 알림 전송 실패. tokenId={}, reason={}", token.fcmTokenId(), e.getMessage());
+                notificationCommandPort.removeToken(token.fcmTokenId());
             }
         });
     }
