@@ -1,12 +1,12 @@
 package com.magambell.server.store.app.port.in;
 
+import com.magambell.server.store.adapter.out.persistence.StoreDetailResponse;
 import com.magambell.server.store.adapter.out.persistence.StoreImagesResponse;
 import com.magambell.server.store.adapter.out.persistence.StoreListResponse;
 import com.magambell.server.store.app.port.in.request.CloseStoreListServiceRequest;
 import com.magambell.server.store.app.port.in.request.RegisterStoreServiceRequest;
 import com.magambell.server.store.app.port.in.request.SearchStoreListServiceRequest;
 import com.magambell.server.store.app.port.in.request.StoreApproveServiceRequest;
-import com.magambell.server.store.app.port.out.dto.StoreDetailDTO;
 import com.magambell.server.store.app.port.out.response.OwnerStoreDetailDTO;
 
 public interface StoreUseCase {
@@ -16,7 +16,7 @@ public interface StoreUseCase {
 
     void storeApprove(StoreApproveServiceRequest request);
 
-    StoreDetailDTO getStoreDetail(Long storeId);
+    StoreDetailResponse getStoreDetail(Long storeId);
 
     OwnerStoreDetailDTO getOwnerStoreInfo(Long userId);
 

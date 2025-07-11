@@ -2,6 +2,7 @@ package com.magambell.server.store.app.service;
 
 import com.magambell.server.common.enums.ErrorCode;
 import com.magambell.server.common.exception.DuplicateException;
+import com.magambell.server.store.adapter.out.persistence.StoreDetailResponse;
 import com.magambell.server.store.adapter.out.persistence.StoreImagesResponse;
 import com.magambell.server.store.adapter.out.persistence.StoreListResponse;
 import com.magambell.server.store.app.port.in.StoreUseCase;
@@ -11,7 +12,6 @@ import com.magambell.server.store.app.port.in.request.SearchStoreListServiceRequ
 import com.magambell.server.store.app.port.in.request.StoreApproveServiceRequest;
 import com.magambell.server.store.app.port.out.StoreCommandPort;
 import com.magambell.server.store.app.port.out.StoreQueryPort;
-import com.magambell.server.store.app.port.out.dto.StoreDetailDTO;
 import com.magambell.server.store.app.port.out.response.OwnerStoreDetailDTO;
 import com.magambell.server.store.app.port.out.response.StoreRegisterResponseDTO;
 import com.magambell.server.store.domain.enums.Approved;
@@ -56,7 +56,7 @@ public class StoreService implements StoreUseCase {
     }
 
     @Override
-    public StoreDetailDTO getStoreDetail(final Long storeId) {
+    public StoreDetailResponse getStoreDetail(final Long storeId) {
         return storeQueryPort.getStoreDetail(storeId);
     }
 

@@ -11,7 +11,6 @@ import com.magambell.server.store.app.port.out.response.StorePreSignedUrlImage;
 import com.magambell.server.store.app.port.out.response.StoreRegisterResponseDTO;
 import com.magambell.server.store.domain.model.Store;
 import com.magambell.server.store.domain.model.StoreImage;
-import com.magambell.server.store.domain.repository.StoreImageRepository;
 import com.magambell.server.store.domain.repository.StoreRepository;
 import com.magambell.server.user.domain.model.User;
 import java.util.List;
@@ -24,7 +23,6 @@ public class StoreCommandAdapter implements StoreCommandPort {
     private static final String IMAGE_PREFIX = "STORE";
 
     private final StoreRepository storeRepository;
-    private final StoreImageRepository storeImageRepository;
     private final S3InputPort s3InputPort;
 
     @Override

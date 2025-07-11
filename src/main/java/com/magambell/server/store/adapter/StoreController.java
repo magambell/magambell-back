@@ -12,7 +12,6 @@ import com.magambell.server.store.adapter.out.persistence.StoreDetailResponse;
 import com.magambell.server.store.adapter.out.persistence.StoreImagesResponse;
 import com.magambell.server.store.adapter.out.persistence.StoreListResponse;
 import com.magambell.server.store.app.port.in.StoreUseCase;
-import com.magambell.server.store.app.port.out.dto.StoreDetailDTO;
 import com.magambell.server.store.app.port.out.response.OwnerStoreDetailDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -69,8 +68,7 @@ public class StoreController {
     public Response<StoreDetailResponse> getStore(
             @PathVariable final Long storeId
     ) {
-        StoreDetailDTO storeDetail = storeUseCase.getStoreDetail(storeId);
-        return new Response<>(storeDetail.toResponse());
+        return new Response<>(storeUseCase.getStoreDetail(storeId));
     }
 
     @Operation(summary = "매장 승인")
