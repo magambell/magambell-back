@@ -53,7 +53,8 @@ public class NotificationService implements NotificationUseCase {
             try {
                 firebaseNotificationSender.send(token.getToken(), request.title(), request.body());
             } catch (Exception e) {
-                log.warn("FCM 알림 전송 실패. userId={}, storeId={}", token.getUser().getId(), token.getStore().getId());
+                log.warn("FCM 알림 전송 실패. userId={}, storeId={}, reason={}", token.getUser().getId(),
+                        token.getStore().getId(), e.getMessage());
                 throw new InternalServerException(ErrorCode.FIREBASE_SEND_FAILED);
             }
         });
