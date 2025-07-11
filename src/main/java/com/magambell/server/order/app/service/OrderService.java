@@ -7,6 +7,7 @@ import com.magambell.server.common.exception.InvalidRequestException;
 import com.magambell.server.common.exception.UnauthorizedException;
 import com.magambell.server.goods.app.port.out.GoodsQueryPort;
 import com.magambell.server.goods.domain.model.Goods;
+import com.magambell.server.notification.app.port.in.NotificationUseCase;
 import com.magambell.server.order.app.port.in.OrderUseCase;
 import com.magambell.server.order.app.port.in.request.CreateOrderServiceRequest;
 import com.magambell.server.order.app.port.in.request.CustomerOrderListServiceRequest;
@@ -58,6 +59,7 @@ public class OrderService implements OrderUseCase {
     private final StockQueryPort stockQueryPort;
     private final StockUseCase stockUseCase;
     private final PortOnePort portOnePort;
+    private final NotificationUseCase notificationUseCase;
 
     @Transactional
     @Override
@@ -110,6 +112,8 @@ public class OrderService implements OrderUseCase {
         Order order = orderQueryPort.findOwnerWithAllById(orderId);
         validateApproveOrder(user, order, now);
         order.accepted();
+
+        notificationUseCase.notifyApproveOrder(order.getUser(), order.getPickupTime());
     }
 
     @Transactional

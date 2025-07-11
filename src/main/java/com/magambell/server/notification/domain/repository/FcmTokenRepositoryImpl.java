@@ -33,4 +33,21 @@ public class FcmTokenRepositoryImpl implements FcmTokenRepositoryCustom {
                 .where(fcmToken.store.id.eq(storeId))
                 .fetch();
     }
+
+    @Override
+    public FcmTokenDTO findWithAllByUserIdAndStoreIsNull(final Long userId) {
+        return queryFactory
+                .select(
+                        Projections.constructor(FcmTokenDTO.class,
+                                fcmToken.id,
+                                fcmToken.token,
+                                user.nickName
+                        )
+                )
+                .from(fcmToken)
+                .innerJoin(user).on(user.id.eq(fcmToken.user.id)).fetchJoin()
+                .where(fcmToken.user.id.eq(userId)
+                        .and(fcmToken.store.isNull()))
+                .fetchOne();
+    }
 }

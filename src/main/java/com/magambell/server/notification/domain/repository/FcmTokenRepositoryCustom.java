@@ -5,4 +5,6 @@ import java.util.List;
 
 public interface FcmTokenRepositoryCustom {
     List<FcmTokenDTO> findWithAllByStoreId(Long storeId);
+
+    FcmTokenDTO findWithAllByUserIdAndStoreIsNull(Long userId);
 }

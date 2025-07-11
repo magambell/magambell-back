@@ -16,6 +16,7 @@ import com.magambell.server.store.app.port.out.StoreQueryPort;
 import com.magambell.server.store.domain.model.Store;
 import com.magambell.server.user.app.port.out.UserQueryPort;
 import com.magambell.server.user.domain.model.User;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -57,8 +58,19 @@ public class NotificationService implements NotificationUseCase {
     }
 
     @Override
+    public void notifyApproveOrder(final User user, final LocalDateTime pickupTime) {
+        FcmTokenDTO token = notificationQueryPort.findWithAllByUserIdAndStoreIsNull(user);
+        try {
+            String message = "주문이 수락됐어요. " + pickupTime.toLocalTime() + "에 마감백을 픽업 해주세요!";
+            firebaseNotificationSender.send(token.token(), message, message);
+        } catch (FirebaseMessagingException e) {
+            fcmFail(e, token);
+        }
+    }
+
+    @Override
     public void notifyStoreOpen(final NotifyStoreOpenRequest request) {
-        List<FcmTokenDTO> tokens = notificationQueryPort.findWithAllByStoreId(request.store().getId());
+        List<FcmTokenDTO> tokens = notificationQueryPort.findWithAllByStoreId(request.store());
 
         tokens.forEach(token -> {
             try {
@@ -69,9 +81,13 @@ public class NotificationService implements NotificationUseCase {
 
                 firebaseNotificationSender.send(token.token(), message, message);
             } catch (FirebaseMessagingException e) {
-                log.warn("FCM 알림 전송 실패. tokenId={}, reason={}", token.fcmTokenId(), e.getMessage());
-                notificationCommandPort.removeToken(token.fcmTokenId());
+                fcmFail(e, token);
             }
         });
+    }
+
+    private void fcmFail(final FirebaseMessagingException e, final FcmTokenDTO token) {
+        log.warn("FCM 알림 전송 실패. tokenId={}, reason={}", token.fcmTokenId(), e.getMessage());
+        notificationCommandPort.removeToken(token.fcmTokenId());
     }
 }
