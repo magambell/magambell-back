@@ -18,11 +18,10 @@ public record StoreDetailDTO(
         Integer discount,
         String description,
         Integer quantity,
-        SaleStatus saleStatus,
-        Long reviewCount,
-        Double averageRating
+        SaleStatus saleStatus
 ) {
-    public StoreDetailResponse toResponse() {
+    public StoreDetailResponse toResponse(Long reviewCount,
+                                          Double averageRating) {
         Double roundedRating = averageRating != null
                 ? Math.round(averageRating * 10.0) / 10.0
                 : 0.0;

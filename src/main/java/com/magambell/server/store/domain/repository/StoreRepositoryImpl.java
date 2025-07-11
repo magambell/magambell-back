@@ -12,6 +12,7 @@ import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.group.GroupBy.list;
 import static com.querydsl.core.types.ExpressionUtils.count;
 
+import com.magambell.server.store.adapter.out.persistence.StoreDetailResponse;
 import com.magambell.server.store.app.port.in.request.CloseStoreListServiceRequest;
 import com.magambell.server.store.app.port.in.request.SearchStoreListServiceRequest;
 import com.magambell.server.store.app.port.out.dto.StoreDetailDTO;
@@ -21,6 +22,7 @@ import com.magambell.server.store.domain.enums.Approved;
 import com.magambell.server.store.domain.enums.SearchSortType;
 import com.magambell.server.user.domain.enums.UserStatus;
 import com.querydsl.core.BooleanBuilder;
+import com.querydsl.core.Tuple;
 import com.querydsl.core.types.OrderSpecifier;
 import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.BooleanExpression;
@@ -108,8 +110,8 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
     }
 
     @Override
-    public Optional<StoreDetailDTO> getStoreDetail(final Long storeId) {
-        Map<Long, StoreDetailDTO> result = queryFactory.select(store, storeImage, goods, stock)
+    public Optional<StoreDetailResponse> getStoreDetail(final Long storeId) {
+        Map<Long, StoreDetailDTO> result = queryFactory
                 .from(store)
                 .leftJoin(storeImage).on(storeImage.store.id.eq(store.id))
                 .leftJoin(goods).on(goods.store.id.eq(store.id))
@@ -140,13 +142,34 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                                         goods.discount,
                                         goods.description,
                                         stock.quantity,
-                                        goods.saleStatus,
-                                        count(review.id),
-                                        review.rating.avg()
+                                        goods.saleStatus
                                 )
                         )
                 );
-        return Optional.ofNullable(result.get(storeId));
+
+        Tuple aggregation = queryFactory
+                .select(
+                        count(review.id),
+                        review.rating.avg()
+                )
+                .from(review)
+                .leftJoin(orderGoods).on(orderGoods.id.eq(review.orderGoods.id))
+                .leftJoin(goods).on(goods.id.eq(orderGoods.goods.id))
+                .leftJoin(store).on(store.id.eq(goods.store.id))
+                .innerJoin(user).on(user.id.eq(store.user.id))
+                .where(
+                        store.id.eq(storeId)
+                                .and(
+                                        store.approved.eq(APPROVED)
+                                ).and(
+                                        user.userStatus.eq(UserStatus.ACTIVE)
+                                )
+                )
+                .fetchOne();
+
+        StoreDetailDTO storeDetailDTO = result.get(storeId);
+        return Optional.of(
+                storeDetailDTO.toResponse(aggregation.get(0, Long.class), aggregation.get(1, Double.class)));
     }
 
     @Override
