@@ -3,14 +3,14 @@ package com.magambell.server.store.app.port.out.dto;
 import com.magambell.server.goods.domain.enums.SaleStatus;
 import com.magambell.server.store.adapter.out.persistence.StoreDetailResponse;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
 
 public record StoreDetailDTO(
         Long storeId,
         Long goodsId,
         String storeName,
         String address,
-        List<String> images,
+        Set<String> images,
         LocalDateTime startTime,
         LocalDateTime endTime,
         Integer originalPrice,
