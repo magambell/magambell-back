@@ -21,7 +21,12 @@ public class NotificationQueryAdapter implements NotificationQueryPort {
     }
 
     @Override
-    public List<FcmTokenDTO> findWithAllByStoreId(final Long storeId) {
-        return fcmTokenRepository.findWithAllByStoreId(storeId);
+    public List<FcmTokenDTO> findWithAllByStoreId(final Store store) {
+        return fcmTokenRepository.findWithAllByStoreId(store.getId());
+    }
+
+    @Override
+    public FcmTokenDTO findWithAllByUserIdAndStoreIsNull(final User user) {
+        return fcmTokenRepository.findWithAllByUserIdAndStoreIsNull(user.getId());
     }
 }

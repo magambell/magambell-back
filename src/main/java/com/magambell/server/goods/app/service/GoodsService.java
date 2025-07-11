@@ -53,11 +53,7 @@ public class GoodsService implements GoodsUseCase {
         goods.changeStatus(user, request.saleStatus(), today);
 
         if (request.saleStatus() == SaleStatus.ON) {
-            notificationUseCase.notifyStoreOpen(new NotifyStoreOpenRequest(
-                    goods.getStore(),
-                    "[닉네임]님이 기다리던 " + goods.getStore().getName() + "의 예약이 오픈되었어요!",
-                    "[닉네임]님이 기다리던 " + goods.getStore().getName() + "의 예약이 오픈되었어요!"
-            ));
+            notificationUseCase.notifyStoreOpen(new NotifyStoreOpenRequest(goods.getStore()));
         }
     }
 
