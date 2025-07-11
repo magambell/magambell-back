@@ -6,6 +6,7 @@ import com.magambell.server.common.exception.DuplicateException;
 import com.magambell.server.notification.app.port.in.NotificationUseCase;
 import com.magambell.server.notification.app.port.in.request.NotifyStoreOpenRequest;
 import com.magambell.server.notification.app.port.in.request.SaveFcmTokenServiceRequest;
+import com.magambell.server.notification.app.port.in.request.SaveStoreOpenFcmTokenServiceRequest;
 import com.magambell.server.notification.app.port.out.NotificationCommandPort;
 import com.magambell.server.notification.app.port.out.NotificationQueryPort;
 import com.magambell.server.notification.app.port.out.dto.FcmTokenDTO;
@@ -35,7 +36,7 @@ public class NotificationService implements NotificationUseCase {
 
     @Transactional
     @Override
-    public void saveToken(final SaveFcmTokenServiceRequest request) {
+    public void saveStoreOpenToken(final SaveStoreOpenFcmTokenServiceRequest request) {
         User user = userQueryPort.findById(request.userId());
         Store store = storeQueryPort.findById(request.storeId());
 
@@ -44,6 +45,15 @@ public class NotificationService implements NotificationUseCase {
         }
 
         notificationCommandPort.save(FcmToken.create(request.fcmToken(), user, store));
+    }
+
+    @Transactional
+    @Override
+    public void saveToken(final SaveFcmTokenServiceRequest request) {
+        User user = userQueryPort.findById(request.userId());
+
+        notificationCommandPort.deleteUser(user);
+        notificationCommandPort.save(FcmToken.create(request.fcmToken(), user));
     }
 
     @Override
