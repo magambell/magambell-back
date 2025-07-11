@@ -14,4 +14,6 @@ public interface NotificationUseCase {
     void saveToken(SaveFcmTokenServiceRequest request);
 
     void notifyApproveOrder(User user, LocalDateTime pickupTime);
+
+    void notifyRejectOrder(User user);
 }

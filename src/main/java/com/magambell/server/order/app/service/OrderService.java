@@ -128,6 +128,7 @@ public class OrderService implements OrderUseCase {
         Payment payment = order.getPayment();
         stockUseCase.restoreStockIfNecessary(payment);
         portOnePort.cancelPayment(payment.getMerchantUid(), order.getTotalPrice(), "사장님 주문 취소");
+        notificationUseCase.notifyRejectOrder(order.getUser());
     }
 
     @Transactional
