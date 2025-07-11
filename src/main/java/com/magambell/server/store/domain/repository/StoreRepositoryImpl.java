@@ -10,8 +10,8 @@ import static com.magambell.server.store.domain.model.QStoreImage.storeImage;
 import static com.magambell.server.user.domain.model.QUser.user;
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.group.GroupBy.list;
+import static com.querydsl.core.group.GroupBy.set;
 import static com.querydsl.core.types.ExpressionUtils.count;
-import static com.querydsl.core.types.dsl.Expressions.set;
 
 import com.magambell.server.store.adapter.out.persistence.StoreDetailResponse;
 import com.magambell.server.store.app.port.in.request.CloseStoreListServiceRequest;

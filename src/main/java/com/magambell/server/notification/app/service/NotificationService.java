@@ -67,6 +67,15 @@ public class NotificationService implements NotificationUseCase {
     }
 
     @Override
+    public void notifyRejectOrder(final User user) {
+        FcmTokenDTO token = notificationQueryPort.findWithAllByUserIdAndStoreIsNull(user);
+        if (token != null) {
+            String message = "주문이 거절됐어요.";
+            send(message, token);
+        }
+    }
+
+    @Override
     public void notifyStoreOpen(final NotifyStoreOpenRequest request) {
         List<FcmTokenDTO> tokens = notificationQueryPort.findWithAllByStoreId(request.store());
 

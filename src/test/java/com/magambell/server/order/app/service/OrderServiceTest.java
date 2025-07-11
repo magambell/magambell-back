@@ -300,7 +300,7 @@ class OrderServiceTest {
 
     @DisplayName("사장님이 주문을 거절하면 상태가 REJECTED로 변경되고 재고가 복구되며 결제 취소 요청이 호출된다.")
     @Test
-    void rejectOrder() {
+    void rejectOrder() throws FirebaseMessagingException {
         // given
         CreateOrderServiceRequest request = new CreateOrderServiceRequest(
                 goods.getId(),
@@ -316,6 +316,8 @@ class OrderServiceTest {
         orderRepository.save(order);
 
         // when
+        doNothing().when(firebaseNotificationSender)
+                .send("testToken", "테스트 매장", "테스트 매장");
         orderService.rejectOrder(order.getId(), owner.getId());
 
         // then
