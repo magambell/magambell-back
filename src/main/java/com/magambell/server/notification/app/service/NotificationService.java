@@ -1,8 +1,8 @@
 package com.magambell.server.notification.app.service;
 
+import com.google.firebase.messaging.FirebaseMessagingException;
 import com.magambell.server.common.enums.ErrorCode;
 import com.magambell.server.common.exception.DuplicateException;
-import com.magambell.server.common.exception.InternalServerException;
 import com.magambell.server.notification.app.port.in.NotificationUseCase;
 import com.magambell.server.notification.app.port.in.request.NotifyStoreOpenRequest;
 import com.magambell.server.notification.app.port.in.request.SaveFcmTokenServiceRequest;
@@ -52,10 +52,10 @@ public class NotificationService implements NotificationUseCase {
         tokens.forEach(token -> {
             try {
                 firebaseNotificationSender.send(token.getToken(), request.title(), request.body());
-            } catch (Exception e) {
+            } catch (FirebaseMessagingException e) {
                 log.warn("FCM 알림 전송 실패. userId={}, storeId={}, reason={}", token.getUser().getId(),
                         token.getStore().getId(), e.getMessage());
-                throw new InternalServerException(ErrorCode.FIREBASE_SEND_FAILED);
+                notificationCommandPort.removeToken(token);
             }
         });
     }
