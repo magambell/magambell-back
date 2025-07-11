@@ -4,6 +4,7 @@ import com.magambell.server.common.annotation.Adapter;
 import com.magambell.server.notification.app.port.out.NotificationCommandPort;
 import com.magambell.server.notification.domain.model.FcmToken;
 import com.magambell.server.notification.domain.repository.FcmTokenRepository;
+import com.magambell.server.user.domain.model.User;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -20,5 +21,10 @@ public class NotificationCommandAdapter implements NotificationCommandPort {
     @Override
     public void removeToken(final Long fcmTokenId) {
         fcmTokenRepository.deleteById(fcmTokenId);
+    }
+
+    @Override
+    public void deleteUser(final User user) {
+        fcmTokenRepository.deleteByUserId(user.getId());
     }
 }

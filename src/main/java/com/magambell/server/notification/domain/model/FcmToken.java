@@ -33,7 +33,7 @@ public class FcmToken extends BaseTimeEntity {
     private User user;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "store_id", nullable = false)
+    @JoinColumn(name = "store_id", nullable = true)
     private Store store;
 
     @Builder(access = AccessLevel.PRIVATE)
@@ -41,12 +41,17 @@ public class FcmToken extends BaseTimeEntity {
         this.token = token;
     }
 
-    public static FcmToken create(final String token, final User user, final Store store) {
+    public static FcmToken create(final String token, final User user) {
         FcmToken fcmToken = FcmToken.builder()
                 .token(token)
                 .build();
 
         fcmToken.addUser(user);
+        return fcmToken;
+    }
+
+    public static FcmToken create(final String token, final User user, final Store store) {
+        FcmToken fcmToken = create(token, user);
         fcmToken.addStore(store);
 
         return fcmToken;

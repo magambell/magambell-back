@@ -4,6 +4,7 @@ import com.magambell.server.common.Response;
 import com.magambell.server.common.security.CustomUserDetails;
 import com.magambell.server.common.swagger.BaseResponse;
 import com.magambell.server.notification.adapter.in.web.SaveFcmTokenRequest;
+import com.magambell.server.notification.adapter.in.web.SaveStoreOpenFcmTokenRequest;
 import com.magambell.server.notification.app.port.in.NotificationUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -25,6 +26,18 @@ import org.springframework.web.bind.annotation.RestController;
 public class NotificationController {
 
     private final NotificationUseCase notificationUseCase;
+
+    @Operation(summary = "매장 오픈 FCM 토큰 등록")
+    @ApiResponse(responseCode = "200", content = {
+            @Content(schema = @Schema(implementation = BaseResponse.class))})
+    @PostMapping("/store")
+    public Response<BaseResponse> saveStoreOpenToken(
+            @RequestBody @Validated SaveStoreOpenFcmTokenRequest request,
+            @AuthenticationPrincipal final CustomUserDetails customUserDetails
+    ) {
+        notificationUseCase.saveStoreOpenToken(request.toService(customUserDetails.userId()));
+        return new Response<>();
+    }
 
     @Operation(summary = "FCM 토큰 등록")
     @ApiResponse(responseCode = "200", content = {
