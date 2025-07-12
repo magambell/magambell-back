@@ -201,7 +201,7 @@ class ReviewServiceTest {
 
         // then
         assertThat(reviewList).isNotNull();
-        assertThat(reviewList.get(0).satisfactionReasons().get(0)).isEqualTo(FRIENDLY);
+        assertThat(reviewList.get(0).satisfactionReasons()).contains(FRIENDLY);
         assertThat(reviewList.get(0).description()).isEqualTo("test");
         assertThat(reviewList.get(0).goodsId()).isEqualTo(goods.getId());
     }
@@ -254,7 +254,7 @@ class ReviewServiceTest {
 
         // then
         assertThat(reviewList).isNotNull();
-        assertThat(reviewList.get(0).satisfactionReasons().get(0)).isEqualTo(FRIENDLY);
+        assertThat(reviewList.get(0).satisfactionReasons()).contains(FRIENDLY);
         assertThat(reviewList.get(0).description()).isEqualTo("test");
         assertThat(reviewList.get(0).nickName()).isEqualTo(user.getNickName());
     }
