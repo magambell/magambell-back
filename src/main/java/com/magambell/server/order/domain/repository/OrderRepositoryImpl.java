@@ -50,6 +50,9 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
                                 .and(
                                         user.id.eq(userId)
                                 )
+                                .and(
+                                        order.orderStatus.ne(OrderStatus.PENDING)
+                                )
                 )
                 .orderBy(order.createdAt.desc())
                 .offset(pageable.getOffset())
