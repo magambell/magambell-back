@@ -10,6 +10,7 @@ import static com.magambell.server.store.domain.model.QStoreImage.storeImage;
 import static com.magambell.server.user.domain.model.QUser.user;
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.group.GroupBy.list;
+import static com.querydsl.core.group.GroupBy.set;
 
 import com.magambell.server.order.app.port.out.response.OrderDetailDTO;
 import com.magambell.server.order.app.port.out.response.OrderListDTO;
@@ -64,16 +65,17 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
                                                 order.id,
                                                 order.orderStatus,
                                                 order.createdAt,
+                                                order.memo,
                                                 store.id,
                                                 store.name,
-                                                list(storeImage.name),
+                                                set(storeImage.name),
                                                 list(Projections.constructor(OrderListDTO.OrderGoodsInfo.class,
                                                         orderGoods.id,
                                                         goods.name,
                                                         orderGoods.quantity,
                                                         orderGoods.salePrice
                                                 )),
-                                                list(review.id)
+                                                set(review.id)
                                         )
                                 )
                 );
@@ -148,6 +150,7 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
                                                 order.orderStatus,
                                                 order.createdAt,
                                                 order.pickupTime,
+                                                order.memo,
                                                 orderGoods.quantity,
                                                 order.totalPrice,
                                                 customer.phoneNumber,

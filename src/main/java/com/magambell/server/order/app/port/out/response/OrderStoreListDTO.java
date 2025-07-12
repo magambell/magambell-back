@@ -8,6 +8,7 @@ public record OrderStoreListDTO(
         OrderStatus orderStatus,
         LocalDateTime createdAt,
         LocalDateTime pickupTime,
+        String memo,
         Integer quantity,
         Integer totalPrice,
         String phoneNumber,

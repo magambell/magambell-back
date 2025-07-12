@@ -3,16 +3,18 @@ package com.magambell.server.order.app.port.out.response;
 import com.magambell.server.order.domain.enums.OrderStatus;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 public record OrderListDTO(
         Long orderId,
         OrderStatus orderStatus,
         LocalDateTime createdAt,
+        String memo,
         Long storeId,
         String storeName,
-        List<String> imageUrls,
+        Set<String> imageUrls,
         List<OrderGoodsInfo> goodsList,
-        List<Long> reviewIds
+        Set<Long> reviewIds
 ) {
     public record OrderGoodsInfo(
             Long orderGoodsId,
