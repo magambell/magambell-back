@@ -9,7 +9,7 @@ import static com.magambell.server.review.domain.model.QReviewReason.reviewReaso
 import static com.magambell.server.store.domain.model.QStore.store;
 import static com.magambell.server.user.domain.model.QUser.user;
 import static com.querydsl.core.group.GroupBy.groupBy;
-import static com.querydsl.core.group.GroupBy.list;
+import static com.querydsl.core.group.GroupBy.set;
 
 import com.magambell.server.order.domain.enums.OrderStatus;
 import com.magambell.server.review.app.port.in.request.ReviewListServiceRequest;
@@ -133,10 +133,10 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
                                                 ReviewListDTO.class,
                                                 review.id,
                                                 review.rating,
-                                                list(reviewReason.satisfactionReason),
+                                                set(reviewReason.satisfactionReason),
                                                 review.description,
                                                 review.createdAt,
-                                                list(reviewImage.name),
+                                                set(reviewImage.name),
                                                 user.nickName,
                                                 goods.id,
                                                 store.id
