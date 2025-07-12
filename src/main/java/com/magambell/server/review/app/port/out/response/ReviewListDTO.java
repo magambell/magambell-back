@@ -2,15 +2,15 @@ package com.magambell.server.review.app.port.out.response;
 
 import com.magambell.server.review.domain.enums.SatisfactionReason;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
 
 public record ReviewListDTO(
         Long reviewId,
         Integer rating,
-        List<SatisfactionReason> satisfactionReasons,
+        Set<SatisfactionReason> satisfactionReasons,
         String description,
         LocalDateTime createdAt,
-        List<String> imageUrls,
+        Set<String> imageUrls,
         String nickName,
         Long goodsId,
         Long storeId
