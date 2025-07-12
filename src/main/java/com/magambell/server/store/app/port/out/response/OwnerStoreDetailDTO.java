@@ -3,11 +3,13 @@ package com.magambell.server.store.app.port.out.response;
 import com.magambell.server.goods.domain.enums.SaleStatus;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 public record OwnerStoreDetailDTO(
         Long storeId,
         String storeName,
-        List<String> storeImageUrls,
+        String address,
+        Set<String> storeImageUrls,
         List<GoodsInfo> goodsList
 ) {
     public record GoodsInfo(

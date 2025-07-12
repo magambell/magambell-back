@@ -2,14 +2,15 @@ package com.magambell.server.store.app.port.out.response;
 
 import com.magambell.server.goods.domain.enums.SaleStatus;
 import java.time.LocalDateTime;
-import java.util.List;
+import java.util.Set;
 
 public record StoreListDTOResponse(
         Long storeId,
         String storeName,
-        List<String> ImageUrl,
+        Set<String> ImageUrl,
         Double latitude,
         Double longitude,
+        String address,
         String goodsName,
         LocalDateTime startTime,
         LocalDateTime endTime,
