@@ -82,9 +82,13 @@ public class NotificationService implements NotificationUseCase {
                 .map(User::getId).toList();
 
         List<FcmTokenDTO> tokens = notificationQueryPort.findWithAllByOwnerIdsAndStoreIsNull(ownerList);
-        tokens.forEach(token -> {
-            send("새 주문이 들어왔어요!", token);
-        });
+        tokens.forEach(token -> send("새 주문이 들어왔어요!", token));
+    }
+
+    @Override
+    public void testSendToken(final Long userId) {
+        List<FcmToken> tokens = notificationQueryPort.findByUserId(userId);
+        tokens.forEach(token -> send("FCM 테스트", new FcmTokenDTO(token.getId(), token.getToken(), "", "")));
     }
 
     @Override

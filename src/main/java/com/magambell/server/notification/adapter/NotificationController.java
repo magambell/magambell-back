@@ -14,6 +14,7 @@ import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -48,6 +49,17 @@ public class NotificationController {
             @AuthenticationPrincipal final CustomUserDetails customUserDetails
     ) {
         notificationUseCase.saveToken(request.toService(customUserDetails.userId()));
+        return new Response<>();
+    }
+
+    @Operation(summary = "FCM 발송 테스트")
+    @ApiResponse(responseCode = "200", content = {
+            @Content(schema = @Schema(implementation = BaseResponse.class))})
+    @GetMapping("")
+    public Response<BaseResponse> testSendToken(
+            @AuthenticationPrincipal final CustomUserDetails customUserDetails
+    ) {
+        notificationUseCase.testSendToken(customUserDetails.userId());
         return new Response<>();
     }
 }
