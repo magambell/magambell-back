@@ -7,6 +7,7 @@ import com.magambell.server.order.domain.model.Order;
 import com.magambell.server.payment.app.port.in.dto.CreatePaymentDTO;
 import com.magambell.server.payment.domain.enums.PaymentStatus;
 import com.magambell.server.payment.infra.PortOnePaymentResponse;
+import com.magambell.server.user.domain.model.User;
 import io.hypersistence.utils.hibernate.id.Tsid;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -18,6 +19,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.OneToOne;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
+import java.util.Set;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -110,5 +112,9 @@ public class Payment extends BaseTimeEntity {
     public void failed() {
         this.paymentStatus = PaymentStatus.FAILED;
         this.order.failed();
+    }
+
+    public Set<User> getOrderStoreOwner() {
+        return this.order.getOrderStoreOwner();
     }
 }

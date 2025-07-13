@@ -11,4 +11,6 @@ public interface NotificationQueryPort {
     List<FcmTokenDTO> findWithAllByStoreId(Store store);
 
     FcmTokenDTO findWithAllByUserIdAndStoreIsNull(User user);
+
+    List<FcmTokenDTO> findWithAllByOwnerIdsAndStoreIsNull(List<Long> ownerList);
 }

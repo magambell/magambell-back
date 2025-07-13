@@ -5,6 +5,7 @@ import static com.magambell.server.store.domain.model.QStore.store;
 import static com.magambell.server.user.domain.model.QUser.user;
 
 import com.magambell.server.notification.app.port.out.dto.FcmTokenDTO;
+import com.magambell.server.user.domain.enums.UserStatus;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
@@ -28,9 +29,9 @@ public class FcmTokenRepositoryImpl implements FcmTokenRepositoryCustom {
                         )
                 )
                 .from(fcmToken)
-                .innerJoin(user).on(user.id.eq(fcmToken.user.id)).fetchJoin()
-                .innerJoin(store).on(store.id.eq(fcmToken.store.id)).fetchJoin()
-                .where(fcmToken.store.id.eq(storeId))
+                .innerJoin(user).on(user.id.eq(fcmToken.user.id))
+                .innerJoin(store).on(store.id.eq(fcmToken.store.id))
+                .where(store.id.eq(storeId))
                 .fetch();
     }
 
@@ -46,10 +47,31 @@ public class FcmTokenRepositoryImpl implements FcmTokenRepositoryCustom {
                         )
                 )
                 .from(fcmToken)
-                .innerJoin(user).on(user.id.eq(fcmToken.user.id)).fetchJoin()
-                .leftJoin(store).on(store.id.eq(fcmToken.store.id)).fetchJoin()
-                .where(fcmToken.user.id.eq(userId)
+                .innerJoin(user).on(user.id.eq(fcmToken.user.id))
+                .leftJoin(store).on(store.id.eq(fcmToken.store.id))
+                .where(user.id.eq(userId)
+                        .and(user.userStatus.eq(UserStatus.ACTIVE))
                         .and(fcmToken.store.isNull()))
                 .fetchOne();
+    }
+
+    @Override
+    public List<FcmTokenDTO> findWithAllByOwnerIdsAndStoreIsNull(final List<Long> ownerList) {
+        return queryFactory
+                .select(
+                        Projections.constructor(FcmTokenDTO.class,
+                                fcmToken.id,
+                                fcmToken.token,
+                                user.nickName,
+                                store.name
+                        )
+                )
+                .from(fcmToken)
+                .innerJoin(user).on(user.id.eq(fcmToken.user.id))
+                .leftJoin(store).on(store.id.eq(fcmToken.store.id))
+                .where(user.id.in(ownerList)
+                        .and(user.userStatus.eq(UserStatus.ACTIVE))
+                        .and(fcmToken.store.isNull()))
+                .fetch();
     }
 }
