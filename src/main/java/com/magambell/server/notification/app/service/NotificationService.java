@@ -18,6 +18,7 @@ import com.magambell.server.user.app.port.out.UserQueryPort;
 import com.magambell.server.user.domain.model.User;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -73,6 +74,17 @@ public class NotificationService implements NotificationUseCase {
             String message = "주문이 거절됐어요.";
             send(message, token);
         }
+    }
+
+    @Override
+    public void notifyPaidOrder(final Set<User> orderStoreOwnerList) {
+        List<Long> ownerList = orderStoreOwnerList.stream()
+                .map(User::getId).toList();
+
+        List<FcmTokenDTO> tokens = notificationQueryPort.findWithAllByOwnerIdsAndStoreIsNull(ownerList);
+        tokens.forEach(token -> {
+            send("새 주문이 들어왔어요!", token);
+        });
     }
 
     @Override

@@ -5,6 +5,8 @@ import static com.magambell.server.order.domain.model.QOrder.order;
 import static com.magambell.server.order.domain.model.QOrderGoods.orderGoods;
 import static com.magambell.server.payment.domain.model.QPayment.payment;
 import static com.magambell.server.stock.domain.model.QStock.stock;
+import static com.magambell.server.store.domain.model.QStore.store;
+import static com.magambell.server.user.domain.model.QUser.user;
 
 import com.magambell.server.payment.domain.model.Payment;
 import com.querydsl.jpa.impl.JPAQueryFactory;
@@ -24,6 +26,8 @@ public class PaymentRepositoryImpl implements PaymentRepositoryCustom {
                         .join(order.orderGoodsList, orderGoods).fetchJoin()
                         .join(orderGoods.goods, goods).fetchJoin()
                         .join(goods.stock, stock).fetchJoin()
+                        .join(goods.store, store).fetchJoin()
+                        .join(store.user, user).fetchJoin()
                         .where(payment.merchantUid.eq(merchantUid))
                         .fetchOne()
         );

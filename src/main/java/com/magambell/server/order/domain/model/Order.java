@@ -21,6 +21,8 @@ import jakarta.persistence.Table;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -125,5 +127,11 @@ public class Order extends BaseTimeEntity {
                 .getStore()
                 .getUser()
                 .equals(user);
+    }
+
+    public Set<User> getOrderStoreOwner() {
+        return orderGoodsList.stream()
+                .map(orderGoods -> orderGoods.getGoods().getStore().getUser())
+                .collect(Collectors.toSet());
     }
 }

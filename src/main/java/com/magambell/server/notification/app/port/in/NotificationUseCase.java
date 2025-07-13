@@ -5,6 +5,7 @@ import com.magambell.server.notification.app.port.in.request.SaveFcmTokenService
 import com.magambell.server.notification.app.port.in.request.SaveStoreOpenFcmTokenServiceRequest;
 import com.magambell.server.user.domain.model.User;
 import java.time.LocalDateTime;
+import java.util.Set;
 
 public interface NotificationUseCase {
     void saveStoreOpenToken(SaveStoreOpenFcmTokenServiceRequest request);
@@ -16,4 +17,6 @@ public interface NotificationUseCase {
     void notifyApproveOrder(User user, LocalDateTime pickupTime);
 
     void notifyRejectOrder(User user);
+
+    void notifyPaidOrder(Set<User> orderStoreOwnerList);
 }

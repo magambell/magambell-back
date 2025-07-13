@@ -7,6 +7,7 @@ import static com.magambell.server.payment.domain.enums.PaymentStatus.READY;
 
 import com.magambell.server.common.enums.ErrorCode;
 import com.magambell.server.common.exception.InvalidRequestException;
+import com.magambell.server.notification.app.port.in.NotificationUseCase;
 import com.magambell.server.payment.app.port.in.PaymentUseCase;
 import com.magambell.server.payment.app.port.in.request.PaymentRedirectPaidServiceRequest;
 import com.magambell.server.payment.app.port.in.request.PortOneWebhookServiceRequest;
@@ -31,6 +32,7 @@ public class PaymentService implements PaymentUseCase {
     private final PortOnePort portOnePort;
     private final PaymentQueryPort paymentQueryPort;
     private final StockUseCase stockUseCase;
+    private final NotificationUseCase notificationUseCase;
 
     @Transactional
     @Override
@@ -39,6 +41,7 @@ public class PaymentService implements PaymentUseCase {
         Payment payment = paymentQueryPort.findByMerchantUidJoinOrder(portOnePaymentResponse.id());
         validatePaid(portOnePaymentResponse, payment);
         payment.paid(portOnePaymentResponse);
+        notificationUseCase.notifyPaidOrder(payment.getOrderStoreOwner());
     }
 
     @Transactional
@@ -51,6 +54,7 @@ public class PaymentService implements PaymentUseCase {
             case PAID -> {
                 validatePaid(portOnePaymentResponse, payment);
                 payment.paid(portOnePaymentResponse);
+                notificationUseCase.notifyPaidOrder(payment.getOrderStoreOwner());
             }
             case CANCELLED -> {
                 validateCancelled(portOnePaymentResponse, payment);

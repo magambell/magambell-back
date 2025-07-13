@@ -29,4 +29,9 @@ public class NotificationQueryAdapter implements NotificationQueryPort {
     public FcmTokenDTO findWithAllByUserIdAndStoreIsNull(final User user) {
         return fcmTokenRepository.findWithAllByUserIdAndStoreIsNull(user.getId());
     }
+
+    @Override
+    public List<FcmTokenDTO> findWithAllByOwnerIdsAndStoreIsNull(final List<Long> ownerList) {
+        return fcmTokenRepository.findWithAllByOwnerIdsAndStoreIsNull(ownerList);
+    }
 }
