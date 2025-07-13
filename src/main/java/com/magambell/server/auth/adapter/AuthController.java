@@ -64,4 +64,28 @@ public class AuthController {
         res.setHeader("RefreshToken", jwtToken.refreshToken());
         return new Response<>();
     }
+
+    @Operation(summary = "oAuth 테스트 고객님 계정 로그인")
+    @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(implementation = BaseResponse.class))})
+    @PostMapping("/user/test")
+    public Response<BaseResponse> userTest(HttpServletResponse response) {
+        //todo 애플, 구글 테스트 후 삭제
+        JwtToken jwtToken = authUseCase.userTest();
+
+        response.setHeader("Authorization", jwtToken.accessToken());
+        response.setHeader("RefreshToken", jwtToken.refreshToken());
+        return new Response<>();
+    }
+
+    @Operation(summary = "oAuth 테스트 사장님 계정 로그인")
+    @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(implementation = BaseResponse.class))})
+    @PostMapping("/owner/test")
+    public Response<BaseResponse> ownerTest(HttpServletResponse response) {
+        //todo 애플, 구글 테스트 후 삭제
+        JwtToken jwtToken = authUseCase.ownerTest();
+
+        response.setHeader("Authorization", jwtToken.accessToken());
+        response.setHeader("RefreshToken", jwtToken.refreshToken());
+        return new Response<>();
+    }
 }

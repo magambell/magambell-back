@@ -16,6 +16,7 @@ import com.magambell.server.user.app.port.out.UserCommandPort;
 import com.magambell.server.user.app.port.out.UserQueryPort;
 import com.magambell.server.user.domain.enums.UserRole;
 import com.magambell.server.user.domain.model.User;
+import com.magambell.server.user.domain.repository.UserRepository;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
@@ -31,15 +32,17 @@ public class AuthService implements AuthUseCase {
     private final UserQueryPort userQueryPort;
     private final UserCommandPort userCommandPort;
     private final JwtService jwtService;
+    private final UserRepository userRepository;
 
     public AuthService(final List<OAuthClient> oAuthClients, final UserQueryPort userQueryPort,
                        final UserCommandPort userCommandPort,
-                       final JwtService jwtService) {
+                       final JwtService jwtService, final UserRepository userRepository) {
         this.oAuthClientMap = oAuthClients.stream()
                 .collect(Collectors.toMap(OAuthClient::getProviderType, Function.identity()));
         this.userQueryPort = userQueryPort;
         this.userCommandPort = userCommandPort;
         this.jwtService = jwtService;
+        this.userRepository = userRepository;
     }
 
     @Transactional
@@ -71,6 +74,18 @@ public class AuthService implements AuthUseCase {
     @Override
     public JwtToken reissueAccessToken(final String refreshToken) {
         return jwtService.reissueAccessToken(refreshToken);
+    }
+
+    @Override
+    public JwtToken userTest() {
+        User user = userQueryPort.findById(742149639478281692L);
+        return jwtService.createJwtToken(user.getId(), user.getUserRole());
+    }
+
+    @Override
+    public JwtToken ownerTest() {
+        User user = userQueryPort.findById(742149639478281693L);
+        return jwtService.createJwtToken(user.getId(), user.getUserRole());
     }
 
     private User oAuthSignUp(final OAuthUserInfo userInfo, final SocialLoginServiceRequest request) {

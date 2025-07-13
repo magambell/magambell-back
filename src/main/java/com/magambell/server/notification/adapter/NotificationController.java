@@ -59,6 +59,7 @@ public class NotificationController {
     public Response<BaseResponse> testSendToken(
             @AuthenticationPrincipal final CustomUserDetails customUserDetails
     ) {
+        //todo 테스트 완료 후 삭제 예정
         notificationUseCase.testSendToken(customUserDetails.userId());
         return new Response<>();
     }
