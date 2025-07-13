@@ -19,4 +19,6 @@ public interface NotificationUseCase {
     void notifyRejectOrder(User user);
 
     void notifyPaidOrder(Set<User> orderStoreOwnerList);
+
+    void testSendToken(Long userId);
 }
