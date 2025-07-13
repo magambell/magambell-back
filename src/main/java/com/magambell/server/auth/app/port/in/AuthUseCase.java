@@ -11,4 +11,8 @@ public interface AuthUseCase {
     void withdrawUser(SocialWithdrawServiceRequest request, CustomUserDetails customUserDetails);
 
     JwtToken reissueAccessToken(String refreshToken);
+
+    JwtToken userTest();
+
+    JwtToken ownerTest();
 }
