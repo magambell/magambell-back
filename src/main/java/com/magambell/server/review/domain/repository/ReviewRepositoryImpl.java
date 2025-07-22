@@ -115,6 +115,13 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
         List<Long> reviewIds = queryFactory
                 .select(review.id)
                 .from(review)
+                .leftJoin(reviewImage).on(reviewImage.review.id.eq(review.id))
+                .leftJoin(reviewReason).on(reviewReason.review.id.eq(review.id))
+                .innerJoin(orderGoods).on(orderGoods.id.eq(review.orderGoods.id))
+                .innerJoin(order).on(order.id.eq(orderGoods.order.id))
+                .innerJoin(goods).on(goods.id.eq(orderGoods.goods.id))
+                .innerJoin(store).on(store.id.eq(goods.store.id))
+                .innerJoin(user).on(user.id.eq(review.user.id))
                 .where(conditions)
                 .orderBy(review.createdAt.desc())
                 .offset(pageable.getOffset())
