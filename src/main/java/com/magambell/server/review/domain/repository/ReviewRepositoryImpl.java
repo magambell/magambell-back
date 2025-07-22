@@ -107,13 +107,22 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
     @Override
     public List<ReviewListDTO> getReviewListByUser(final Long userId, final Pageable pageable) {
         BooleanBuilder conditions = new BooleanBuilder();
-        conditions.and(user.id.eq(userId));
+        conditions.and(review.user.id.eq(userId));
         return getReviewListDTOS(pageable, conditions);
     }
 
     private List<ReviewListDTO> getReviewListDTOS(final Pageable pageable, final BooleanBuilder conditions) {
+        List<Long> reviewIds = queryFactory
+                .select(review.id)
+                .from(review)
+                .where(conditions)
+                .orderBy(review.createdAt.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
         return queryFactory
-                .select(review, reviewImage, order, orderGoods, goods, store, user)
+                .select(review, reviewImage, reviewReason, order, orderGoods, goods, store, user)
                 .from(review)
                 .leftJoin(reviewImage).on(reviewImage.review.id.eq(review.id))
                 .leftJoin(reviewReason).on(reviewReason.review.id.eq(review.id))
@@ -122,10 +131,8 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
                 .innerJoin(goods).on(goods.id.eq(orderGoods.goods.id))
                 .innerJoin(store).on(store.id.eq(goods.store.id))
                 .innerJoin(user).on(user.id.eq(review.user.id))
-                .where(conditions)
+                .where(review.id.in(reviewIds))
                 .orderBy(review.createdAt.desc())
-                .offset(pageable.getOffset())
-                .limit(pageable.getPageSize())
                 .transform(
                         groupBy(review.id)
                                 .list(
