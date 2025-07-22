@@ -13,7 +13,8 @@ public record ReviewListDTO(
         Set<String> imageUrls,
         String nickName,
         Long goodsId,
-        Long storeId
+        Long storeId,
+        String storeName
 ) {
     public String getReviewId() {
         return String.valueOf(reviewId);

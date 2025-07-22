@@ -139,7 +139,8 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
                                                 set(reviewImage.name),
                                                 user.nickName,
                                                 goods.id,
-                                                store.id
+                                                store.id,
+                                                store.name
                                         )
                                 )
                 );
