@@ -1,6 +1,6 @@
 package com.magambell.server.goods.app.scheduler;
 
-import com.magambell.server.goods.app.service.GoodsSchedulerService;
+import com.magambell.server.goods.app.port.in.GoodsUseCase;
 import java.time.LocalDateTime;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -12,10 +12,10 @@ import org.springframework.stereotype.Component;
 @Component
 public class GoodsStatusScheduler {
 
-    private final GoodsSchedulerService goodsSchedulerService;
+    private final GoodsUseCase goodsUseCase;
 
     @Scheduled(cron = "0 */5 * * * *")
     public void changeSaleStatusToOff() {
-        goodsSchedulerService.changeSaleStatusToOff(LocalDateTime.now());
+        goodsUseCase.changeSaleStatusToOff(LocalDateTime.now());
     }
 }
