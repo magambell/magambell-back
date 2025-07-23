@@ -4,6 +4,7 @@ import com.google.firebase.messaging.FirebaseMessagingException;
 import com.magambell.server.common.enums.ErrorCode;
 import com.magambell.server.common.exception.DuplicateException;
 import com.magambell.server.notification.app.port.in.NotificationUseCase;
+import com.magambell.server.notification.app.port.in.request.DeleteStoreOpenFcmTokenServiceRequest;
 import com.magambell.server.notification.app.port.in.request.NotifyStoreOpenRequest;
 import com.magambell.server.notification.app.port.in.request.SaveFcmTokenServiceRequest;
 import com.magambell.server.notification.app.port.in.request.SaveStoreOpenFcmTokenServiceRequest;
@@ -49,6 +50,12 @@ public class NotificationService implements NotificationUseCase {
         notificationCommandPort.save(FcmToken.create(request.fcmToken(), user, store));
     }
 
+    @Override
+    public void deleteStoreOpenToken(final DeleteStoreOpenFcmTokenServiceRequest request) {
+        FcmToken fcmToken = notificationQueryPort.findByUserIdAndStoreId(request.storeId(), request.userId());
+        notificationCommandPort.delete(fcmToken);
+    }
+
     @Transactional
     @Override
     public void saveToken(final SaveFcmTokenServiceRequest request) {
@@ -90,6 +97,7 @@ public class NotificationService implements NotificationUseCase {
         List<FcmToken> tokens = notificationQueryPort.findByUserId(userId);
         tokens.forEach(token -> send("FCM 테스트", new FcmTokenDTO(token.getId(), token.getToken(), "", "")));
     }
+
 
     @Override
     public void notifyStoreOpen(final NotifyStoreOpenRequest request) {

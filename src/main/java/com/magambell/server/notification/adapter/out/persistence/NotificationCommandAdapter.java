@@ -27,4 +27,9 @@ public class NotificationCommandAdapter implements NotificationCommandPort {
     public void deleteUserAndStoreIsNull(final User user) {
         fcmTokenRepository.deleteByUserIdAndStoreIsNull(user.getId());
     }
+
+    @Override
+    public void delete(final FcmToken fcmToken) {
+        fcmTokenRepository.delete(fcmToken);
+    }
 }

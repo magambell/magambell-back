@@ -9,4 +9,6 @@ public interface NotificationCommandPort {
     void removeToken(Long fcmTokenId);
 
     void deleteUserAndStoreIsNull(User user);
+
+    void delete(FcmToken fcmToken);
 }

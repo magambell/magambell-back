@@ -1,6 +1,8 @@
 package com.magambell.server.notification.adapter.out.persistence;
 
 import com.magambell.server.common.annotation.Adapter;
+import com.magambell.server.common.enums.ErrorCode;
+import com.magambell.server.common.exception.NotFoundException;
 import com.magambell.server.notification.app.port.out.NotificationQueryPort;
 import com.magambell.server.notification.app.port.out.dto.FcmTokenDTO;
 import com.magambell.server.notification.domain.model.FcmToken;
@@ -39,5 +41,11 @@ public class NotificationQueryAdapter implements NotificationQueryPort {
     @Override
     public List<FcmToken> findByUserId(final Long userId) {
         return fcmTokenRepository.findByUserId(userId);
+    }
+
+    @Override
+    public FcmToken findByUserIdAndStoreId(final Long storeId, final Long userId) {
+        return fcmTokenRepository.findByStoreIdAndUserId(storeId, userId)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
     }
 }
