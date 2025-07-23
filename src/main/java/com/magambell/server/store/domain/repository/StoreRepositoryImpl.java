@@ -224,12 +224,18 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                 store.longitude
         );
 
+        BooleanBuilder conditions = new BooleanBuilder();
+        Optional.ofNullable(radiusCondition(distance)).ifPresent(conditions::and);
+        conditions.and(store.approved.eq(APPROVED));
+        conditions.and(user.userStatus.eq(UserStatus.ACTIVE));
+
         List<Long> storeIds = queryFactory
                 .select(store.id)
                 .from(store)
                 .leftJoin(goods).on(goods.store.id.eq(store.id))
                 .innerJoin(stock).on(stock.goods.id.eq(goods.id))
                 .innerJoin(user).on(user.id.eq(store.user.id))
+                .where(conditions)
                 .orderBy(distance.asc())
                 .fetch();
 
