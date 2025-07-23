@@ -50,6 +50,7 @@ public class NotificationService implements NotificationUseCase {
         notificationCommandPort.save(FcmToken.create(request.fcmToken(), user, store));
     }
 
+    @Transactional
     @Override
     public void deleteStoreOpenToken(final DeleteStoreOpenFcmTokenServiceRequest request) {
         FcmToken fcmToken = notificationQueryPort.findByUserIdAndStoreId(request.storeId(), request.userId());
