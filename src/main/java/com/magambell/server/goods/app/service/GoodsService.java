@@ -68,6 +68,7 @@ public class GoodsService implements GoodsUseCase {
     @Override
     public void changeSaleStatusToOff(final LocalDateTime now) {
         List<Goods> expiredGoods = goodsQueryPort.findExpiredGoods(now);
+        log.info("Expired Goods {}", expiredGoods);
         expiredGoods.forEach(Goods::changeSaleStatusToOffBySystem);
     }
 
