@@ -117,7 +117,7 @@ class ReviewServiceTest {
                 "대표",
                 "01099998888",
                 "123123",
-                Bank.IBK기업은행,
+                Bank.KB국민,
                 "9876543210",
                 List.of(),
                 Approved.APPROVED,
