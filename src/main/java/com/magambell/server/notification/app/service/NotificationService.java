@@ -3,6 +3,7 @@ package com.magambell.server.notification.app.service;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.magambell.server.common.enums.ErrorCode;
 import com.magambell.server.common.exception.DuplicateException;
+import com.magambell.server.notification.adapter.in.web.CheckStoreOpenServiceRequest;
 import com.magambell.server.notification.app.port.in.NotificationUseCase;
 import com.magambell.server.notification.app.port.in.request.DeleteStoreOpenFcmTokenServiceRequest;
 import com.magambell.server.notification.app.port.in.request.NotifyStoreOpenRequest;
@@ -55,6 +56,14 @@ public class NotificationService implements NotificationUseCase {
     public void deleteStoreOpenToken(final DeleteStoreOpenFcmTokenServiceRequest request) {
         FcmToken fcmToken = notificationQueryPort.findByUserIdAndStoreId(request.storeId(), request.userId());
         notificationCommandPort.delete(fcmToken);
+    }
+
+    @Override
+    public boolean checkUserStoreOpen(final CheckStoreOpenServiceRequest request) {
+        User user = userQueryPort.findById(request.userId());
+        Store store = storeQueryPort.findById(request.storeId());
+
+        return notificationQueryPort.existsByUserAndStore(user, store);
     }
 
     @Transactional

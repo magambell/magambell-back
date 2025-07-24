@@ -51,7 +51,9 @@ public class OrderController {
             @RequestBody @Validated final CreateOrderRequest request,
             @AuthenticationPrincipal final CustomUserDetails customUserDetails
     ) {
-        CreateOrderResponseDTO dto = orderUseCase.createOrder(request.toServiceRequest(), customUserDetails.userId());
+        LocalDateTime now = LocalDateTime.now();
+        CreateOrderResponseDTO dto = orderUseCase.createOrder(request.toServiceRequest(), customUserDetails.userId(),
+                now);
         return new Response<>(new CreateOrderResponse(dto.merchantUid(), dto.totalAmount()));
     }
 

@@ -3,8 +3,10 @@ package com.magambell.server.notification.adapter;
 import com.magambell.server.common.Response;
 import com.magambell.server.common.security.CustomUserDetails;
 import com.magambell.server.common.swagger.BaseResponse;
+import com.magambell.server.notification.adapter.in.web.CheckStoreOpenServiceRequest;
 import com.magambell.server.notification.adapter.in.web.SaveFcmTokenRequest;
 import com.magambell.server.notification.adapter.in.web.SaveStoreOpenFcmTokenRequest;
+import com.magambell.server.notification.adapter.out.persistence.CheckUserStoreOpenNotificationResponse;
 import com.magambell.server.notification.app.port.in.NotificationUseCase;
 import com.magambell.server.notification.app.port.in.request.DeleteStoreOpenFcmTokenServiceRequest;
 import io.swagger.v3.oas.annotations.Operation;
@@ -78,5 +80,18 @@ public class NotificationController {
         //todo 테스트 완료 후 삭제 예정
         notificationUseCase.testSendToken(customUserDetails.userId());
         return new Response<>();
+    }
+
+    @Operation(summary = "고객 매장 오픈 알림 여부 조회")
+    @ApiResponse(responseCode = "200", content = {
+            @Content(schema = @Schema(implementation = CheckUserStoreOpenNotificationResponse.class))})
+    @GetMapping("/store/{storeId}")
+    public Response<CheckUserStoreOpenNotificationResponse> checkStoreOpen(
+            @PathVariable Long storeId,
+            @AuthenticationPrincipal final CustomUserDetails customUserDetails
+    ) {
+        boolean exists = notificationUseCase.checkUserStoreOpen(new CheckStoreOpenServiceRequest(storeId,
+                customUserDetails.userId()));
+        return new Response<>(new CheckUserStoreOpenNotificationResponse(exists));
     }
 }

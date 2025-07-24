@@ -63,14 +63,15 @@ public class OrderService implements OrderUseCase {
 
     @Transactional
     @Override
-    public CreateOrderResponseDTO createOrder(final CreateOrderServiceRequest request, final Long userId) {
+    public CreateOrderResponseDTO createOrder(final CreateOrderServiceRequest request, final Long userId,
+                                              final LocalDateTime now) {
         User user = userQueryPort.findById(userId);
         Goods goods = goodsQueryPort.findById(request.goodsId());
         Stock stock = stockQueryPort.findByGoodsIdWithLock(goods.getId());
         StockHistory stockHistory = stock.recordDecrease(goods, request.quantity());
         stockCommandPort.saveStockHistory(stockHistory);
 
-        validateOrderRequest(request, goods);
+        validateOrderRequest(request, goods, now);
 
         Order order = orderCommandPort.createOrder(request.toDTO(user, goods));
 
@@ -155,13 +156,18 @@ public class OrderService implements OrderUseCase {
         order.completed();
     }
 
-    private void validateOrderRequest(final CreateOrderServiceRequest request, final Goods goods) {
+    private void validateOrderRequest(final CreateOrderServiceRequest request, final Goods goods,
+                                      final LocalDateTime now) {
         if (request.totalPrice() != goods.getSalePrice() * request.quantity()) {
             throw new InvalidRequestException(ErrorCode.INVALID_TOTAL_PRICE);
         }
 
         if (request.pickupTime().isBefore(goods.getStartTime()) || request.pickupTime().isAfter(goods.getEndTime())) {
             throw new InvalidRequestException(ErrorCode.INVALID_PICKUP_TIME);
+        }
+
+        if (!request.pickupTime().isBefore(now)) {
+            throw new InvalidRequestException(ErrorCode.INVALID_NOW_TIME_PICKUP_TIME);
         }
     }
 

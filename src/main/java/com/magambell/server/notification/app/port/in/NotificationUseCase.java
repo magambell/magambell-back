@@ -1,5 +1,6 @@
 package com.magambell.server.notification.app.port.in;
 
+import com.magambell.server.notification.adapter.in.web.CheckStoreOpenServiceRequest;
 import com.magambell.server.notification.app.port.in.request.DeleteStoreOpenFcmTokenServiceRequest;
 import com.magambell.server.notification.app.port.in.request.NotifyStoreOpenRequest;
 import com.magambell.server.notification.app.port.in.request.SaveFcmTokenServiceRequest;
@@ -24,4 +25,6 @@ public interface NotificationUseCase {
     void testSendToken(Long userId);
 
     void deleteStoreOpenToken(DeleteStoreOpenFcmTokenServiceRequest request);
+
+    boolean checkUserStoreOpen(CheckStoreOpenServiceRequest request);
 }
