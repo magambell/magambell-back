@@ -16,6 +16,7 @@ import com.magambell.server.review.app.port.in.request.ReviewListServiceRequest;
 import com.magambell.server.review.app.port.in.request.ReviewRatingAllServiceRequest;
 import com.magambell.server.review.app.port.out.response.ReviewListDTO;
 import com.magambell.server.review.app.port.out.response.ReviewRatingSummaryDTO;
+import com.magambell.server.review.domain.enums.ReviewStatus;
 import com.magambell.server.user.domain.enums.UserStatus;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
@@ -39,6 +40,7 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
         conditions.and(goods.id.eq(request.goodsId()));
         conditions.and(user.userStatus.eq(UserStatus.ACTIVE));
         conditions.and(order.orderStatus.eq(OrderStatus.COMPLETED));
+        conditions.and(review.reviewStatus.eq(ReviewStatus.ACTIVE));
         if (request.imageCheck()) {
             conditions.and(reviewImage.isNotNull());
         }
@@ -52,6 +54,7 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
         conditions.and(goods.id.eq(request.goodsId()));
         conditions.and(user.userStatus.eq(UserStatus.ACTIVE));
         conditions.and(order.orderStatus.eq(OrderStatus.COMPLETED));
+        conditions.and(review.reviewStatus.eq(ReviewStatus.ACTIVE));
         if (request.imageCheck()) {
             conditions.and(reviewImage.isNotNull());
         }
@@ -108,6 +111,7 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
     public List<ReviewListDTO> getReviewListByUser(final Long userId, final Pageable pageable) {
         BooleanBuilder conditions = new BooleanBuilder();
         conditions.and(review.user.id.eq(userId));
+        conditions.and(review.reviewStatus.eq(ReviewStatus.ACTIVE));
         return getReviewListDTOS(pageable, conditions);
     }
 

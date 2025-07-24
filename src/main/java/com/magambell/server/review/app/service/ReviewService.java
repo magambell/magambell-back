@@ -7,6 +7,7 @@ import com.magambell.server.order.app.port.out.OrderQueryPort;
 import com.magambell.server.order.domain.enums.OrderStatus;
 import com.magambell.server.order.domain.model.OrderGoods;
 import com.magambell.server.review.app.port.in.ReviewUseCase;
+import com.magambell.server.review.app.port.in.request.DeleteReviewServiceRequest;
 import com.magambell.server.review.app.port.in.request.RegisterReviewServiceRequest;
 import com.magambell.server.review.app.port.in.request.ReviewListServiceRequest;
 import com.magambell.server.review.app.port.in.request.ReviewMyServiceRequest;
@@ -16,6 +17,7 @@ import com.magambell.server.review.app.port.out.ReviewQueryPort;
 import com.magambell.server.review.app.port.out.response.ReviewListDTO;
 import com.magambell.server.review.app.port.out.response.ReviewRatingSummaryDTO;
 import com.magambell.server.review.app.port.out.response.ReviewRegisterResponseDTO;
+import com.magambell.server.review.domain.model.Review;
 import com.magambell.server.user.app.port.out.UserQueryPort;
 import com.magambell.server.user.domain.model.User;
 import java.util.List;
@@ -60,6 +62,14 @@ public class ReviewService implements ReviewUseCase {
     public List<ReviewListDTO> getReviewListByUser(final ReviewMyServiceRequest request) {
         User user = userQueryPort.findById(request.userId());
         return reviewQueryPort.getReviewListByUser(user, PageRequest.of(request.page() - 1, request.size()));
+    }
+
+    @Transactional
+    @Override
+    public void deleteReview(final DeleteReviewServiceRequest request) {
+        User user = userQueryPort.findById(request.userId());
+        Review review = reviewQueryPort.findByIdAndUserId(request.reviewId(), user.getId());
+        review.delete();
     }
 
     private void validateOrderStatus(final OrderGoods orderGoods) {

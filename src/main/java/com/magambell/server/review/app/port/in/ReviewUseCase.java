@@ -1,5 +1,6 @@
 package com.magambell.server.review.app.port.in;
 
+import com.magambell.server.review.app.port.in.request.DeleteReviewServiceRequest;
 import com.magambell.server.review.app.port.in.request.RegisterReviewServiceRequest;
 import com.magambell.server.review.app.port.in.request.ReviewListServiceRequest;
 import com.magambell.server.review.app.port.in.request.ReviewMyServiceRequest;
@@ -17,4 +18,6 @@ public interface ReviewUseCase {
     ReviewRatingSummaryDTO getReviewRatingAll(ReviewRatingAllServiceRequest request);
 
     List<ReviewListDTO> getReviewListByUser(ReviewMyServiceRequest request);
+
+    void deleteReview(DeleteReviewServiceRequest request);
 }
