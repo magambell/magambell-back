@@ -84,7 +84,7 @@ class GoodsServiceTest {
                 "대표이름",
                 "01012345678",
                 "123491923",
-                Bank.IBK기업은행,
+                Bank.KB국민,
                 "102391485",
                 List.of(),
                 Approved.APPROVED,
