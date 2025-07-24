@@ -2,6 +2,7 @@ package com.magambell.server.review.adapter;
 
 import com.magambell.server.common.Response;
 import com.magambell.server.common.security.CustomUserDetails;
+import com.magambell.server.common.swagger.BaseResponse;
 import com.magambell.server.review.adapter.in.web.RegisterReviewRequest;
 import com.magambell.server.review.adapter.in.web.ReviewListRequest;
 import com.magambell.server.review.adapter.in.web.ReviewMyRequest;
@@ -10,6 +11,7 @@ import com.magambell.server.review.adapter.out.persistence.ReviewListResponse;
 import com.magambell.server.review.adapter.out.persistence.ReviewRatingSummaryResponse;
 import com.magambell.server.review.adapter.out.persistence.ReviewRegisterResponse;
 import com.magambell.server.review.app.port.in.ReviewUseCase;
+import com.magambell.server.review.app.port.in.request.DeleteReviewServiceRequest;
 import com.magambell.server.review.app.port.out.response.ReviewListDTO;
 import com.magambell.server.review.app.port.out.response.ReviewRatingSummaryDTO;
 import com.magambell.server.review.app.port.out.response.ReviewRegisterResponseDTO;
@@ -23,8 +25,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -86,5 +90,19 @@ public class ReviewController {
         List<ReviewListDTO> reviewListByUser = reviewUseCase.getReviewListByUser(
                 request.toServiceRequest(customUserDetails.userId()));
         return new Response<>(new ReviewListResponse(reviewListByUser));
+    }
+
+    @PreAuthorize("hasRole('CUSTOMER')")
+    @Operation(summary = "리뷰 삭제")
+    @ApiResponse(responseCode = "200", content = {
+            @Content(schema = @Schema(implementation = BaseResponse.class))})
+    @DeleteMapping("/{reviewId}")
+    public Response<BaseResponse> deleteReview(
+            @PathVariable Long reviewId,
+            @AuthenticationPrincipal final CustomUserDetails customUserDetails
+    ) {
+        reviewUseCase.deleteReview(new DeleteReviewServiceRequest(reviewId, customUserDetails.userId()));
+
+        return new Response<>();
     }
 }

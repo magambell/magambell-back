@@ -5,10 +5,13 @@ import com.magambell.server.common.enums.ErrorCode;
 import com.magambell.server.common.exception.InvalidRequestException;
 import com.magambell.server.order.domain.model.OrderGoods;
 import com.magambell.server.review.app.port.in.dto.RegisterReviewDTO;
+import com.magambell.server.review.domain.enums.ReviewStatus;
 import com.magambell.server.user.domain.model.User;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -39,6 +42,9 @@ public class Review extends BaseTimeEntity {
 
     private String description;
 
+    @Enumerated(EnumType.STRING)
+    private ReviewStatus reviewStatus;
+
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     private User user;
@@ -54,9 +60,10 @@ public class Review extends BaseTimeEntity {
     private List<ReviewReason> reviewReasons = new ArrayList<>();
 
     @Builder(access = AccessLevel.PRIVATE)
-    private Review(final Integer rating, final String description) {
+    private Review(final Integer rating, final String description, final ReviewStatus reviewStatus) {
         this.rating = rating;
         this.description = description;
+        this.reviewStatus = reviewStatus;
     }
 
     public static Review create(final RegisterReviewDTO dto) {
@@ -67,6 +74,7 @@ public class Review extends BaseTimeEntity {
         Review review = Review.builder()
                 .rating(dto.rating())
                 .description(dto.description())
+                .reviewStatus(ReviewStatus.ACTIVE)
                 .build();
 
         List<ReviewReason> list = Optional.ofNullable(dto.satisfactionReasons())
@@ -102,5 +110,9 @@ public class Review extends BaseTimeEntity {
     public void addReviewImage(final ReviewImage reviewImage) {
         this.reviewImages.add(reviewImage);
         reviewImage.addReview(this);
+    }
+
+    public void delete() {
+        this.reviewStatus = ReviewStatus.DELETED;
     }
 }

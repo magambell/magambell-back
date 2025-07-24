@@ -17,12 +17,14 @@ import com.magambell.server.order.domain.repository.OrderGoodsRepository;
 import com.magambell.server.order.domain.repository.OrderRepository;
 import com.magambell.server.payment.domain.repository.PaymentRepository;
 import com.magambell.server.review.app.port.in.dto.RegisterReviewDTO;
+import com.magambell.server.review.app.port.in.request.DeleteReviewServiceRequest;
 import com.magambell.server.review.app.port.in.request.RegisterReviewServiceRequest;
 import com.magambell.server.review.app.port.in.request.ReviewListServiceRequest;
 import com.magambell.server.review.app.port.in.request.ReviewMyServiceRequest;
 import com.magambell.server.review.app.port.in.request.ReviewRatingAllServiceRequest;
 import com.magambell.server.review.app.port.out.response.ReviewListDTO;
 import com.magambell.server.review.app.port.out.response.ReviewRatingSummaryDTO;
+import com.magambell.server.review.domain.enums.ReviewStatus;
 import com.magambell.server.review.domain.model.Review;
 import com.magambell.server.review.domain.repository.ReviewImageRepository;
 import com.magambell.server.review.domain.repository.ReviewReasonRepository;
@@ -257,6 +259,30 @@ class ReviewServiceTest {
         assertThat(reviewList.get(0).satisfactionReasons()).contains(FRIENDLY);
         assertThat(reviewList.get(0).description()).isEqualTo("test");
         assertThat(reviewList.get(0).nickName()).isEqualTo(user.getNickName());
+    }
+
+    @DisplayName("내가 작성한 리뷰 삭제")
+    @Test
+    void deleteReview() {
+        // given
+        RegisterReviewDTO dto = new RegisterReviewDTO(
+                order.getId(),
+                2,
+                List.of(FRIENDLY, AFFORDABLE, ZERO),
+                "test",
+                List.of(),
+                user,
+                orderGoods
+        );
+        Review review = reviewRepository.save(Review.create(dto));
+
+        // when
+        reviewService.deleteReview(new DeleteReviewServiceRequest(review.getId(), user.getId()));
+
+        // then
+        List<Review> reviewAll = reviewRepository.findAll();
+        assertThat(reviewAll).hasSize(1);
+        assertThat(reviewAll.get(0).getReviewStatus()).isEqualTo(ReviewStatus.DELETED);
     }
 
     private Review createReview(int i) {
