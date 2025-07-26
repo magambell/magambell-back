@@ -166,7 +166,7 @@ public class OrderService implements OrderUseCase {
             throw new InvalidRequestException(ErrorCode.INVALID_PICKUP_TIME);
         }
 
-        if (!request.pickupTime().isBefore(now)) {
+        if (!request.pickupTime().isAfter(now)) {
             throw new InvalidRequestException(ErrorCode.INVALID_NOW_TIME_PICKUP_TIME);
         }
     }

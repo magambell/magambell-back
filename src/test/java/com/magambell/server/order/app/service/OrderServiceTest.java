@@ -167,7 +167,7 @@ class OrderServiceTest {
         );
 
         // when
-        orderService.createOrder(request, user.getId(), LocalDateTime.now().plusHours(1));
+        orderService.createOrder(request, user.getId(), LocalDateTime.now().plusMinutes(10));
 
         // then
         Goods updatedGoods = goodsRepository.findById(goods.getId()).orElse(null);
@@ -309,7 +309,7 @@ class OrderServiceTest {
                 LocalDateTime.now().plusMinutes(30),
                 "빨리 주세요"
         );
-        orderService.createOrder(request, user.getId(), LocalDateTime.now().plusHours(1));
+        orderService.createOrder(request, user.getId(), LocalDateTime.now().plusMinutes(10));
 
         Order order = orderRepository.findAll().get(0);
         order.paid();
@@ -342,7 +342,7 @@ class OrderServiceTest {
                 LocalDateTime.now().plusMinutes(30),
                 "빨리 주세요"
         );
-        orderService.createOrder(request, user.getId(), LocalDateTime.now().plusHours(1));
+        orderService.createOrder(request, user.getId(), LocalDateTime.now().plusMinutes(10));
 
         Order order = orderRepository.findAll().get(0);
         order.paid();
