@@ -32,7 +32,7 @@ public class FavoriteController {
 
     private final FavoriteUseCase favoriteUseCase;
 
-    @Operation(summary = "매장 즐겨찾기 삭제")
+    @Operation(summary = "매장 즐겨찾기 추가")
     @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(implementation = BaseResponse.class))})
     @PostMapping("/{storeId}")
     public Response<BaseResponse> registerFavorite(@PathVariable final Long storeId,

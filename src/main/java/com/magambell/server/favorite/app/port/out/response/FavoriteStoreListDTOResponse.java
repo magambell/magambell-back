@@ -7,6 +7,7 @@ import java.util.List;
 public record FavoriteStoreListDTOResponse(
         Long storeId,
         String storeName,
+        String address,
         List<String> ImageUrl,
         String goodsName,
         LocalDateTime startTime,
