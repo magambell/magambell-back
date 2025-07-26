@@ -45,6 +45,7 @@ public class FavoriteRepositoryImpl implements FavoriteRepositoryCustom {
                                 .list(Projections.constructor(FavoriteStoreListDTOResponse.class,
                                                 store.id,
                                                 store.name,
+                                                store.address,
                                                 list(storeImage.name),
                                                 goods.name,
                                                 goods.startTime,
