@@ -8,5 +8,5 @@ public interface FcmTokenRepositoryCustom {
 
     FcmTokenDTO findWithAllByUserIdAndStoreIsNull(Long userId);
 
-    List<FcmTokenDTO> findWithAllByOwnerIdsAndStoreIsNull(List<Long> ownerList);
+    List<FcmTokenDTO> findWithAllByUsersIdsAndStoreIsNull(List<Long> userList);
 }

@@ -10,6 +10,7 @@ import com.magambell.server.notification.domain.repository.FcmTokenRepository;
 import com.magambell.server.store.domain.model.Store;
 import com.magambell.server.user.domain.model.User;
 import java.util.List;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -35,7 +36,7 @@ public class NotificationQueryAdapter implements NotificationQueryPort {
 
     @Override
     public List<FcmTokenDTO> findWithAllByOwnerIdsAndStoreIsNull(final List<Long> ownerList) {
-        return fcmTokenRepository.findWithAllByOwnerIdsAndStoreIsNull(ownerList);
+        return fcmTokenRepository.findWithAllByUsersIdsAndStoreIsNull(ownerList);
     }
 
     @Override
@@ -47,5 +48,14 @@ public class NotificationQueryAdapter implements NotificationQueryPort {
     public FcmToken findByUserIdAndStoreId(final Long storeId, final Long userId) {
         return fcmTokenRepository.findByStoreIdAndUserId(storeId, userId)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.USER_NOT_FOUND));
+    }
+
+    @Override
+    public List<FcmTokenDTO> findByUsers(final Set<User> users) {
+        List<Long> userIds = users.stream()
+                .map(User::getId)
+                .toList();
+
+        return fcmTokenRepository.findWithAllByUsersIdsAndStoreIsNull(userIds);
     }
 }

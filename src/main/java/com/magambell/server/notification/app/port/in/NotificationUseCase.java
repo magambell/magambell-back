@@ -27,4 +27,6 @@ public interface NotificationUseCase {
     void deleteStoreOpenToken(DeleteStoreOpenFcmTokenServiceRequest request);
 
     boolean checkUserStoreOpen(CheckStoreOpenServiceRequest request);
+
+    void notifyPickup(LocalDateTime pickupTime);
 }

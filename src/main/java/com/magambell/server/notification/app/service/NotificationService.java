@@ -14,13 +14,20 @@ import com.magambell.server.notification.app.port.out.NotificationQueryPort;
 import com.magambell.server.notification.app.port.out.dto.FcmTokenDTO;
 import com.magambell.server.notification.domain.model.FcmToken;
 import com.magambell.server.notification.infra.FirebaseNotificationSender;
+import com.magambell.server.order.app.port.out.OrderQueryPort;
+import com.magambell.server.order.domain.model.Order;
+import com.magambell.server.order.domain.model.OrderGoods;
 import com.magambell.server.store.app.port.out.StoreQueryPort;
 import com.magambell.server.store.domain.model.Store;
 import com.magambell.server.user.app.port.out.UserQueryPort;
 import com.magambell.server.user.domain.model.User;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -37,6 +44,7 @@ public class NotificationService implements NotificationUseCase {
     private final FirebaseNotificationSender firebaseNotificationSender;
     private final StoreQueryPort storeQueryPort;
     private final UserQueryPort userQueryPort;
+    private final OrderQueryPort orderQueryPort;
 
     @Transactional
     @Override
@@ -105,7 +113,8 @@ public class NotificationService implements NotificationUseCase {
     @Override
     public void testSendToken(final Long userId) {
         List<FcmToken> tokens = notificationQueryPort.findByUserId(userId);
-        tokens.forEach(token -> send("FCM 테스트", new FcmTokenDTO(token.getId(), token.getToken(), "", "")));
+        tokens.forEach(token -> send("FCM 테스트",
+                new FcmTokenDTO(token.getId(), token.getToken(), token.getUser().getId(), "", "")));
     }
 
 
@@ -119,6 +128,63 @@ public class NotificationService implements NotificationUseCase {
             String message = nickname + "님이 기다리던 " + storeName + "의 예약이 오픈되었어요!";
 
             send(message, token);
+        });
+    }
+
+    @Transactional
+    @Override
+    public void notifyPickup(final LocalDateTime pickupTime) {
+        List<Order> orders = orderQueryPort.findOrdersToNotifyByPickupTime(pickupTime);
+
+        Set<User> customers = orders.stream()
+                .map(Order::getUser)
+                .collect(Collectors.toSet());
+
+        Set<User> owners = orders.stream()
+                .flatMap(order -> order.getOrderStoreOwner().stream())
+                .collect(Collectors.toSet());
+
+        List<FcmTokenDTO> customerTokens = notificationQueryPort.findByUsers(customers);
+        List<FcmTokenDTO> ownerTokens = notificationQueryPort.findByUsers(owners);
+
+        Map<Long, FcmTokenDTO> tokenByUserId = Stream.concat(customerTokens.stream(), ownerTokens.stream())
+                .collect(Collectors.toMap(
+                        FcmTokenDTO::userId,
+                        Function.identity(),
+                        (t1, t2) -> t1
+                ));
+
+        orders.forEach(order -> {
+            User customer = order.getUser();
+            FcmTokenDTO customerToken = tokenByUserId.get(customer.getId());
+
+            if (customerToken != null) {
+                String storeNames = order.getOrderGoodsList().stream()
+                        .map(og -> og.getGoods().getStore().getName())
+                        .distinct()
+                        .collect(Collectors.joining(", ")); // 여러 매장이라면 쉼표로
+
+                String message = "[" + storeNames + "] 에서 마감백을 픽업해주세요!";
+                send(message, customerToken);
+            }
+
+            order.getOrderStoreOwner().forEach(owner -> {
+                FcmTokenDTO ownerToken = tokenByUserId.get(owner.getId());
+                if (ownerToken != null) {
+                    Set<String> storesOwnedByThisOwner = order.getOrderGoodsList().stream()
+                            .map(OrderGoods::getGoods)
+                            .filter(goods -> goods.getStore().getUser().equals(owner))
+                            .map(goods -> goods.getStore().getName())
+                            .collect(Collectors.toSet());
+
+                    storesOwnedByThisOwner.forEach(storeName -> {
+                        String message = "[" + storeName + "]의 픽업 가능 시간이 시작되었습니다.";
+                        send(message, ownerToken);
+                    });
+                }
+            });
+
+            order.markPickupNotificationSent();
         });
     }
 
