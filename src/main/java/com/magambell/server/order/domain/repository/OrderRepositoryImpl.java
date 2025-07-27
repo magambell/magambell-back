@@ -16,6 +16,7 @@ import com.magambell.server.order.app.port.out.response.OrderDetailDTO;
 import com.magambell.server.order.app.port.out.response.OrderListDTO;
 import com.magambell.server.order.app.port.out.response.OrderStoreListDTO;
 import com.magambell.server.order.domain.enums.OrderStatus;
+import com.magambell.server.order.domain.enums.PickupNotificationStatus;
 import com.magambell.server.order.domain.model.Order;
 import com.magambell.server.order.domain.model.OrderGoods;
 import com.magambell.server.store.domain.enums.Approved;
@@ -25,6 +26,7 @@ import com.magambell.server.user.domain.model.QUser;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
@@ -208,6 +210,27 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
                         .where(orderGoods.id.eq(orderGoodsId))
                         .fetchOne()
         );
+    }
+
+    @Override
+    public List<Order> findOrdersToNotifyByPickupTime(final LocalDateTime pickupTime) {
+        QUser owner = new QUser("owner");
+        QUser customer = new QUser("customer");
+        return queryFactory
+                .selectFrom(order)
+                .distinct()
+                .innerJoin(customer).on(customer.id.eq(order.user.id)).fetchJoin()
+                .innerJoin(orderGoods).on(orderGoods.order.id.eq(order.id)).fetchJoin()
+                .innerJoin(goods).on(goods.id.eq(orderGoods.goods.id)).fetchJoin()
+                .innerJoin(store).on(store.id.eq(goods.store.id)).fetchJoin()
+                .innerJoin(owner).on(owner.id.eq(store.user.id)).fetchJoin()
+                .where(
+                        order.pickupTime.eq(pickupTime),
+                        order.pickupNotificationStatus.eq(PickupNotificationStatus.NOT_SENT),
+                        customer.userStatus.eq(UserStatus.ACTIVE),
+                        owner.userStatus.eq(UserStatus.ACTIVE)
+                )
+                .fetch();
     }
 
     private BooleanBuilder buildOrderStatusCondition(OrderStatus orderStatus) {

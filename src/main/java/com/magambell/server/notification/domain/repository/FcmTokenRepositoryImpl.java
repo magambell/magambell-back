@@ -24,6 +24,7 @@ public class FcmTokenRepositoryImpl implements FcmTokenRepositoryCustom {
                         Projections.constructor(FcmTokenDTO.class,
                                 fcmToken.id,
                                 fcmToken.token,
+                                user.id,
                                 user.nickName,
                                 store.name
                         )
@@ -42,6 +43,7 @@ public class FcmTokenRepositoryImpl implements FcmTokenRepositoryCustom {
                         Projections.constructor(FcmTokenDTO.class,
                                 fcmToken.id,
                                 fcmToken.token,
+                                user.id,
                                 user.nickName,
                                 store.name
                         )
@@ -56,12 +58,13 @@ public class FcmTokenRepositoryImpl implements FcmTokenRepositoryCustom {
     }
 
     @Override
-    public List<FcmTokenDTO> findWithAllByOwnerIdsAndStoreIsNull(final List<Long> ownerList) {
+    public List<FcmTokenDTO> findWithAllByUsersIdsAndStoreIsNull(final List<Long> userList) {
         return queryFactory
                 .select(
                         Projections.constructor(FcmTokenDTO.class,
                                 fcmToken.id,
                                 fcmToken.token,
+                                user.id,
                                 user.nickName,
                                 store.name
                         )
@@ -69,7 +72,7 @@ public class FcmTokenRepositoryImpl implements FcmTokenRepositoryCustom {
                 .from(fcmToken)
                 .innerJoin(user).on(user.id.eq(fcmToken.user.id))
                 .leftJoin(store).on(store.id.eq(fcmToken.store.id))
-                .where(user.id.in(ownerList)
+                .where(user.id.in(userList)
                         .and(user.userStatus.eq(UserStatus.ACTIVE))
                         .and(fcmToken.store.isNull()))
                 .fetch();

@@ -5,6 +5,7 @@ import com.magambell.server.notification.domain.model.FcmToken;
 import com.magambell.server.store.domain.model.Store;
 import com.magambell.server.user.domain.model.User;
 import java.util.List;
+import java.util.Set;
 
 public interface NotificationQueryPort {
     boolean existsByUserAndStore(User user, Store store);
@@ -18,4 +19,6 @@ public interface NotificationQueryPort {
     List<FcmToken> findByUserId(Long userId);
 
     FcmToken findByUserIdAndStoreId(Long storeId, Long userId);
+
+    List<FcmTokenDTO> findByUsers(Set<User> customers);
 }

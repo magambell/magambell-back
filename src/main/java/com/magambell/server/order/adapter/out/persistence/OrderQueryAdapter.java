@@ -11,6 +11,7 @@ import com.magambell.server.order.domain.enums.OrderStatus;
 import com.magambell.server.order.domain.model.Order;
 import com.magambell.server.order.domain.model.OrderGoods;
 import com.magambell.server.order.domain.repository.OrderRepository;
+import java.time.LocalDateTime;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
@@ -60,5 +61,10 @@ public class OrderQueryAdapter implements OrderQueryPort {
     public OrderGoods findOrderGoodsById(final Long orderGoodsId) {
         return orderRepository.findOrderGoodsWithOrderById(orderGoodsId)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.ORDER_NOT_FOUND));
+    }
+
+    @Override
+    public List<Order> findOrdersToNotifyByPickupTime(final LocalDateTime pickupTime) {
+        return orderRepository.findOrdersToNotifyByPickupTime(pickupTime);
     }
 }
