@@ -25,4 +25,6 @@ public interface StoreQueryPort {
     OwnerStoreDetailDTO getOwnerStoreInfo(User user);
 
     List<StoreListDTOResponse> getCloseStoreList(CloseStoreListServiceRequest request);
+
+    List<StoreListDTOResponse> getWaitingStoreList(Pageable pageable);
 }

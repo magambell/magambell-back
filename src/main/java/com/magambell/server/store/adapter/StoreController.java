@@ -7,6 +7,7 @@ import com.magambell.server.store.adapter.in.web.CloseStoreListRequest;
 import com.magambell.server.store.adapter.in.web.RegisterStoreRequest;
 import com.magambell.server.store.adapter.in.web.SearchStoreListRequest;
 import com.magambell.server.store.adapter.in.web.StoreApproveRequest;
+import com.magambell.server.store.adapter.in.web.WaitingStoreListRequest;
 import com.magambell.server.store.adapter.out.persistence.OwnerStoreDetailResponse;
 import com.magambell.server.store.adapter.out.persistence.StoreDetailResponse;
 import com.magambell.server.store.adapter.out.persistence.StoreImagesResponse;
@@ -103,5 +104,16 @@ public class StoreController {
             @ModelAttribute @Validated final CloseStoreListRequest request
     ) {
         return new Response<>(storeUseCase.getCloseStoreList(request.toService()));
+    }
+
+    @Operation(summary = "승인 대기중인 매장 리스트")
+    @ApiResponse(responseCode = "200", content = {
+            @Content(schema = @Schema(implementation = StoreListResponse.class))})
+    @GetMapping("/waiting")
+    public Response<StoreListResponse> getWaitingStoreList(
+            @ModelAttribute @Validated final WaitingStoreListRequest request
+    ) {
+        // todo 추후 관리자 용으로 변경
+        return new Response<>(storeUseCase.getWaitingStoreList(request.toService()));
     }
 }
