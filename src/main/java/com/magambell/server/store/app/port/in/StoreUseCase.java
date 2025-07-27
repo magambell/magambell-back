@@ -7,6 +7,7 @@ import com.magambell.server.store.app.port.in.request.CloseStoreListServiceReque
 import com.magambell.server.store.app.port.in.request.RegisterStoreServiceRequest;
 import com.magambell.server.store.app.port.in.request.SearchStoreListServiceRequest;
 import com.magambell.server.store.app.port.in.request.StoreApproveServiceRequest;
+import com.magambell.server.store.app.port.in.request.WaitingStoreListServiceRequest;
 import com.magambell.server.store.app.port.out.response.OwnerStoreDetailDTO;
 
 public interface StoreUseCase {
@@ -21,4 +22,6 @@ public interface StoreUseCase {
     OwnerStoreDetailDTO getOwnerStoreInfo(Long userId);
 
     StoreListResponse getCloseStoreList(CloseStoreListServiceRequest request);
+
+    StoreListResponse getWaitingStoreList(WaitingStoreListServiceRequest request);
 }

@@ -18,6 +18,7 @@ import com.magambell.server.store.app.port.in.dto.RegisterStoreDTO;
 import com.magambell.server.store.app.port.in.request.CloseStoreListServiceRequest;
 import com.magambell.server.store.app.port.in.request.RegisterStoreServiceRequest;
 import com.magambell.server.store.app.port.in.request.SearchStoreListServiceRequest;
+import com.magambell.server.store.app.port.in.request.WaitingStoreListServiceRequest;
 import com.magambell.server.store.app.port.out.response.OwnerStoreDetailDTO;
 import com.magambell.server.store.app.port.out.response.StoreListDTOResponse;
 import com.magambell.server.store.domain.enums.Approved;
@@ -133,8 +134,6 @@ class StoreServiceTest {
         // when
         StoreListResponse storeListResponse = storeService.getStoreList(request);
 
-        storeRepository.findAll().forEach(s -> System.out.println(s.getName() + " - " + s.getCreatedAt()));
-
         // then
         StoreListDTOResponse store = storeListResponse.storeListDTOResponses().get(0);
         assertThat(store)
@@ -223,6 +222,25 @@ class StoreServiceTest {
 
         // then
         assertThat(closeStoreList.storeListDTOResponses()).hasSize(0);
+    }
+
+    @DisplayName("승인 대기중인 매장 리스트를 가져온다.")
+    @Test
+    void getWaitingStoreList() {
+        // given
+        WaitingStoreListServiceRequest request = new WaitingStoreListServiceRequest(1, 10);
+
+        List<Store> storeList = IntStream.range(1, 31)
+                .mapToObj(this::createStore)
+                .toList();
+
+        storeRepository.saveAll(storeList);
+
+        // when
+        StoreListResponse storeListResponse = storeService.getWaitingStoreList(request);
+
+        // then
+        assertThat(storeListResponse.storeListDTOResponses()).hasSize(0);
     }
 
     private Store createStore(int i) {

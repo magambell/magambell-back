@@ -10,6 +10,7 @@ import com.magambell.server.store.app.port.in.request.CloseStoreListServiceReque
 import com.magambell.server.store.app.port.in.request.RegisterStoreServiceRequest;
 import com.magambell.server.store.app.port.in.request.SearchStoreListServiceRequest;
 import com.magambell.server.store.app.port.in.request.StoreApproveServiceRequest;
+import com.magambell.server.store.app.port.in.request.WaitingStoreListServiceRequest;
 import com.magambell.server.store.app.port.out.StoreCommandPort;
 import com.magambell.server.store.app.port.out.StoreQueryPort;
 import com.magambell.server.store.app.port.out.response.OwnerStoreDetailDTO;
@@ -69,6 +70,12 @@ public class StoreService implements StoreUseCase {
     @Override
     public StoreListResponse getCloseStoreList(final CloseStoreListServiceRequest request) {
         return new StoreListResponse(storeQueryPort.getCloseStoreList(request));
+    }
+
+    @Override
+    public StoreListResponse getWaitingStoreList(final WaitingStoreListServiceRequest request) {
+        return new StoreListResponse(
+                storeQueryPort.getWaitingStoreList(PageRequest.of(request.page() - 1, request.size())));
     }
 
     private void checkDuplicateStore(final User user) {

@@ -60,4 +60,9 @@ public class StoreQueryAdapter implements StoreQueryPort {
     public List<StoreListDTOResponse> getCloseStoreList(final CloseStoreListServiceRequest request) {
         return storeRepository.getCloseStoreList(request);
     }
+
+    @Override
+    public List<StoreListDTOResponse> getWaitingStoreList(final Pageable pageable) {
+        return storeRepository.getWaitingStoreList(pageable);
+    }
 }

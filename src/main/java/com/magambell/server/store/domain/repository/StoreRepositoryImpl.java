@@ -5,6 +5,7 @@ import static com.magambell.server.order.domain.model.QOrderGoods.orderGoods;
 import static com.magambell.server.review.domain.model.QReview.review;
 import static com.magambell.server.stock.domain.model.QStock.stock;
 import static com.magambell.server.store.domain.enums.Approved.APPROVED;
+import static com.magambell.server.store.domain.enums.Approved.WAITING;
 import static com.magambell.server.store.domain.model.QStore.store;
 import static com.magambell.server.store.domain.model.QStoreImage.storeImage;
 import static com.magambell.server.user.domain.model.QUser.user;
@@ -271,6 +272,59 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                                         goods.salePrice,
                                         stock.quantity,
                                         distance != null ? distance : Expressions.nullExpression(Double.class),
+                                        goods.saleStatus
+                                ))
+                );
+    }
+
+    @Override
+    public List<StoreListDTOResponse> getWaitingStoreList(final Pageable pageable) {
+        BooleanBuilder conditions = new BooleanBuilder();
+        conditions.and(store.approved.eq(WAITING));
+        conditions.and(user.userStatus.eq(UserStatus.ACTIVE));
+
+        List<Long> storeIds = queryFactory
+                .select(store.id)
+                .from(store)
+                .leftJoin(goods).on(goods.store.id.eq(store.id))
+                .innerJoin(stock).on(stock.goods.id.eq(goods.id))
+                .innerJoin(user).on(user.id.eq(store.user.id))
+                .where(conditions)
+                .orderBy(store.createdAt.desc())
+                .offset(pageable.getOffset())
+                .limit(pageable.getPageSize())
+                .fetch();
+
+        if (storeIds.isEmpty()) {
+            return List.of();
+        }
+
+        return queryFactory.select(store, storeImage, goods, stock)
+                .from(store)
+                .leftJoin(storeImage).on(storeImage.store.id.eq(store.id))
+                .leftJoin(goods).on(goods.store.id.eq(store.id))
+                .innerJoin(stock).on(stock.goods.id.eq(goods.id))
+                .leftJoin(orderGoods).on(orderGoods.goods.id.eq(goods.id))
+                .leftJoin(review).on(review.orderGoods.id.eq(orderGoods.id))
+                .where(store.id.in(storeIds))
+                .orderBy(store.createdAt.desc())
+                .transform(
+                        groupBy(store.id)
+                                .list(Projections.constructor(StoreListDTOResponse.class,
+                                        store.id,
+                                        store.name,
+                                        set(storeImage.name),
+                                        store.latitude,
+                                        store.longitude,
+                                        store.address,
+                                        goods.name,
+                                        goods.startTime,
+                                        goods.endTime,
+                                        goods.originalPrice,
+                                        goods.discount,
+                                        goods.salePrice,
+                                        stock.quantity,
+                                        Expressions.nullExpression(Double.class),
                                         goods.saleStatus
                                 ))
                 );

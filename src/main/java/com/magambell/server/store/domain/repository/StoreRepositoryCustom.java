@@ -18,4 +18,6 @@ public interface StoreRepositoryCustom {
     Optional<OwnerStoreDetailDTO> getOwnerStoreInfo(Long userId);
 
     List<StoreListDTOResponse> getCloseStoreList(CloseStoreListServiceRequest request);
+
+    List<StoreListDTOResponse> getWaitingStoreList(Pageable pageable);
 }
