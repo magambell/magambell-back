@@ -72,6 +72,8 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                 .leftJoin(goods).on(goods.store.id.eq(store.id))
                 .innerJoin(stock).on(stock.goods.id.eq(goods.id))
                 .innerJoin(user).on(user.id.eq(store.user.id))
+                .leftJoin(orderGoods).on(orderGoods.goods.id.eq(goods.id))
+                .leftJoin(review).on(review.orderGoods.id.eq(orderGoods.id))
                 .where(conditions)
                 .orderBy(sortCondition(request.sortType(), distance))
                 .offset(pageable.getOffset())
@@ -87,6 +89,8 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                 .leftJoin(storeImage).on(storeImage.store.id.eq(store.id))
                 .leftJoin(goods).on(goods.store.id.eq(store.id))
                 .innerJoin(stock).on(stock.goods.id.eq(goods.id))
+                .leftJoin(orderGoods).on(orderGoods.goods.id.eq(goods.id))
+                .leftJoin(review).on(review.orderGoods.id.eq(orderGoods.id))
                 .where(store.id.in(storeIds))
                 .orderBy(sortCondition(request.sortType(), distance))
                 .transform(
@@ -308,6 +312,12 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
         }
         if (sortType == SearchSortType.PRICE_ASC) {
             return goods.salePrice.asc();
+        }
+        if (sortType == SearchSortType.RATING_DESC) {
+            return review.rating.avg().desc().nullsLast();
+        }
+        if (sortType == SearchSortType.POPULAR_DESC) {
+            return orderGoods.count().desc().nullsLast();
         }
         return store.createdAt.desc();
     }

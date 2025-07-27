@@ -4,5 +4,6 @@ public enum SearchSortType {
     RECENT_DESC,
     PRICE_ASC,
     DISTANCE_ASC,
-    RATING_DESC
+    RATING_DESC,
+    POPULAR_DESC
 }
