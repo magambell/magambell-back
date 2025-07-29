@@ -35,10 +35,12 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
 @Service
@@ -154,6 +156,26 @@ public class OrderService implements OrderUseCase {
 
         validateCompletedOrder(user, order);
         order.completed();
+    }
+
+    @Transactional
+    @Override
+    public void batchRejectOrdersBeforePickup(final LocalDateTime pickupTime, final LocalDateTime createdAtCutOff) {
+        List<Order> orders = orderQueryPort.findByPaidBeforePickupRejectProcessedOrders(pickupTime, createdAtCutOff);
+        orders.forEach(order -> {
+            log.info("시스템 주문 거절 order = {}", order.getId());
+            order.rejected();
+            Payment payment = order.getPayment();
+            stockUseCase.restoreStockIfNecessary(payment);
+            portOnePort.cancelPayment(payment.getMerchantUid(), order.getTotalPrice(), "시스템 주문 취소");
+            notificationUseCase.notifyRejectOrder(order.getUser());
+        });
+    }
+
+    @Override
+    public void autoRejectOrdersAfter(final LocalDateTime minusMinutes, final LocalDateTime pickupTime,
+                                      final LocalDateTime createdAtCutOff) {
+        orderQueryPort.findByAutoRejectProcessedOrders(minusMinutes, pickupTime, createdAtCutOff);
     }
 
     private void validateOrderRequest(final CreateOrderServiceRequest request, final Goods goods,
