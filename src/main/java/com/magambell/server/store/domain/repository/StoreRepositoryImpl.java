@@ -76,14 +76,11 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                 .leftJoin(orderGoods).on(orderGoods.goods.id.eq(goods.id))
                 .leftJoin(review).on(review.orderGoods.id.eq(orderGoods.id))
                 .where(conditions)
+                .groupBy(store.id)
                 .orderBy(sortCondition(request.sortType(), distance))
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
-
-        System.out.println("page: " + request.page());
-        System.out.println("offset: " + pageable.getOffset());
-        System.out.println("storeIds: " + storeIds.size());
 
         if (storeIds.isEmpty()) {
             return List.of();
@@ -245,6 +242,7 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                 .innerJoin(stock).on(stock.goods.id.eq(goods.id))
                 .innerJoin(user).on(user.id.eq(store.user.id))
                 .where(conditions)
+                .groupBy(store.id)
                 .orderBy(distance.asc())
                 .fetch();
 
@@ -294,6 +292,7 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                 .innerJoin(stock).on(stock.goods.id.eq(goods.id))
                 .innerJoin(user).on(user.id.eq(store.user.id))
                 .where(conditions)
+                .groupBy(store.id)
                 .orderBy(store.createdAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
