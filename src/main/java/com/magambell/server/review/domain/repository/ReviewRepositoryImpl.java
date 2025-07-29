@@ -63,6 +63,7 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
 
         List<Tuple> results = queryFactory
                 .select(review.rating, review.rating.count().as(ratingCount))
+                .distinct()
                 .from(review)
                 .leftJoin(reviewImage).on(reviewImage.review.id.eq(review.id))
                 .innerJoin(orderGoods).on(orderGoods.id.eq(review.orderGoods.id))
