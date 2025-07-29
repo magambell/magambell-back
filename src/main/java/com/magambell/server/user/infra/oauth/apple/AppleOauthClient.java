@@ -2,6 +2,7 @@ package com.magambell.server.user.infra.oauth.apple;
 
 import com.magambell.server.auth.domain.ProviderType;
 import com.magambell.server.common.enums.ErrorCode;
+import com.magambell.server.common.exception.InternalServerException;
 import com.magambell.server.common.exception.NotFoundException;
 import com.magambell.server.user.app.dto.OAuthUserInfo;
 import com.magambell.server.user.app.port.out.OAuthClient;
@@ -72,7 +73,7 @@ public class AppleOauthClient implements OAuthClient {
                     ProviderType.APPLE
             );
         } catch (ParseException e) {
-            throw new NotFoundException(ErrorCode.OAUTH_APPLE_USER_NOT_FOUND);
+            throw new InternalServerException(ErrorCode.OAUTH_APPLE_PARSE_FAILED);
         }
     }
 }

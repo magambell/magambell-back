@@ -79,6 +79,6 @@ public enum ErrorCode {
 
     FIREBASE_INIT_FAILED("Firebase 초기화에 실패했습니다."),
     FIREBASE_SEND_FAILED("Firebase 메세지 발송에 실패했습니다."),
-    ;
+    OAUTH_APPLE_PARSE_FAILED("사용자 정보를 가져오는데 실패했습니다.");
     private final String message;
 }
