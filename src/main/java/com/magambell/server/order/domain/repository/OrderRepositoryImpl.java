@@ -40,12 +40,12 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
     @Override
     public List<OrderListDTO> getOrderList(final Pageable pageable, final Long userId) {
         return queryFactory
-                .select(order, orderGoods, goods, store, storeImage, user, review)
+                .select(order, orderGoods, goods, store, storeImage, user, review, payment)
                 .from(order)
                 .innerJoin(orderGoods).on(orderGoods.order.id.eq(order.id))
                 .innerJoin(goods).on(goods.id.eq(orderGoods.goods.id))
                 .innerJoin(store).on(store.id.eq(goods.store.id))
-                .innerJoin(payment).on(payment.order.id.eq(order.id))
+                .leftJoin(payment).on(payment.order.id.eq(order.id))
                 .leftJoin(storeImage).on(storeImage.store.id.eq(store.id))
                 .leftJoin(review).on(review.orderGoods.id.eq(orderGoods.id))
                 .innerJoin(user).on(user.id.eq(order.user.id))
