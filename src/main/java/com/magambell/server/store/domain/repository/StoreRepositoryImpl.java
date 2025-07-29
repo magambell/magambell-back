@@ -81,6 +81,10 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                 .limit(pageable.getPageSize())
                 .fetch();
 
+        System.out.println("page: " + request.page());
+        System.out.println("offset: " + pageable.getOffset());
+        System.out.println("storeIds: " + storeIds.size());
+
         if (storeIds.isEmpty()) {
             return List.of();
         }
