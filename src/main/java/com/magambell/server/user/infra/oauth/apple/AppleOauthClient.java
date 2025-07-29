@@ -59,8 +59,11 @@ public class AppleOauthClient implements OAuthClient {
             String sub = claims.getSubject();
             String email = claims.getStringClaim("email");
 
-            if (sub == null || email == null) {
+            if (sub == null) {
                 throw new NotFoundException(ErrorCode.OAUTH_APPLE_USER_NOT_FOUND);
+            }
+            if (email == null) {
+                throw new NotFoundException(ErrorCode.EMAIL_NOT_FOUND);
             }
 
             return new OAuthUserInfo(
