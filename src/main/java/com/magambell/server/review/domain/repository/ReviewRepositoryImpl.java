@@ -62,8 +62,7 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
         NumberPath<Long> ratingCount = Expressions.numberPath(Long.class, "ratingCount");
 
         List<Tuple> results = queryFactory
-                .select(review.rating, review.rating.count().as(ratingCount))
-                .distinct()
+                .select(review.rating, review.id.countDistinct().as(ratingCount))
                 .from(review)
                 .leftJoin(reviewImage).on(reviewImage.review.id.eq(review.id))
                 .innerJoin(orderGoods).on(orderGoods.id.eq(review.orderGoods.id))
