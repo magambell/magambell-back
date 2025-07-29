@@ -14,7 +14,9 @@ public record OrderListDTO(
         String storeName,
         Set<String> imageUrls,
         List<OrderGoodsInfo> goodsList,
-        Set<Long> reviewIds
+        Set<Long> reviewIds,
+        String payType,
+        String easyPayProvider
 ) {
     public record OrderGoodsInfo(
             Long orderGoodsId,
