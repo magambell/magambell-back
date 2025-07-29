@@ -233,6 +233,44 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
                 .fetch();
     }
 
+    @Override
+    public List<Order> findByPaidProcessedOrders(final LocalDateTime pickupTime, final LocalDateTime createdAtCutOff) {
+        return queryFactory
+                .selectFrom(order)
+                .distinct()
+                .innerJoin(orderGoods).on(orderGoods.order.id.eq(order.id)).fetchJoin()
+                .innerJoin(goods).on(goods.id.eq(orderGoods.goods.id)).fetchJoin()
+                .innerJoin(store).on(store.id.eq(goods.store.id)).fetchJoin()
+                .innerJoin(payment).on(payment.order.id.eq(order.id)).fetchJoin()
+                .where(
+                        order.orderStatus.eq(OrderStatus.PAID),
+                        goods.startTime.eq(pickupTime), // 9시이고 지금은 8시 30분이지만 픽업 시작 시간이 9시
+                        order.pickupTime.eq(pickupTime), // 주문 픽업시간 설정한게 9시
+                        order.createdAt.loe(createdAtCutOff) // 생성된게 <= 35분전 8시 25분
+                )
+                .fetch();
+    }
+
+    @Override
+    public List<Order> findByAutoRejectProcessedOrders(final LocalDateTime minusMinutes, final LocalDateTime pickupTime,
+                                                       final LocalDateTime createdAtCutOff) {
+        return queryFactory
+                .selectFrom(order)
+                .distinct()
+                .innerJoin(orderGoods).on(orderGoods.order.id.eq(order.id)).fetchJoin()
+                .innerJoin(goods).on(goods.id.eq(orderGoods.goods.id)).fetchJoin()
+                .innerJoin(store).on(store.id.eq(goods.store.id)).fetchJoin()
+                .innerJoin(payment).on(payment.order.id.eq(order.id)).fetchJoin()
+                .where(
+                        order.orderStatus.eq(OrderStatus.PAID),
+                        order.pickupTime.eq(pickupTime), // 9시
+                        goods.startTime.loe(pickupTime), // 9시
+                        order.createdAt.gt(createdAtCutOff), // 9시 일때 8시 25분
+                        order.createdAt.loe(minusMinutes) // 실제 시간이 8시 30분이라면 5분이고
+                )
+                .fetch();
+    }
+
     private BooleanBuilder buildOrderStatusCondition(OrderStatus orderStatus) {
         BooleanBuilder builder = new BooleanBuilder();
 

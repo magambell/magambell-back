@@ -26,4 +26,9 @@ public interface OrderQueryPort {
     OrderGoods findOrderGoodsById(Long orderGoodsId);
 
     List<Order> findOrdersToNotifyByPickupTime(LocalDateTime pickupTime);
+
+    List<Order> findByPaidBeforePickupRejectProcessedOrders(LocalDateTime pickupTime, LocalDateTime createdAtCutOff);
+
+    List<Order> findByAutoRejectProcessedOrders(LocalDateTime minusMinutes, LocalDateTime pickupTime,
+                                                LocalDateTime createdAtCutOff);
 }

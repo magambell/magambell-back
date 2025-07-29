@@ -67,4 +67,16 @@ public class OrderQueryAdapter implements OrderQueryPort {
     public List<Order> findOrdersToNotifyByPickupTime(final LocalDateTime pickupTime) {
         return orderRepository.findOrdersToNotifyByPickupTime(pickupTime);
     }
+
+    @Override
+    public List<Order> findByPaidBeforePickupRejectProcessedOrders(final LocalDateTime pickupTime,
+                                                                   final LocalDateTime createdAtCutOff) {
+        return orderRepository.findByPaidProcessedOrders(pickupTime, createdAtCutOff);
+    }
+
+    @Override
+    public List<Order> findByAutoRejectProcessedOrders(final LocalDateTime minusMinutes, final LocalDateTime pickupTime,
+                                                       final LocalDateTime createdAtCutOff) {
+        return orderRepository.findByAutoRejectProcessedOrders(minusMinutes, pickupTime, createdAtCutOff);
+    }
 }

@@ -26,4 +26,8 @@ public interface OrderUseCase {
     void cancelOrder(Long orderId, Long userId);
 
     void completedOrder(Long orderId, Long userId);
+
+    void batchRejectOrdersBeforePickup(LocalDateTime pickupTime, LocalDateTime createdAtCutOff);
+
+    void autoRejectOrdersAfter(LocalDateTime minusMinutes, LocalDateTime pickupTime, LocalDateTime createdAtCutOff);
 }

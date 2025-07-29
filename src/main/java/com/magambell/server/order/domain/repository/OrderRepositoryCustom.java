@@ -25,4 +25,9 @@ public interface OrderRepositoryCustom {
     Optional<OrderGoods> findOrderGoodsWithOrderById(Long orderGoodsId);
 
     List<Order> findOrdersToNotifyByPickupTime(LocalDateTime pickupTime);
+
+    List<Order> findByPaidProcessedOrders(LocalDateTime pickupTime, LocalDateTime createdAtCutOff);
+
+    List<Order> findByAutoRejectProcessedOrders(LocalDateTime minusMinutes, LocalDateTime pickupTime,
+                                                LocalDateTime createdAtCutOff);
 }
