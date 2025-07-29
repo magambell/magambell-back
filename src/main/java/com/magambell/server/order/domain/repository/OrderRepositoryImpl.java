@@ -45,6 +45,7 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
                 .innerJoin(orderGoods).on(orderGoods.order.id.eq(order.id))
                 .innerJoin(goods).on(goods.id.eq(orderGoods.goods.id))
                 .innerJoin(store).on(store.id.eq(goods.store.id))
+                .innerJoin(payment).on(payment.order.id.eq(order.id))
                 .leftJoin(storeImage).on(storeImage.store.id.eq(store.id))
                 .leftJoin(review).on(review.orderGoods.id.eq(orderGoods.id))
                 .innerJoin(user).on(user.id.eq(order.user.id))
@@ -77,7 +78,9 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
                                                         orderGoods.quantity,
                                                         orderGoods.salePrice
                                                 )),
-                                                set(review.id)
+                                                set(review.id),
+                                                payment.payType,
+                                                payment.easyPayProvider
                                         )
                                 )
                 );
