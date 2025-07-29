@@ -14,6 +14,7 @@ import static com.querydsl.core.group.GroupBy.list;
 import static com.querydsl.core.group.GroupBy.set;
 import static com.querydsl.core.types.ExpressionUtils.count;
 
+import com.magambell.server.review.domain.enums.ReviewStatus;
 import com.magambell.server.store.adapter.out.persistence.StoreDetailResponse;
 import com.magambell.server.store.app.port.in.request.CloseStoreListServiceRequest;
 import com.magambell.server.store.app.port.in.request.SearchStoreListServiceRequest;
@@ -169,8 +170,12 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                         store.id.eq(storeId)
                                 .and(
                                         store.approved.eq(APPROVED)
-                                ).and(
+                                )
+                                .and(
                                         user.userStatus.eq(UserStatus.ACTIVE)
+                                )
+                                .and(
+                                        review.reviewStatus.eq(ReviewStatus.ACTIVE)
                                 )
                 )
                 .fetchOne();

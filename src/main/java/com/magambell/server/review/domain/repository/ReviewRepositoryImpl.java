@@ -71,7 +71,7 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
                 .innerJoin(store).on(store.id.eq(goods.store.id))
                 .innerJoin(user).on(user.id.eq(review.user.id))
                 .where(conditions)
-                .groupBy(review.id)
+                .groupBy(review.rating)
                 .fetch();
 
         long totalCount = 0;
