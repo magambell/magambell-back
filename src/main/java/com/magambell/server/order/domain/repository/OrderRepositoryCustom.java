@@ -28,6 +28,5 @@ public interface OrderRepositoryCustom {
 
     List<Order> findByPaidProcessedOrders(LocalDateTime pickupTime, LocalDateTime createdAtCutOff);
 
-    List<Order> findByAutoRejectProcessedOrders(LocalDateTime minusMinutes, LocalDateTime pickupTime,
-                                                LocalDateTime createdAtCutOff);
+    List<Order> findByAutoRejectProcessedOrders(LocalDateTime minusMinutes, LocalDateTime pickupTime);
 }
