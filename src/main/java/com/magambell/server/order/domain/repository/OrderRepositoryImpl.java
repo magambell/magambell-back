@@ -247,16 +247,16 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
                 .innerJoin(payment).on(payment.order.id.eq(order.id)).fetchJoin()
                 .where(
                         order.orderStatus.eq(OrderStatus.PAID),
-                        goods.startTime.eq(pickupTime), // 9시이고 지금은 8시 30분이지만 픽업 시작 시간이 9시
-                        order.pickupTime.eq(pickupTime), // 주문 픽업시간 설정한게 9시
-                        order.createdAt.loe(createdAtCutOff) // 생성된게 <= 35분전 8시 25분
+                        goods.startTime.eq(pickupTime),
+                        order.pickupTime.eq(pickupTime),
+                        order.createdAt.loe(createdAtCutOff)
                 )
                 .fetch();
     }
 
     @Override
-    public List<Order> findByAutoRejectProcessedOrders(final LocalDateTime minusMinutes, final LocalDateTime pickupTime,
-                                                       final LocalDateTime createdAtCutOff) {
+    public List<Order> findByAutoRejectProcessedOrders(final LocalDateTime minusMinutes,
+                                                       final LocalDateTime pickupTime) {
         return queryFactory
                 .selectFrom(order)
                 .distinct()
@@ -266,10 +266,8 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
                 .innerJoin(payment).on(payment.order.id.eq(order.id)).fetchJoin()
                 .where(
                         order.orderStatus.eq(OrderStatus.PAID),
-                        order.pickupTime.eq(pickupTime), // 9시
-                        goods.startTime.loe(pickupTime), // 9시
-                        order.createdAt.gt(createdAtCutOff), // 9시 일때 8시 25분
-                        order.createdAt.loe(minusMinutes) // 실제 시간이 8시 30분이라면 5분이고
+                        goods.startTime.lt(pickupTime),
+                        order.createdAt.loe(minusMinutes)
                 )
                 .fetch();
     }

@@ -75,8 +75,8 @@ public class OrderQueryAdapter implements OrderQueryPort {
     }
 
     @Override
-    public List<Order> findByAutoRejectProcessedOrders(final LocalDateTime minusMinutes, final LocalDateTime pickupTime,
-                                                       final LocalDateTime createdAtCutOff) {
-        return orderRepository.findByAutoRejectProcessedOrders(minusMinutes, pickupTime, createdAtCutOff);
+    public List<Order> findByAutoRejectProcessedOrders(final LocalDateTime minusMinutes,
+                                                       final LocalDateTime pickupTime) {
+        return orderRepository.findByAutoRejectProcessedOrders(minusMinutes, pickupTime);
     }
 }

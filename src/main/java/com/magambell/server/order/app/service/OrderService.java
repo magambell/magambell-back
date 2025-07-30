@@ -163,7 +163,7 @@ public class OrderService implements OrderUseCase {
     public void batchRejectOrdersBeforePickup(final LocalDateTime pickupTime, final LocalDateTime createdAtCutOff) {
         List<Order> orders = orderQueryPort.findByPaidBeforePickupRejectProcessedOrders(pickupTime, createdAtCutOff);
         orders.forEach(order -> {
-            log.info("시스템 주문 거절 order = {}", order.getId());
+            log.info("[픽업 30분 전] 시스템 주문 거절 order = {}", order.getId());
             order.rejected();
             Payment payment = order.getPayment();
             stockUseCase.restoreStockIfNecessary(payment);
@@ -172,10 +172,19 @@ public class OrderService implements OrderUseCase {
         });
     }
 
+    @Transactional
     @Override
-    public void autoRejectOrdersAfter(final LocalDateTime minusMinutes, final LocalDateTime pickupTime,
-                                      final LocalDateTime createdAtCutOff) {
-        orderQueryPort.findByAutoRejectProcessedOrders(minusMinutes, pickupTime, createdAtCutOff);
+    public void autoRejectOrdersAfter(final LocalDateTime minusMinutes, final LocalDateTime pickupTime) {
+        List<Order> orders = orderQueryPort.findByAutoRejectProcessedOrders(minusMinutes,
+                pickupTime);
+        orders.forEach(order -> {
+            log.info("[5분 마다] 시스템 주문 거절 order = {}", order.getId());
+            order.rejected();
+            Payment payment = order.getPayment();
+            stockUseCase.restoreStockIfNecessary(payment);
+            portOnePort.cancelPayment(payment.getMerchantUid(), order.getTotalPrice(), "시스템 주문 취소");
+            notificationUseCase.notifyRejectOrder(order.getUser());
+        });
     }
 
     private void validateOrderRequest(final CreateOrderServiceRequest request, final Goods goods,
