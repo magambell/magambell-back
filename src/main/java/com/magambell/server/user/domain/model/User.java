@@ -1,15 +1,27 @@
 package com.magambell.server.user.domain.model;
 
 import com.magambell.server.common.BaseTimeEntity;
+import com.magambell.server.favorite.domain.model.Favorite;
+import com.magambell.server.notification.domain.model.FcmToken;
+import com.magambell.server.order.domain.model.Order;
+import com.magambell.server.review.domain.model.Review;
+import com.magambell.server.store.domain.model.Store;
 import com.magambell.server.user.app.port.in.dto.UserDTO;
+import com.magambell.server.user.app.port.in.dto.UserSocialAccountDTO;
 import com.magambell.server.user.domain.enums.UserRole;
+import com.magambell.server.user.domain.enums.UserStatus;
 import io.hypersistence.utils.hibernate.id.Tsid;
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.EnumType;
 import jakarta.persistence.Enumerated;
 import jakarta.persistence.Id;
+import jakarta.persistence.OneToMany;
+import jakarta.persistence.OneToOne;
 import jakarta.persistence.Table;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
@@ -23,7 +35,7 @@ public class User extends BaseTimeEntity {
 
     @Id
     @Tsid
-    @Column(name = "user_id")  // DB 컬럼명 명확하게 지정
+    @Column(name = "user_id")
     private Long id;
 
     private String email;
@@ -32,19 +44,46 @@ public class User extends BaseTimeEntity {
 
     private String name;
 
+    private String nickName;
+
     private String phoneNumber;
 
     @Enumerated(EnumType.STRING)
     private UserRole userRole;
 
+    @Enumerated(EnumType.STRING)
+    private UserStatus userStatus;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<UserSocialAccount> userSocialAccounts = new ArrayList<>();
+
+    @OneToOne(mappedBy = "user", cascade = CascadeType.ALL)
+    private Store store;
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Order> orders = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Review> reviews = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<Favorite> favorites = new ArrayList<>();
+
+    @OneToMany(mappedBy = "user", cascade = CascadeType.ALL)
+    private List<FcmToken> fcmTokens = new ArrayList<>();
+
     @Builder(access = AccessLevel.PRIVATE)
-    private User(final String email, final String password, final String name, final String phoneNumber,
-                 final UserRole userRole) {
+    private User(final String email, final String password, final String name, final String nickName,
+                 final String phoneNumber,
+                 final UserRole userRole,
+                 final UserStatus userStatus) {
         this.email = email;
         this.password = password;
         this.name = name;
+        this.nickName = nickName;
         this.phoneNumber = phoneNumber;
         this.userRole = userRole;
+        this.userStatus = userStatus;
     }
 
     public static User create(final UserDTO dto) {
@@ -54,6 +93,52 @@ public class User extends BaseTimeEntity {
                 .name(dto.name())
                 .phoneNumber(dto.phoneNumber())
                 .userRole(dto.userRole())
+                .userStatus(UserStatus.ACTIVE)
                 .build();
+    }
+
+    public static User createBySocial(final UserSocialAccountDTO dto) {
+        return User.builder()
+                .email(dto.email())
+                .name(dto.name())
+                .nickName(dto.nickName())
+                .phoneNumber(dto.phoneNumber())
+                .userRole(dto.userRole())
+                .userStatus(UserStatus.ACTIVE)
+                .build();
+    }
+
+    public void addUserSocialAccount(final UserSocialAccount userSocialAccount) {
+        this.userSocialAccounts.add(userSocialAccount);
+        userSocialAccount.addUser(this);
+    }
+
+    public void addStore(final Store store) {
+        this.store = store;
+        store.addUser(this);
+    }
+
+    public void withdraw() {
+        this.userStatus = UserStatus.WITHDRAWN;
+    }
+
+    public void addOrder(final Order order) {
+        this.orders.add(order);
+    }
+
+    public void addReview(final Review review) {
+        this.reviews.add(review);
+    }
+
+    public void addFavorite(final Favorite favorite) {
+        this.favorites.add(favorite);
+    }
+
+    public void editNickName(final String nickName) {
+        this.nickName = nickName;
+    }
+
+    public void addFcmToken(final FcmToken fcmToken) {
+        this.fcmTokens.add(fcmToken);
     }
 }

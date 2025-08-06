@@ -5,6 +5,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.magambell.server.auth.app.service.JwtService;
 import com.magambell.server.user.adapter.in.web.UserRegisterRequest;
 import com.magambell.server.user.app.port.in.UserUseCase;
 import com.magambell.server.user.domain.enums.UserRole;
@@ -30,6 +31,9 @@ class UserAuthControllerTest {
     @MockBean
     private UserUseCase userUseCase;
 
+    @MockBean
+    private JwtService jwtService;
+
     @DisplayName("회원가입을 진행한다.")
     @Test
     void register() throws Exception {
@@ -44,7 +48,7 @@ class UserAuthControllerTest {
 
         // when // then
         mockMvc.perform(
-                        post("/api/v1/user/signup")
+                        post("/api/v1/user/register")
                                 .content(objectMapper.writeValueAsString(request))
                                 .contentType(MediaType.APPLICATION_JSON)
                 )

@@ -31,6 +31,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-validation'
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'
     implementation 'io.hypersistence:hypersistence-utils-hibernate-63:3.7.0'
+    implementation 'org.springframework.boot:spring-boot-starter-webflux'
 
     // lombok
     compileOnly 'org.projectlombok:lombok'
@@ -50,9 +51,22 @@ dependencies {
     implementation 'io.jsonwebtoken:jjwt-impl:0.11.5'
     implementation 'io.jsonwebtoken:jjwt-jackson:0.11.5'
 
+    // aws
+    implementation 'com.amazonaws:aws-java-sdk-ses:1.12.664'
+    implementation 'com.amazonaws:aws-java-sdk-s3:1.12.691'
+
     // db
     runtimeOnly 'com.h2database:h2'
-    runtimeOnly 'com.mysql:mysql-connector-j'
+    runtimeOnly 'org.mariadb.jdbc:mariadb-java-client'
+
+    // swagger
+    implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.2.0'
+
+    // apple jwt 관련
+    implementation 'com.nimbusds:nimbus-jose-jwt:9.38'
+
+    // fcm
+    implementation 'com.google.firebase:firebase-admin:9.5.0'
 }
 
 tasks.named('test') {

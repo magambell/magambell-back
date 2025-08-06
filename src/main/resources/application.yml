@@ -1,27 +1,65 @@
 spring:
   profiles:
-    default: local
+    active: ${SPRING_PROFILES_ACTIVE:local}
   application:
     name: magambell
-
   jpa:
     hibernate:
       ddl-auto: none
+  aws:
+    ses:
+      access-key: ${AWS_SES_ACCESS_KEY}
+      secret-key: ${AWS_SES_SECRET_KEY}
+    cf: ${AWS_CF_DISTRIBUTION}
+    bucket: ${AWS_S3_BUCKET}
+
+jwt:
+  secret-key: ${JWT_SECRET_KEY:testtesttesttesttesttesttesttesttesttesttest}
+  access-expire-time: 3600
+  refresh-expire-time: 2592000
+
+oauth:
+  kakao:
+    uri: https://kapi.kakao.com
+  google:
+    uri: https://www.googleapis.com/oauth2/v3/userinfo
+    revoke-uri: https://oauth2.googleapis.com/revoke
+  naver:
+    uri: https://openapi.naver.com/v1/nid/me
+    client_id: ${NAVER_CLIENT_ID:test-client-id}
+    client_secret: ${NAVER_CLIENT_SECRET:test-client-secret}
+
+portone:
+  secret:
+    store-id: ${PORT_ONE_STORE_ID:test-store-id}
+    api-key: ${PORT_ONE_API_KEY:test-api-key}
+    web-hook: ${PORT_ONE_WEB_HOOK:test-web-hook}
+
+firebase:
+  config:
+    json: ${FIREBASE_CONFIG_JSON:test}
+
+LOG_PATH: /logs
+APP_NAME: magambell
 
 ---
 spring:
   config:
     activate:
       on-profile: local
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
   datasource:
-    url: jdbc:h2:mem:~/magambell
+    url: jdbc:h2:file:./data/magambell-db;DB_CLOSE_DELAY=-1;DB_CLOSE_ON_EXIT=FALSE
     username: sa
     password:
     driver-class-name: org.h2.Driver
   jpa:
     database-platform: org.hibernate.dialect.H2Dialect
     hibernate:
-      ddl-auto: create
+      ddl-auto: update
     show-sql: true
     properties:
       hibernate:
@@ -31,13 +69,56 @@ spring:
 spring:
   config:
     activate:
+      on-profile: test
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: create
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+  aws:
+    ses:
+      access-key: test
+      secret-key: test
+    cf: test
+    bucket: test
+
+---
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://${SERVER_HOST}:3306/magambell
+    username: ${MARIA_USERNAME}
+    password: ${MARIA_PASSWORD}
+  aws:
+    ses:
+      access-key: ${AWS_SES_ACCESS_KEY}
+      secret-key: ${AWS_SES_SECRET_KEY}
+    cf: ${AWS_CF_DISTRIBUTION}
+    bucket: ${AWS_S3_BUCKET}
+
+  jpa:
+    database-platform: org.hibernate.dialect.MariaDBDialect
+    hibernate:
+      ddl-auto: none
+
+---
+spring:
+  config:
+    activate:
       on-profile: prod
   datasource:
-    url: jdbc:mysql://localhost:3306/magambell
-    username: your_mysql_user
-    password: your_mysql_password
-    driver-class-name: com.mysql.cj.jdbc.Driver
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://${SERVER_HOST}:3306/magambell
+    username: ${MARIA_USERNAME}
+    password: ${MARIA_PASSWORD}
+
   jpa:
-    database-platform: org.hibernate.dialect.MySQLDialect
-
-
+    database-platform: org.hibernate.dialect.MariaDBDialect
+    hibernate:
+      ddl-auto: none

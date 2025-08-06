@@ -1,10 +1,26 @@
 package com.magambell.server.user.app.port.out;
 
-import com.magambell.server.user.app.port.in.dto.UserDTO;
+import com.magambell.server.auth.domain.ProviderType;
+import com.magambell.server.user.app.port.out.dto.MyPageStatsDTO;
+import com.magambell.server.user.app.port.out.dto.UserInfoDTO;
+import com.magambell.server.user.domain.model.User;
+import java.util.Optional;
 
 public interface UserQueryPort {
 
     boolean existsByEmail(String email);
 
-    void register(UserDTO userDTO);
+    User getUser(String email, String password);
+
+    Optional<User> findUserBySocial(ProviderType providerType, String providerId);
+
+    UserInfoDTO getUserInfo(Long userId);
+
+    User findById(Long userId);
+
+    boolean existsUserBySocial(ProviderType providerType, String providerId);
+
+    boolean existsByNickName(String nickName);
+
+    MyPageStatsDTO getMyPageData(User user);
 }

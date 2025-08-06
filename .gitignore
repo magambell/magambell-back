@@ -38,3 +38,6 @@ out/
 ### VS Code ###
 .vscode/
 /src/main/generated/
+/data/magambell-db.mv.db
+/config/firebase-service-account.json
+/data/magambell-db.trace.db
