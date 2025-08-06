@@ -8,7 +8,9 @@ import io.swagger.v3.oas.models.security.SecurityScheme;
 import io.swagger.v3.oas.models.servers.Server;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Profile;
 
+@Profile("dev")
 @Configuration
 public class SwaggerConfig {
 
@@ -25,7 +27,7 @@ public class SwaggerConfig {
         return new OpenAPI()
                 .info(apiInfo())
                 .addSecurityItem(securityRequirement)
-                .addServersItem(new Server().url("https://www.mgbell-server.run"))
+                .addServersItem(new Server().url("https://dev.mgbell-server.run"))
                 .addServersItem(new Server().url("http://localhost:8080"))
                 .components(components);
     }
