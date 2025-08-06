@@ -89,6 +89,28 @@ spring:
 spring:
   config:
     activate:
+      on-profile: dev
+  datasource:
+    driver-class-name: org.mariadb.jdbc.Driver
+    url: jdbc:mariadb://${DEV_SERVER_HOST}:3306/magambell
+    username: ${DEV_MARIA_USERNAME}
+    password: ${DEV_MARIA_PASSWORD}
+  aws:
+    ses:
+      access-key: ${DEV_AWS_SES_ACCESS_KEY}
+      secret-key: ${DEV_AWS_SES_SECRET_KEY}
+    cf: ${DEV_AWS_CF_DISTRIBUTION}
+    bucket: ${DEV_AWS_S3_BUCKET}
+
+  jpa:
+    database-platform: org.hibernate.dialect.MariaDBDialect
+    hibernate:
+      ddl-auto: none
+
+---
+spring:
+  config:
+    activate:
       on-profile: prod
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver

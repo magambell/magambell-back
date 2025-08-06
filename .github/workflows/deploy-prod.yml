@@ -3,7 +3,7 @@ name: Build and Push to ECR
 on:
   push:
     branches:
-      - dev # 또는 원하는 브랜치명
+      - main # 또는 원하는 브랜치명
 
 jobs:
   build:
@@ -77,7 +77,7 @@ jobs:
           
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
-      - name: Deploy to Dev
+      - name: Deploy to Prod
         uses: appleboy/ssh-action@master
         with:
           username: ubuntu
