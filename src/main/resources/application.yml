@@ -92,15 +92,15 @@ spring:
       on-profile: dev
   datasource:
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://${DEV_SERVER_HOST}:3306/magambell
-    username: ${DEV_MARIA_USERNAME}
-    password: ${DEV_MARIA_PASSWORD}
+    url: jdbc:mariadb://${SERVER_HOST}:3306/magambell
+    username: ${MARIA_USERNAME}
+    password: ${MARIA_PASSWORD}
   aws:
     ses:
-      access-key: ${DEV_AWS_SES_ACCESS_KEY}
-      secret-key: ${DEV_AWS_SES_SECRET_KEY}
-    cf: ${DEV_AWS_CF_DISTRIBUTION}
-    bucket: ${DEV_AWS_S3_BUCKET}
+      access-key: ${AWS_SES_ACCESS_KEY}
+      secret-key: ${AWS_SES_SECRET_KEY}
+    cf: ${AWS_CF_DISTRIBUTION}
+    bucket: ${AWS_S3_BUCKET}
 
   jpa:
     database-platform: org.hibernate.dialect.MariaDBDialect
