@@ -17,7 +17,9 @@ public record OrderDetailDTO(
         String memo,
         LocalDateTime createdAt,
         Long storeId,
-        Long reviewId
+        Long reviewId,
+        String payType,
+        String easyPayProvider
 ) {
     public OrderDetailResponse toResponse() {
 
@@ -34,7 +36,9 @@ public record OrderDetailDTO(
                 memo,
                 createdAt,
                 String.valueOf(storeId),
-                String.valueOf(reviewId)
+                String.valueOf(reviewId),
+                payType,
+                easyPayProvider
         );
     }
 }

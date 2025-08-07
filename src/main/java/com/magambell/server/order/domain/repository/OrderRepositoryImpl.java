@@ -104,7 +104,9 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
                                 order.memo,
                                 order.createdAt,
                                 store.id,
-                                review.id.min()
+                                review.id.min(),
+                                payment.payType,
+                                payment.easyPayProvider
                         ))
                         .from(order)
                         .innerJoin(orderGoods).on(orderGoods.order.id.eq(order.id))
