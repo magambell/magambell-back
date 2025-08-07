@@ -217,6 +217,9 @@ class OrderServiceTest {
         Order createOrder = createOrderDTO.toOrder();
         createOrder.completed();
         orderRepository.save(createOrder);
+        
+        Payment payment = new CreatePaymentDTO(createOrder, 9000, PaymentStatus.PAID).toPayment();
+        paymentRepository.save(payment);
 
         // when
         OrderDetailDTO orderDetail = orderService.getOrderDetail(createOrder.getId(), user.getId());

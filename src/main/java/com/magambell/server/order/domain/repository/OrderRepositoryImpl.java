@@ -120,6 +120,7 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
                                 order.user.id.eq(userId),
                                 order.user.userStatus.eq(UserStatus.ACTIVE)
                         )
+                        .groupBy(order.id)
                         .fetchOne()
         );
     }
