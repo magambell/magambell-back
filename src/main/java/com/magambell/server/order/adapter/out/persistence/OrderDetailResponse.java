@@ -16,7 +16,9 @@ public record OrderDetailResponse(
         String memo,
         LocalDateTime createdAt,
         String storeId,
-        String reviewId
+        String reviewId,
+        String payType,
+        String easyPayProvider
 ) {
 
 }
