@@ -82,4 +82,3 @@ jobs:
             export SPRING_PROFILES_ACTIVE=prod
             sudo -E bash /home/ubuntu/deploy.sh
             
-            
