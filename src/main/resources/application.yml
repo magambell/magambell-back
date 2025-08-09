@@ -127,16 +127,8 @@ springdoc:
     enabled: false
 
 management:
-  server:
-    port: 18080
-    address: 127.0.0.1
   endpoints:
     web:
-      base-path: /
+      base-path: /magambell
       exposure:
         include: health
-  endpoint:
-    health:
-      probes:
-        enabled: true
-      show-details: "never"
