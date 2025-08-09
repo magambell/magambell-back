@@ -125,3 +125,8 @@ spring:
 springdoc:
   swagger-ui:
     enabled: false
+
+management:
+  endpoints:
+    web:
+      base-path: /magambell
