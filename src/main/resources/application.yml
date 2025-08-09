@@ -130,3 +130,5 @@ management:
   endpoints:
     web:
       base-path: /magambell
+      exposure:
+        include: health
