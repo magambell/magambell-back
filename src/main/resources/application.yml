@@ -107,6 +107,13 @@ spring:
     hibernate:
       ddl-auto: none
 
+management:
+  endpoints:
+    web:
+      base-path: /magambell
+      exposure:
+        include: health
+
 ---
 spring:
   config:

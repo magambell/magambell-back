@@ -83,6 +83,8 @@ jobs:
           username: ubuntu
           host: ${{ secrets.DEV_EC2_HOST }}
           key: ${{ secrets.DEV_EC2_PRIVATE_KEY }}
+          timeout: 10m
+          command_timeout: 180s
           script: |
             export SERVER_HOST=${{ secrets.DEV_SERVER_HOST }}
             export MARIA_USERNAME=${{ secrets.DEV_MARIA_USERNAME }}
