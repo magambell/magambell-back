@@ -60,6 +60,8 @@ jobs:
           username: ubuntu
           host: ${{ secrets.EC2_HOST }}
           key: ${{ secrets.EC2_PRIVATE_KEY }}
+          timeout: 10m
+          command_timeout: 180s
           script: |
             export ECR_IMAGE=${{ steps.login-ecr.outputs.registry }}/${{ secrets.ECR_REPOSITORY }}
             export NEW_TAG=${{ github.sha }}
