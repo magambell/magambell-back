@@ -83,3 +83,4 @@ jobs:
             export FIREBASE_CONFIG_JSON=${{ secrets.FIREBASE_CONFIG_JSON }}
             export SPRING_PROFILES_ACTIVE=dev
             sudo -E bash /home/ubuntu/deploy.sh
+
