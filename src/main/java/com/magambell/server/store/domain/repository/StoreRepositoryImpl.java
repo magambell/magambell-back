@@ -236,7 +236,6 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
         );
 
         BooleanBuilder conditions = new BooleanBuilder();
-        Optional.ofNullable(radiusCondition(distance)).ifPresent(conditions::and);
         conditions.and(store.approved.eq(APPROVED));
         conditions.and(user.userStatus.eq(UserStatus.ACTIVE));
 
