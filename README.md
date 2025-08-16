@@ -1,3 +1,4 @@
 ## Architecture
 
-![magambell-architecture drawio](https://github.com/user-attachments/assets/0751c8ec-6b5b-4884-a73c-c40f5abe7db4)
+<img width="1802" height="1315" alt="magambell-architecture drawio" src="https://github.com/user-attachments/assets/c9918b41-8a4c-4f07-922f-3706b54c6e73" />
+
