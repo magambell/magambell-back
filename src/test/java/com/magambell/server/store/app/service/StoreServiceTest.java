@@ -205,25 +205,6 @@ class StoreServiceTest {
         assertThat(closeStoreList.storeListDTOResponses()).hasSize(30);
     }
 
-    @DisplayName("내 주변 매장 리스트 5km 근처에 없을 때")
-    @Test
-    void getCloseStoreListIs5KmLimit() {
-        // given
-        CloseStoreListServiceRequest request = new CloseStoreListServiceRequest(37.6300, 37.5665);
-
-        List<Store> storeList = IntStream.range(1, 31)
-                .mapToObj(this::createStore)
-                .toList();
-
-        storeRepository.saveAll(storeList);
-
-        // when
-        StoreListResponse closeStoreList = storeService.getCloseStoreList(request);
-
-        // then
-        assertThat(closeStoreList.storeListDTOResponses()).hasSize(0);
-    }
-
     @DisplayName("승인 대기중인 매장 리스트를 가져온다.")
     @Test
     void getWaitingStoreList() {

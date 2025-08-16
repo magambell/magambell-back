@@ -45,36 +45,13 @@ jobs:
               echo "ECR repository already exists: ${{ secrets.DEV_ECR_REPOSITORY }}"
           fi
 
-      - name: Build, tag, and push image to Amazon ECR
+      - name: Build, tag, push
         env:
           ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
           ECR_REPOSITORY: ${{ secrets.DEV_ECR_REPOSITORY }}
-          IMAGE_TAG: latest
+          IMAGE_TAG: ${{ github.sha }}
         run: |
-          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG \
-            --build-arg JAR_FILE=build/libs/*.jar \
-            --build-arg MARIA_PASSWORD=${{ secrets.DEV_MARIA_PASSWORD }} \
-            --build-arg MARIA_USERNAME=${{ secrets.DEV_MARIA_USERNAME }} \
-            --build-arg SERVER_HOST=${{ secrets.DEV_SERVER_HOST }} \
-            --build-arg AWS_ECR_ACCESS_KEY=${{ secrets.DEV_AWS_ECR_ACCESS_KEY }} \
-            --build-arg AWS_ECR_SECRET_KEY=${{ secrets.DEV_AWS_ECR_SECRET_KEY }} \
-            --build-arg AWS_SES_ACCESS_KEY=${{ secrets.DEV_AWS_SES_ACCESS_KEY }} \
-            --build-arg AWS_SES_SECRET_KEY=${{ secrets.DEV_AWS_SES_SECRET_KEY }} \
-            --build-arg AWS_CF_DISTRIBUTION=${{ secrets.DEV_AWS_CF_DISTRIBUTION }} \
-            --build-arg AWS_S3_BUCKET=${{ secrets.DEV_AWS_S3_BUCKET }} \
-            --build-arg JWT_SECRET_KEY=${{ secrets.JWT_SECRET_KEY }} \
-            --build-arg NAVER_CLIENT_ID=${{ secrets.NAVER_CLIENT_ID }} \
-            --build-arg NAVER_CLIENT_SECRET=${{ secrets.NAVER_CLIENT_SECRET }} \
-            --build-arg PORT_ONE_STORE_ID=${{ secrets.PORT_ONE_STORE_ID }} \
-            --build-arg PORT_ONE_API_KEY=${{ secrets.PORT_ONE_API_KEY }} \
-            --build-arg PORT_ONE_WEB_HOOK=${{ secrets.PORT_ONE_WEB_HOOK }} \
-            --build-arg FIREBASE_CONFIG_JSON=${{ secrets.FIREBASE_CONFIG_JSON }} \
-            --build-arg SPRING_PROFILES_ACTIVE=dev \
-            .
-          
-          echo "ECR REGISTRY: $ECR_REGISTRY"
-          echo "ECR_REPOSITORY: $ECR_REPOSITORY"
-          
+          docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG --build-arg JAR_FILE=build/libs/*.jar .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
       - name: Deploy to Dev
@@ -83,7 +60,11 @@ jobs:
           username: ubuntu
           host: ${{ secrets.DEV_EC2_HOST }}
           key: ${{ secrets.DEV_EC2_PRIVATE_KEY }}
+          timeout: 30s
+          command_timeout: 20m
           script: |
+            export ECR_IMAGE=${{ steps.login-ecr.outputs.registry }}/${{ secrets.DEV_ECR_REPOSITORY }}
+            export NEW_TAG=${{ github.sha }}
             export SERVER_HOST=${{ secrets.DEV_SERVER_HOST }}
             export MARIA_USERNAME=${{ secrets.DEV_MARIA_USERNAME }}
             export MARIA_PASSWORD=${{ secrets.DEV_MARIA_PASSWORD }}
@@ -102,4 +83,3 @@ jobs:
             export FIREBASE_CONFIG_JSON=${{ secrets.FIREBASE_CONFIG_JSON }}
             export SPRING_PROFILES_ACTIVE=dev
             sudo -E bash /home/ubuntu/deploy.sh
-            
