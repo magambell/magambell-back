@@ -1,3 +1,3 @@
 ## Architecture
 
-![마감벨 drawio (1)](https://github.com/user-attachments/assets/d9de2f76-a869-4216-b8af-e060a0380403)
+![magambell-architecture drawio](https://github.com/user-attachments/assets/0751c8ec-6b5b-4884-a73c-c40f5abe7db4)
