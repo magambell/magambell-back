@@ -7,6 +7,7 @@ import com.magambell.server.store.app.port.in.request.CloseStoreListServiceReque
 import com.magambell.server.store.app.port.in.request.SearchStoreListServiceRequest;
 import com.magambell.server.store.app.port.out.StoreQueryPort;
 import com.magambell.server.store.app.port.out.response.OwnerStoreDetailDTO;
+import com.magambell.server.store.app.port.out.response.StoreAdminListDTO;
 import com.magambell.server.store.app.port.out.response.StoreListDTOResponse;
 import com.magambell.server.store.domain.model.Store;
 import com.magambell.server.store.domain.repository.StoreRepository;
@@ -62,7 +63,7 @@ public class StoreQueryAdapter implements StoreQueryPort {
     }
 
     @Override
-    public List<StoreListDTOResponse> getWaitingStoreList(final Pageable pageable) {
+    public List<StoreAdminListDTO> getWaitingStoreList(final Pageable pageable) {
         return storeRepository.getWaitingStoreList(pageable);
     }
 }

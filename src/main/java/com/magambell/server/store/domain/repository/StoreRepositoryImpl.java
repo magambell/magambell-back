@@ -20,6 +20,7 @@ import com.magambell.server.store.app.port.in.request.CloseStoreListServiceReque
 import com.magambell.server.store.app.port.in.request.SearchStoreListServiceRequest;
 import com.magambell.server.store.app.port.out.dto.StoreDetailDTO;
 import com.magambell.server.store.app.port.out.response.OwnerStoreDetailDTO;
+import com.magambell.server.store.app.port.out.response.StoreAdminListDTO;
 import com.magambell.server.store.app.port.out.response.StoreListDTOResponse;
 import com.magambell.server.store.domain.enums.Approved;
 import com.magambell.server.store.domain.enums.SearchSortType;
@@ -284,7 +285,7 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
     }
 
     @Override
-    public List<StoreListDTOResponse> getWaitingStoreList(final Pageable pageable) {
+    public List<StoreAdminListDTO> getWaitingStoreList(final Pageable pageable) {
         BooleanBuilder conditions = new BooleanBuilder();
         conditions.and(store.approved.eq(WAITING));
         conditions.and(user.userStatus.eq(UserStatus.ACTIVE));
@@ -313,11 +314,12 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                 .innerJoin(stock).on(stock.goods.id.eq(goods.id))
                 .leftJoin(orderGoods).on(orderGoods.goods.id.eq(goods.id))
                 .leftJoin(review).on(review.orderGoods.id.eq(orderGoods.id))
+                .innerJoin(user).on(user.id.eq(store.user.id))
                 .where(store.id.in(storeIds))
                 .orderBy(store.createdAt.desc())
                 .transform(
                         groupBy(store.id)
-                                .list(Projections.constructor(StoreListDTOResponse.class,
+                                .list(Projections.constructor(StoreAdminListDTO.class,
                                         store.id,
                                         store.name,
                                         set(storeImage.name),
@@ -332,7 +334,8 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                                         goods.salePrice,
                                         stock.quantity,
                                         Expressions.nullExpression(Double.class),
-                                        goods.saleStatus
+                                        goods.saleStatus,
+                                        user.nickName
                                 ))
                 );
     }
