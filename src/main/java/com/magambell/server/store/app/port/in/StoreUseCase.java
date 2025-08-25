@@ -1,5 +1,6 @@
 package com.magambell.server.store.app.port.in;
 
+import com.magambell.server.store.adapter.out.persistence.StoreAdminListResponse;
 import com.magambell.server.store.adapter.out.persistence.StoreDetailResponse;
 import com.magambell.server.store.adapter.out.persistence.StoreImagesResponse;
 import com.magambell.server.store.adapter.out.persistence.StoreListResponse;
@@ -23,5 +24,5 @@ public interface StoreUseCase {
 
     StoreListResponse getCloseStoreList(CloseStoreListServiceRequest request);
 
-    StoreListResponse getWaitingStoreList(WaitingStoreListServiceRequest request);
+    StoreAdminListResponse getWaitingStoreList(WaitingStoreListServiceRequest request);
 }

@@ -2,6 +2,7 @@ package com.magambell.server.store.app.service;
 
 import com.magambell.server.common.enums.ErrorCode;
 import com.magambell.server.common.exception.DuplicateException;
+import com.magambell.server.store.adapter.out.persistence.StoreAdminListResponse;
 import com.magambell.server.store.adapter.out.persistence.StoreDetailResponse;
 import com.magambell.server.store.adapter.out.persistence.StoreImagesResponse;
 import com.magambell.server.store.adapter.out.persistence.StoreListResponse;
@@ -73,8 +74,8 @@ public class StoreService implements StoreUseCase {
     }
 
     @Override
-    public StoreListResponse getWaitingStoreList(final WaitingStoreListServiceRequest request) {
-        return new StoreListResponse(
+    public StoreAdminListResponse getWaitingStoreList(final WaitingStoreListServiceRequest request) {
+        return new StoreAdminListResponse(
                 storeQueryPort.getWaitingStoreList(PageRequest.of(request.page() - 1, request.size())));
     }
 

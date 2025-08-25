@@ -12,6 +12,7 @@ import com.magambell.server.stock.domain.model.Stock;
 import com.magambell.server.stock.domain.repository.StockHistoryRepository;
 import com.magambell.server.stock.domain.repository.StockRepository;
 import com.magambell.server.store.adapter.in.web.StoreImagesRegister;
+import com.magambell.server.store.adapter.out.persistence.StoreAdminListResponse;
 import com.magambell.server.store.adapter.out.persistence.StoreDetailResponse;
 import com.magambell.server.store.adapter.out.persistence.StoreListResponse;
 import com.magambell.server.store.app.port.in.dto.RegisterStoreDTO;
@@ -169,7 +170,7 @@ class StoreServiceTest {
         assertThat(result.images()).isEmpty();
     }
 
-    @DisplayName("관리자 매장 상세 정보를 조회한다")
+    @DisplayName("사장님 매장 상세 정보를 조회한다")
     @Test
     void getOwnerStoreInfo() {
         // given
@@ -218,10 +219,10 @@ class StoreServiceTest {
         storeRepository.saveAll(storeList);
 
         // when
-        StoreListResponse storeListResponse = storeService.getWaitingStoreList(request);
+        StoreAdminListResponse storeListResponse = storeService.getWaitingStoreList(request);
 
         // then
-        assertThat(storeListResponse.storeListDTOResponses()).hasSize(0);
+        assertThat(storeListResponse.storeAdminListDTOs()).hasSize(0);
     }
 
     private Store createStore(int i) {
