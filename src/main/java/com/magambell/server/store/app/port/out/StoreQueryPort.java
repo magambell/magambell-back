@@ -33,4 +33,6 @@ public interface StoreQueryPort {
     Long findOwnerIdByStoreId(Long storeId);
 
     List<StoreImage> getStoreImageList(Long storeId);
+
+    Store getStoreAndStoreImages(Long storeId);
 }

@@ -4,6 +4,7 @@ import com.magambell.server.common.Response;
 import com.magambell.server.common.security.CustomUserDetails;
 import com.magambell.server.common.swagger.BaseResponse;
 import com.magambell.server.store.adapter.in.web.CloseStoreListRequest;
+import com.magambell.server.store.adapter.in.web.EditStoreImageRequest;
 import com.magambell.server.store.adapter.in.web.RegisterStoreRequest;
 import com.magambell.server.store.adapter.in.web.SearchStoreListRequest;
 import com.magambell.server.store.adapter.in.web.StoreApproveRequest;
@@ -129,5 +130,15 @@ public class StoreController {
             @AuthenticationPrincipal final CustomUserDetails customUserDetails,
             @PathVariable final Long storeId) {
         return new Response<>(storeUseCase.getStoreImageList(customUserDetails.userId(), storeId));
+    }
+
+    @Operation(summary = "매장 이미지 수정")
+    @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(
+            implementation = StoreImagesResponse.class))})
+    @PatchMapping("")
+    public Response<StoreImagesResponse> editStoreImage(
+            @AuthenticationPrincipal final CustomUserDetails customUserDetails,
+            @RequestBody @Validated final EditStoreImageRequest editStoreImageRequest) {
+        return new Response<>(storeUseCase.editStoreImage(editStoreImageRequest.toService(customUserDetails.userId())));
     }
 }

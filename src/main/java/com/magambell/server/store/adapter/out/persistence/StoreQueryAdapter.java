@@ -78,4 +78,9 @@ public class StoreQueryAdapter implements StoreQueryPort {
     public List<StoreImage> getStoreImageList(final Long storeId) {
         return storeRepository.getStoreImageList(storeId);
     }
+
+    @Override
+    public Store getStoreAndStoreImages(final Long storeId) {
+        return storeRepository.getStoreAndStoreImages(storeId);
+    }
 }
