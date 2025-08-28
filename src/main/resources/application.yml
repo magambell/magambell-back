@@ -127,6 +127,13 @@ spring:
     activate:
       on-profile: prod
   datasource:
+    hikari:
+      minimum-idle: 0
+      maximum-pool-size: 10
+      idle-timeout: 600000
+      max-lifetime: 1800000
+      connection-timeout: 5000
+      auto-commit: false
     driver-class-name: org.mariadb.jdbc.Driver
     url: jdbc:mariadb://${SERVER_HOST}:3306/magambell
     username: ${MARIA_USERNAME}
