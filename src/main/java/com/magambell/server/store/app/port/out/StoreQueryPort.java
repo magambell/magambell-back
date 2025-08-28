@@ -7,6 +7,7 @@ import com.magambell.server.store.app.port.out.response.OwnerStoreDetailDTO;
 import com.magambell.server.store.app.port.out.response.StoreAdminListDTO;
 import com.magambell.server.store.app.port.out.response.StoreListDTOResponse;
 import com.magambell.server.store.domain.model.Store;
+import com.magambell.server.store.domain.model.StoreImage;
 import com.magambell.server.user.domain.model.User;
 import java.util.List;
 import java.util.Optional;
@@ -28,4 +29,10 @@ public interface StoreQueryPort {
     List<StoreListDTOResponse> getCloseStoreList(CloseStoreListServiceRequest request);
 
     List<StoreAdminListDTO> getWaitingStoreList(Pageable pageable);
+
+    Long findOwnerIdByStoreId(Long storeId);
+
+    List<StoreImage> getStoreImageList(Long storeId);
+
+    Store getStoreAndStoreImages(Long storeId);
 }

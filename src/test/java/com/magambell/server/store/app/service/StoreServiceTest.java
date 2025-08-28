@@ -2,8 +2,10 @@ package com.magambell.server.store.app.service;
 
 import static com.magambell.server.goods.domain.enums.SaleStatus.ON;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.doNothing;
 
 import com.magambell.server.auth.domain.ProviderType;
+import com.magambell.server.common.s3.S3Client;
 import com.magambell.server.common.s3.dto.ImageRegister;
 import com.magambell.server.goods.app.port.in.dto.RegisterGoodsDTO;
 import com.magambell.server.goods.domain.model.Goods;
@@ -14,9 +16,11 @@ import com.magambell.server.stock.domain.repository.StockRepository;
 import com.magambell.server.store.adapter.in.web.StoreImagesRegister;
 import com.magambell.server.store.adapter.out.persistence.StoreAdminListResponse;
 import com.magambell.server.store.adapter.out.persistence.StoreDetailResponse;
+import com.magambell.server.store.adapter.out.persistence.StoreImagesResponse;
 import com.magambell.server.store.adapter.out.persistence.StoreListResponse;
 import com.magambell.server.store.app.port.in.dto.RegisterStoreDTO;
 import com.magambell.server.store.app.port.in.request.CloseStoreListServiceRequest;
+import com.magambell.server.store.app.port.in.request.EditStoreImageServiceRequest;
 import com.magambell.server.store.app.port.in.request.RegisterStoreServiceRequest;
 import com.magambell.server.store.app.port.in.request.SearchStoreListServiceRequest;
 import com.magambell.server.store.app.port.in.request.WaitingStoreListServiceRequest;
@@ -43,6 +47,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.context.ActiveProfiles;
 
 @ActiveProfiles("test")
@@ -65,6 +70,8 @@ class StoreServiceTest {
     private StockHistoryRepository stockHistoryRepository;
     @Autowired
     private StockRepository stockRepository;
+    @MockBean
+    private S3Client s3Client;
     private User user;
 
     @BeforeEach
@@ -223,6 +230,39 @@ class StoreServiceTest {
 
         // then
         assertThat(storeListResponse.storeAdminListDTOs()).hasSize(0);
+    }
+
+    @DisplayName("사장님 매장 이미지 리스트 가져오기")
+    @Test
+    void getStoreImageList() {
+        // given
+        Store store = createStore(1);
+        storeRepository.save(store);
+
+        // when
+        StoreImagesResponse storeImageList = storeService.getStoreImageList(user.getId(), store.getId());
+
+        // then
+        assertThat(storeImageList.storePreSignedUrlImages()).hasSize(0);
+    }
+
+    @DisplayName("사장님 매장 이미지 변경하기")
+    @Test
+    void editStoreImage() {
+        // given
+        Store store = createStore(1);
+        storeRepository.save(store);
+
+        EditStoreImageServiceRequest editStoreImageServiceRequest = new EditStoreImageServiceRequest(user.getId(),
+                store.getId(), List.of());
+
+        // when
+        doNothing().when(s3Client)
+                .deleteObjectS3("");
+        StoreImagesResponse storeImageList = storeService.editStoreImage(editStoreImageServiceRequest);
+
+        // then
+        assertThat(storeImageList.storePreSignedUrlImages()).hasSize(0);
     }
 
     private Store createStore(int i) {

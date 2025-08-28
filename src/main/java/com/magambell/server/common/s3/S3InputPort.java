@@ -11,6 +11,6 @@ public interface S3InputPort {
 
     String getImagePrefix(String imagePrefix, ImageRegister imageRegister, User user);
 
-    void deleteS3Objects(User user);
+    void deleteS3Objects(String imagePrefix, User user);
 
 }

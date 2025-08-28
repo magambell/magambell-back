@@ -24,6 +24,8 @@ import com.magambell.server.store.app.port.out.response.StoreAdminListDTO;
 import com.magambell.server.store.app.port.out.response.StoreListDTOResponse;
 import com.magambell.server.store.domain.enums.Approved;
 import com.magambell.server.store.domain.enums.SearchSortType;
+import com.magambell.server.store.domain.model.Store;
+import com.magambell.server.store.domain.model.StoreImage;
 import com.magambell.server.user.domain.enums.UserStatus;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
@@ -338,6 +340,35 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                                         user.nickName
                                 ))
                 );
+    }
+
+    @Override
+    public Optional<Long> findOwnerIdByStoreId(final Long storeId) {
+        return Optional.ofNullable(
+                queryFactory.select(user.id)
+                        .from(store)
+                        .innerJoin(user).on(user.id.eq(store.user.id))
+                        .where(store.id.eq(storeId))
+                        .fetchOne()
+        );
+    }
+
+    @Override
+    public List<StoreImage> getStoreImageList(final Long storeId) {
+        return queryFactory.selectFrom(storeImage)
+                .innerJoin(store).on(store.id.eq(storeImage.store.id)).fetchJoin()
+                .innerJoin(user).on(user.id.eq(store.user.id))
+                .where(store.id.eq(storeId).and(user.userStatus.eq(UserStatus.ACTIVE)))
+                .fetch();
+    }
+
+    @Override
+    public Store getStoreAndStoreImages(final Long storeId) {
+        return queryFactory.selectFrom(store)
+                .leftJoin(storeImage).on(storeImage.store.id.eq(store.id)).fetchJoin()
+                .innerJoin(user).on(user.id.eq(store.user.id))
+                .where(store.id.eq(storeId).and(user.userStatus.eq(UserStatus.ACTIVE)))
+                .fetchOne();
     }
 
     private BooleanExpression keywordCondition(final String keyword) {

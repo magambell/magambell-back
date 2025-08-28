@@ -35,9 +35,9 @@ public class S3Adapter implements S3InputPort {
     }
 
     @Override
-    public void deleteS3Objects(final User user) {
+    public void deleteS3Objects(final String imagePrefix, final User user) {
         s3Client.listObjectKeys(
-                        user.getUserRole() + "/" + user.getId()
+                        imagePrefix + "/" + user.getUserRole() + "/" + user.getId()
                 )
                 .forEach(s3Client::deleteObjectS3);
     }

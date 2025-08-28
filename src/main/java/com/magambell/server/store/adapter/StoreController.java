@@ -4,6 +4,7 @@ import com.magambell.server.common.Response;
 import com.magambell.server.common.security.CustomUserDetails;
 import com.magambell.server.common.swagger.BaseResponse;
 import com.magambell.server.store.adapter.in.web.CloseStoreListRequest;
+import com.magambell.server.store.adapter.in.web.EditStoreImageRequest;
 import com.magambell.server.store.adapter.in.web.RegisterStoreRequest;
 import com.magambell.server.store.adapter.in.web.SearchStoreListRequest;
 import com.magambell.server.store.adapter.in.web.StoreApproveRequest;
@@ -109,12 +110,35 @@ public class StoreController {
 
     @Operation(summary = "승인 대기중인 매장 리스트")
     @ApiResponse(responseCode = "200", content = {
-            @Content(schema = @Schema(implementation = StoreAdminListResponse.class))})
+            @Content(schema = @Schema(implementation = StoreAdminListResponse.class))}
+    )
     @GetMapping("/waiting")
     public Response<StoreAdminListResponse> getWaitingStoreList(
             @ModelAttribute @Validated final WaitingStoreListRequest request
     ) {
         // todo 추후 관리자 용으로 변경
         return new Response<>(storeUseCase.getWaitingStoreList(request.toService()));
+    }
+
+    @PreAuthorize("{hasRole('OWNER'), hasRole('ADMIN')}")
+    @Operation(summary = "매장 이미지 조회")
+    @ApiResponse(responseCode = "200", content = {
+            @Content(schema = @Schema(implementation = StoreImagesResponse.class))}
+    )
+    @GetMapping("/images/{storeId}")
+    public Response<StoreImagesResponse> getStoreImageList(
+            @AuthenticationPrincipal final CustomUserDetails customUserDetails,
+            @PathVariable final Long storeId) {
+        return new Response<>(storeUseCase.getStoreImageList(customUserDetails.userId(), storeId));
+    }
+
+    @Operation(summary = "매장 이미지 수정")
+    @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(
+            implementation = StoreImagesResponse.class))})
+    @PatchMapping("")
+    public Response<StoreImagesResponse> editStoreImage(
+            @AuthenticationPrincipal final CustomUserDetails customUserDetails,
+            @RequestBody @Validated final EditStoreImageRequest editStoreImageRequest) {
+        return new Response<>(storeUseCase.editStoreImage(editStoreImageRequest.toService(customUserDetails.userId())));
     }
 }
