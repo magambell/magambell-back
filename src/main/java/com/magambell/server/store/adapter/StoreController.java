@@ -109,12 +109,25 @@ public class StoreController {
 
     @Operation(summary = "승인 대기중인 매장 리스트")
     @ApiResponse(responseCode = "200", content = {
-            @Content(schema = @Schema(implementation = StoreAdminListResponse.class))})
+            @Content(schema = @Schema(implementation = StoreAdminListResponse.class))}
+    )
     @GetMapping("/waiting")
     public Response<StoreAdminListResponse> getWaitingStoreList(
             @ModelAttribute @Validated final WaitingStoreListRequest request
     ) {
         // todo 추후 관리자 용으로 변경
         return new Response<>(storeUseCase.getWaitingStoreList(request.toService()));
+    }
+
+    @PreAuthorize("{hasRole('OWNER'), hasRole('ADMIN')}")
+    @Operation(summary = "매장 이미지 조회")
+    @ApiResponse(responseCode = "200", content = {
+            @Content(schema = @Schema(implementation = StoreImagesResponse.class))}
+    )
+    @GetMapping("/images/{storeId}")
+    public Response<StoreImagesResponse> getStoreImageList(
+            @AuthenticationPrincipal final CustomUserDetails customUserDetails,
+            @PathVariable final Long storeId) {
+        return new Response<>(storeUseCase.getStoreImageList(customUserDetails.userId(), storeId));
     }
 }

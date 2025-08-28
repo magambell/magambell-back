@@ -10,6 +10,7 @@ import com.magambell.server.store.app.port.out.response.OwnerStoreDetailDTO;
 import com.magambell.server.store.app.port.out.response.StoreAdminListDTO;
 import com.magambell.server.store.app.port.out.response.StoreListDTOResponse;
 import com.magambell.server.store.domain.model.Store;
+import com.magambell.server.store.domain.model.StoreImage;
 import com.magambell.server.store.domain.repository.StoreRepository;
 import com.magambell.server.user.domain.model.User;
 import java.util.List;
@@ -65,5 +66,16 @@ public class StoreQueryAdapter implements StoreQueryPort {
     @Override
     public List<StoreAdminListDTO> getWaitingStoreList(final Pageable pageable) {
         return storeRepository.getWaitingStoreList(pageable);
+    }
+
+    @Override
+    public Long findOwnerIdByStoreId(final Long storeId) {
+        return storeRepository.findOwnerIdByStoreId(storeId)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.STORE_NOT_FOUND));
+    }
+
+    @Override
+    public List<StoreImage> getStoreImageList(final Long storeId) {
+        return storeRepository.getStoreImageList(storeId);
     }
 }

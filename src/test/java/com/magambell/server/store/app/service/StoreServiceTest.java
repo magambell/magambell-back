@@ -14,6 +14,7 @@ import com.magambell.server.stock.domain.repository.StockRepository;
 import com.magambell.server.store.adapter.in.web.StoreImagesRegister;
 import com.magambell.server.store.adapter.out.persistence.StoreAdminListResponse;
 import com.magambell.server.store.adapter.out.persistence.StoreDetailResponse;
+import com.magambell.server.store.adapter.out.persistence.StoreImagesResponse;
 import com.magambell.server.store.adapter.out.persistence.StoreListResponse;
 import com.magambell.server.store.app.port.in.dto.RegisterStoreDTO;
 import com.magambell.server.store.app.port.in.request.CloseStoreListServiceRequest;
@@ -223,6 +224,20 @@ class StoreServiceTest {
 
         // then
         assertThat(storeListResponse.storeAdminListDTOs()).hasSize(0);
+    }
+
+    @DisplayName("사장님 매장 이미지 리스트 가져오기")
+    @Test
+    void getStoreImageList() {
+        // given
+        Store store = createStore(1);
+        storeRepository.save(store);
+
+        // when
+        StoreImagesResponse storeImageList = storeService.getStoreImageList(user.getId(), store.getId());
+
+        // then
+        assertThat(storeImageList.storePreSignedUrlImages()).hasSize(0);
     }
 
     private Store createStore(int i) {
