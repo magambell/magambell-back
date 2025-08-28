@@ -25,4 +25,6 @@ public interface StoreUseCase {
     StoreListResponse getCloseStoreList(CloseStoreListServiceRequest request);
 
     StoreAdminListResponse getWaitingStoreList(WaitingStoreListServiceRequest request);
+
+    StoreImagesResponse getStoreImageList(Long userId, Long storeId);
 }

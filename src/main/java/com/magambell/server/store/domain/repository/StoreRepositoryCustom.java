@@ -6,6 +6,7 @@ import com.magambell.server.store.app.port.in.request.SearchStoreListServiceRequ
 import com.magambell.server.store.app.port.out.response.OwnerStoreDetailDTO;
 import com.magambell.server.store.app.port.out.response.StoreAdminListDTO;
 import com.magambell.server.store.app.port.out.response.StoreListDTOResponse;
+import com.magambell.server.store.domain.model.StoreImage;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Pageable;
@@ -21,4 +22,8 @@ public interface StoreRepositoryCustom {
     List<StoreListDTOResponse> getCloseStoreList(CloseStoreListServiceRequest request);
 
     List<StoreAdminListDTO> getWaitingStoreList(Pageable pageable);
+
+    Optional<Long> findOwnerIdByStoreId(Long storeId);
+
+    List<StoreImage> getStoreImageList(Long storeId);
 }
