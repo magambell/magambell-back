@@ -3,22 +3,26 @@ package com.magambell.server.store.app.service;
 import com.magambell.server.common.enums.ErrorCode;
 import com.magambell.server.common.exception.DuplicateException;
 import com.magambell.server.common.exception.InvalidRequestException;
+import com.magambell.server.store.adapter.in.web.StoreImagesRegister;
 import com.magambell.server.store.adapter.out.persistence.StoreAdminListResponse;
 import com.magambell.server.store.adapter.out.persistence.StoreDetailResponse;
 import com.magambell.server.store.adapter.out.persistence.StoreImagesResponse;
 import com.magambell.server.store.adapter.out.persistence.StoreListResponse;
 import com.magambell.server.store.app.port.in.StoreUseCase;
 import com.magambell.server.store.app.port.in.request.CloseStoreListServiceRequest;
+import com.magambell.server.store.app.port.in.request.EditStoreImageServiceRequest;
 import com.magambell.server.store.app.port.in.request.RegisterStoreServiceRequest;
 import com.magambell.server.store.app.port.in.request.SearchStoreListServiceRequest;
 import com.magambell.server.store.app.port.in.request.StoreApproveServiceRequest;
 import com.magambell.server.store.app.port.in.request.WaitingStoreListServiceRequest;
 import com.magambell.server.store.app.port.out.StoreCommandPort;
 import com.magambell.server.store.app.port.out.StoreQueryPort;
+import com.magambell.server.store.app.port.out.response.EditStoreImageResponseDTO;
 import com.magambell.server.store.app.port.out.response.OwnerStoreDetailDTO;
 import com.magambell.server.store.app.port.out.response.StorePreSignedUrlImage;
 import com.magambell.server.store.app.port.out.response.StoreRegisterResponseDTO;
 import com.magambell.server.store.domain.enums.Approved;
+import com.magambell.server.store.domain.model.Store;
 import com.magambell.server.user.app.port.out.UserQueryPort;
 import com.magambell.server.user.domain.enums.UserRole;
 import com.magambell.server.user.domain.model.User;
@@ -100,6 +104,19 @@ public class StoreService implements StoreUseCase {
         return new StoreImagesResponse(String.valueOf(storeId), images);
     }
 
+    @Override
+    @Transactional
+    public StoreImagesResponse editStoreImage(final EditStoreImageServiceRequest request) {
+        User user = userQueryPort.findById(request.userId());
+        Store store = storeQueryPort.getStoreAndStoreImages(request.storeId());
+
+        validateUserRoleAndStore(user, store.getId());
+
+        EditStoreImageResponseDTO editStoreImageResponseDTO = changeStoreImage(store, request.storeImagesRegisters());
+        return new StoreImagesResponse(String.valueOf(editStoreImageResponseDTO.id()),
+                editStoreImageResponseDTO.storePreSignedUrlImages());
+    }
+
     private void checkDuplicateStore(final User user) {
         if (storeQueryPort.existsByUser(user)) {
             throw new DuplicateException(ErrorCode.DUPLICATE_STORE);
@@ -116,5 +133,10 @@ public class StoreService implements StoreUseCase {
         if (!ownerId.equals(user.getId())) {
             throw new InvalidRequestException(ErrorCode.INVALID_STORE_OWNER);
         }
+    }
+
+    private EditStoreImageResponseDTO changeStoreImage(final Store store,
+                                                       final List<StoreImagesRegister> storeImagesRegisters) {
+        return storeCommandPort.editStoreImage(store, storeImagesRegisters);
     }
 }
