@@ -60,7 +60,6 @@ public class Payment extends BaseTimeEntity {
     private Payment(final String transactionId, final String merchantUid, final String payType,
                     final String easyPayProvider, final String cardName,
                     final Integer amount, final PaymentStatus paymentStatus,
-                    final PaymentCompletionType paymentCompletionType,
                     final LocalDateTime paidAt,
                     final String failReason,
                     final String cancelReason) {
