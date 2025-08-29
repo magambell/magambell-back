@@ -59,7 +59,7 @@ public class Store extends BaseTimeEntity {
     @OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
     private List<Goods> goods = new ArrayList<>();
 
-    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "store", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<StoreImage> storeImages = new ArrayList<>();
 
     @OneToMany(mappedBy = "store", cascade = CascadeType.ALL)
