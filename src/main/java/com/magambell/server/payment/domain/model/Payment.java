@@ -5,6 +5,7 @@ import static com.magambell.server.payment.app.service.PaymentService.MERCHANT_U
 import com.magambell.server.common.BaseTimeEntity;
 import com.magambell.server.order.domain.model.Order;
 import com.magambell.server.payment.app.port.in.dto.CreatePaymentDTO;
+import com.magambell.server.payment.domain.enums.PaymentCompletionType;
 import com.magambell.server.payment.domain.enums.PaymentStatus;
 import com.magambell.server.payment.infra.PortOnePaymentResponse;
 import com.magambell.server.user.domain.model.User;
@@ -44,6 +45,9 @@ public class Payment extends BaseTimeEntity {
 
     @Enumerated(EnumType.STRING)
     private PaymentStatus paymentStatus;
+
+    @Enumerated(EnumType.STRING)
+    private PaymentCompletionType paymentCompletionType;
     private LocalDateTime paidAt;
     private String failReason;
     private String cancelReason;
@@ -55,7 +59,8 @@ public class Payment extends BaseTimeEntity {
     @Builder(access = AccessLevel.PRIVATE)
     private Payment(final String transactionId, final String merchantUid, final String payType,
                     final String easyPayProvider, final String cardName,
-                    final Integer amount, final PaymentStatus paymentStatus, final LocalDateTime paidAt,
+                    final Integer amount, final PaymentStatus paymentStatus,
+                    final LocalDateTime paidAt,
                     final String failReason,
                     final String cancelReason) {
         this.transactionId = transactionId;
@@ -91,8 +96,9 @@ public class Payment extends BaseTimeEntity {
         return paymentStatus == PaymentStatus.PAID;
     }
 
-    public void paid(final PortOnePaymentResponse response) {
+    public void paid(final PortOnePaymentResponse response, final PaymentCompletionType paymentCompletionType) {
         this.paymentStatus = PaymentStatus.PAID;
+        this.paymentCompletionType = paymentCompletionType;
         this.transactionId = response.transactionId();
         this.paidAt = response.paidAt().atZoneSameInstant(ZoneId.of("Asia/Seoul")).toLocalDateTime();
         this.payType = response.method().type();
