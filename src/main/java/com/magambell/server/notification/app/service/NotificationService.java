@@ -125,7 +125,7 @@ public class NotificationService implements NotificationUseCase {
         tokens.forEach(token -> {
             String nickname = token.nickName();
             String storeName = token.storeName();
-            String message = nickname + "님이 기다리던 " + storeName + "의 예약이 오픈되었어요!";
+            String message = nickname + "님이 기다리던 " + storeName + "의 마감백 판매가 시작됐어요!";
 
             send(message, token);
         });
