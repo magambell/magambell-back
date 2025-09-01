@@ -87,7 +87,7 @@ public class NotificationService implements NotificationUseCase {
     public void notifyApproveOrder(final User user, final LocalDateTime pickupTime) {
         FcmTokenDTO token = notificationQueryPort.findWithAllByUserIdAndStoreIsNull(user);
         if (token != null) {
-            String message = "주문이 수락됐어요. " + pickupTime.toLocalTime() + "에 마감백을 픽업 해주세요!";
+            String message = "주문이 수락됐어요. [" + pickupTime.toLocalTime() + "]에 마감백을 픽업 해주세요!";
             send(message, token);
         }
     }
@@ -125,7 +125,7 @@ public class NotificationService implements NotificationUseCase {
         tokens.forEach(token -> {
             String nickname = token.nickName();
             String storeName = token.storeName();
-            String message = nickname + "님이 기다리던 " + storeName + "의 예약이 오픈되었어요!";
+            String message = "[" + nickname + "]님이 기다리던 [" + storeName + "]의 마감백 판매가 시작됐어요!";
 
             send(message, token);
         });
