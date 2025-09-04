@@ -114,6 +114,7 @@ public class Order extends BaseTimeEntity {
 
     public void rejected(final RejectReason rejectReason) {
         this.orderStatus = OrderStatus.REJECTED;
+        this.rejectReason = rejectReason;
         this.payment.cancel();
     }
 

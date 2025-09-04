@@ -328,15 +328,16 @@ class OrderServiceTest {
                 .send("testToken", "테스트 매장", "테스트 매장");
         orderService.rejectOrder(request);
 
-        // then
-        Order result = orderRepository.findById(order.getId()).orElseThrow();
-        assertThat(result.getOrderStatus()).isEqualTo(OrderStatus.REJECTED);
-
-        Stock updatedStock = stockRepository.findAll().get(0);
-        assertThat(updatedStock.getQuantity()).isEqualTo(120);
-
         verify(portOnePort, times(1))
                 .cancelPayment(eq(order.getPayment().getMerchantUid()), eq(18000), eq("사장님 주문 취소"));
+
+        // then
+        Order result = orderRepository.findById(order.getId()).orElseThrow();
+        Stock updatedStock = stockRepository.findAll().get(0);
+
+        assertThat(result.getOrderStatus()).isEqualTo(OrderStatus.REJECTED);
+        assertThat(updatedStock.getQuantity()).isEqualTo(120);
+        assertThat(result.getRejectReason()).isEqualTo(RejectReason.STORE_ISSUE);
     }
 
     @DisplayName("고객이 주문을 취소하면 재고가 복구되며 결제 취소 요청이 호출된다.")

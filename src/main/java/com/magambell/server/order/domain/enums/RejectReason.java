@@ -9,7 +9,8 @@ public enum RejectReason {
     COOKING_DELAY("조리 지연"),
     OUT_OF_STOCK("재료 소진"),
     UNDELIVERABLE_AREA("배달 불가 지역"),
-    STORE_ISSUE("가게 사정");
+    STORE_ISSUE("가게 사정"),
+    SYSTEM("시스템 자동 거절");
 
     private final String text;
 }

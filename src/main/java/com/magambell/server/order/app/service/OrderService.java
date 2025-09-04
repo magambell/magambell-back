@@ -20,6 +20,7 @@ import com.magambell.server.order.app.port.out.response.OrderDetailDTO;
 import com.magambell.server.order.app.port.out.response.OrderListDTO;
 import com.magambell.server.order.app.port.out.response.OrderStoreListDTO;
 import com.magambell.server.order.domain.enums.OrderStatus;
+import com.magambell.server.order.domain.enums.RejectReason;
 import com.magambell.server.order.domain.model.Order;
 import com.magambell.server.payment.app.port.in.dto.CreatePaymentDTO;
 import com.magambell.server.payment.app.port.out.PaymentCommandPort;
@@ -165,7 +166,7 @@ public class OrderService implements OrderUseCase {
         List<Order> orders = orderQueryPort.findByPaidBeforePickupRejectProcessedOrders(pickupTime, createdAtCutOff);
         orders.forEach(order -> {
             log.info("[픽업 30분 전] 시스템 주문 거절 order = {}", order.getId());
-            order.rejected(request.rejectReason());
+            order.rejected(RejectReason.SYSTEM);
             Payment payment = order.getPayment();
             stockUseCase.restoreStockIfNecessary(payment);
             portOnePort.cancelPayment(payment.getMerchantUid(), order.getTotalPrice(), "시스템 주문 취소");
@@ -180,7 +181,7 @@ public class OrderService implements OrderUseCase {
                 pickupTime);
         orders.forEach(order -> {
             log.info("[5분 마다] 시스템 주문 거절 order = {}", order.getId());
-            order.rejected(request.rejectReason());
+            order.rejected(RejectReason.SYSTEM);
             Payment payment = order.getPayment();
             stockUseCase.restoreStockIfNecessary(payment);
             portOnePort.cancelPayment(payment.getMerchantUid(), order.getTotalPrice(), "시스템 주문 취소");
