@@ -12,6 +12,7 @@ import com.magambell.server.order.app.port.in.OrderUseCase;
 import com.magambell.server.order.app.port.in.request.CreateOrderServiceRequest;
 import com.magambell.server.order.app.port.in.request.CustomerOrderListServiceRequest;
 import com.magambell.server.order.app.port.in.request.OwnerOrderListServiceRequest;
+import com.magambell.server.order.app.port.in.request.RejectOrderServiceRequest;
 import com.magambell.server.order.app.port.out.OrderCommandPort;
 import com.magambell.server.order.app.port.out.OrderQueryPort;
 import com.magambell.server.order.app.port.out.response.CreateOrderResponseDTO;
@@ -121,12 +122,12 @@ public class OrderService implements OrderUseCase {
 
     @Transactional
     @Override
-    public void rejectOrder(final Long orderId, final Long userId) {
-        User user = userQueryPort.findById(userId);
-        Order order = orderQueryPort.findOwnerWithAllById(orderId);
+    public void rejectOrder(final RejectOrderServiceRequest request) {
+        User user = userQueryPort.findById(request.userId());
+        Order order = orderQueryPort.findOwnerWithAllById(request.orderId());
 
         validateRejectOrder(user, order);
-        order.rejected();
+        order.rejected(request.rejectReason());
 
         Payment payment = order.getPayment();
         stockUseCase.restoreStockIfNecessary(payment);
@@ -164,7 +165,7 @@ public class OrderService implements OrderUseCase {
         List<Order> orders = orderQueryPort.findByPaidBeforePickupRejectProcessedOrders(pickupTime, createdAtCutOff);
         orders.forEach(order -> {
             log.info("[픽업 30분 전] 시스템 주문 거절 order = {}", order.getId());
-            order.rejected();
+            order.rejected(request.rejectReason());
             Payment payment = order.getPayment();
             stockUseCase.restoreStockIfNecessary(payment);
             portOnePort.cancelPayment(payment.getMerchantUid(), order.getTotalPrice(), "시스템 주문 취소");
@@ -179,7 +180,7 @@ public class OrderService implements OrderUseCase {
                 pickupTime);
         orders.forEach(order -> {
             log.info("[5분 마다] 시스템 주문 거절 order = {}", order.getId());
-            order.rejected();
+            order.rejected(request.rejectReason());
             Payment payment = order.getPayment();
             stockUseCase.restoreStockIfNecessary(payment);
             portOnePort.cancelPayment(payment.getMerchantUid(), order.getTotalPrice(), "시스템 주문 취소");

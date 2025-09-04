@@ -19,10 +19,12 @@ import com.magambell.server.order.app.port.in.dto.CreateOrderDTO;
 import com.magambell.server.order.app.port.in.request.CreateOrderServiceRequest;
 import com.magambell.server.order.app.port.in.request.CustomerOrderListServiceRequest;
 import com.magambell.server.order.app.port.in.request.OwnerOrderListServiceRequest;
+import com.magambell.server.order.app.port.in.request.RejectOrderServiceRequest;
 import com.magambell.server.order.app.port.out.response.OrderDetailDTO;
 import com.magambell.server.order.app.port.out.response.OrderListDTO;
 import com.magambell.server.order.app.port.out.response.OrderStoreListDTO;
 import com.magambell.server.order.domain.enums.OrderStatus;
+import com.magambell.server.order.domain.enums.RejectReason;
 import com.magambell.server.order.domain.model.Order;
 import com.magambell.server.order.domain.repository.OrderGoodsRepository;
 import com.magambell.server.order.domain.repository.OrderRepository;
@@ -217,7 +219,7 @@ class OrderServiceTest {
         Order createOrder = createOrderDTO.toOrder();
         createOrder.completed();
         orderRepository.save(createOrder);
-        
+
         Payment payment = new CreatePaymentDTO(createOrder, 9000, PaymentStatus.PAID).toPayment();
         paymentRepository.save(payment);
 
@@ -305,23 +307,26 @@ class OrderServiceTest {
     @Test
     void rejectOrder() throws FirebaseMessagingException {
         // given
-        CreateOrderServiceRequest request = new CreateOrderServiceRequest(
+        CreateOrderServiceRequest createRequest = new CreateOrderServiceRequest(
                 goods.getId(),
                 2,
                 18000,
                 LocalDateTime.now().plusMinutes(30),
                 "빨리 주세요"
         );
-        orderService.createOrder(request, user.getId(), LocalDateTime.now().plusMinutes(10));
+        orderService.createOrder(createRequest, user.getId(), LocalDateTime.now().plusMinutes(10));
 
         Order order = orderRepository.findAll().get(0);
         order.paid();
         orderRepository.save(order);
 
+        RejectOrderServiceRequest request = new RejectOrderServiceRequest(order.getId(),
+                owner.getId(), RejectReason.STORE_ISSUE);
+
         // when
         doNothing().when(firebaseNotificationSender)
                 .send("testToken", "테스트 매장", "테스트 매장");
-        orderService.rejectOrder(order.getId(), owner.getId());
+        orderService.rejectOrder(request);
 
         // then
         Order result = orderRepository.findById(order.getId()).orElseThrow();
