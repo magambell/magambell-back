@@ -6,6 +6,7 @@ import com.magambell.server.common.swagger.BaseResponse;
 import com.magambell.server.order.adapter.in.web.CreateOrderRequest;
 import com.magambell.server.order.adapter.in.web.CustomerOrderListRequest;
 import com.magambell.server.order.adapter.in.web.OwnerOrderListRequest;
+import com.magambell.server.order.adapter.in.web.RejectOrderRequest;
 import com.magambell.server.order.adapter.out.persistence.CreateOrderResponse;
 import com.magambell.server.order.adapter.out.persistence.OrderDetailResponse;
 import com.magambell.server.order.adapter.out.persistence.OrderListResponse;
@@ -131,9 +132,10 @@ public class OrderController {
     @PatchMapping("/reject/{orderId}")
     public Response<BaseResponse> rejectOrder(
             @PathVariable final Long orderId,
+            @RequestBody @Validated RejectOrderRequest request,
             @AuthenticationPrincipal final CustomUserDetails customUserDetails
     ) {
-        orderUseCase.rejectOrder(orderId, customUserDetails.userId());
+        orderUseCase.rejectOrder(request.toService(orderId, customUserDetails.userId()));
         return new Response<>();
     }
 
