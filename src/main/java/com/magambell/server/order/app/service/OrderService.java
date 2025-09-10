@@ -25,6 +25,7 @@ import com.magambell.server.order.domain.model.Order;
 import com.magambell.server.payment.app.port.in.dto.CreatePaymentDTO;
 import com.magambell.server.payment.app.port.out.PaymentCommandPort;
 import com.magambell.server.payment.app.port.out.PortOnePort;
+import com.magambell.server.payment.domain.enums.PaymentCompletionType;
 import com.magambell.server.payment.domain.model.Payment;
 import com.magambell.server.stock.app.port.in.StockUseCase;
 import com.magambell.server.stock.app.port.out.StockCommandPort;
@@ -143,7 +144,7 @@ public class OrderService implements OrderUseCase {
         Order order = orderQueryPort.findWithAllById(orderId);
 
         validateCancelOrder(user, order);
-        order.cancelled();
+        order.cancelled(PaymentCompletionType.REDIRECT);
 
         Payment payment = order.getPayment();
         stockUseCase.restoreStockIfNecessary(payment);
