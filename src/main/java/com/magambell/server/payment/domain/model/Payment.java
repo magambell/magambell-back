@@ -106,13 +106,14 @@ public class Payment extends BaseTimeEntity {
         this.order.paid();
     }
 
-    public void cancel() {
+    public void cancel(final PaymentCompletionType paymentCompletionType) {
+        this.paymentCompletionType = paymentCompletionType;
         this.paymentStatus = PaymentStatus.CANCELLED;
     }
 
     public void hookCancel() {
-        cancel();
-        this.order.cancelled();
+        cancel(PaymentCompletionType.WEBHOOK);
+        this.order.cancelled(PaymentCompletionType.WEBHOOK);
     }
 
     public void failed() {

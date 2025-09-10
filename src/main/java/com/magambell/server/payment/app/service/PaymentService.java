@@ -66,6 +66,10 @@ public class PaymentService implements PaymentUseCase {
                 notificationUseCase.notifyPaidOrder(payment.getOrderStoreOwner());
             }
             case CANCELLED -> {
+                if (payment.getPaymentStatus() == CANCELLED) {
+                    log.info("Payment {} already processed CANCEL", payment.getId());
+                    return;
+                }
                 validateCancelled(portOnePaymentResponse, payment);
                 payment.hookCancel();
 
