@@ -5,6 +5,7 @@ import com.magambell.server.order.app.port.in.dto.CreateOrderDTO;
 import com.magambell.server.order.domain.enums.OrderStatus;
 import com.magambell.server.order.domain.enums.PickupNotificationStatus;
 import com.magambell.server.order.domain.enums.RejectReason;
+import com.magambell.server.payment.domain.enums.PaymentCompletionType;
 import com.magambell.server.payment.domain.model.Payment;
 import com.magambell.server.user.domain.model.User;
 import io.hypersistence.utils.hibernate.id.Tsid;
@@ -115,16 +116,16 @@ public class Order extends BaseTimeEntity {
     public void rejected(final RejectReason rejectReason) {
         this.orderStatus = OrderStatus.REJECTED;
         this.rejectReason = rejectReason;
-        this.payment.cancel();
+        this.payment.cancel(PaymentCompletionType.REDIRECT);
     }
 
     public void completed() {
         this.orderStatus = OrderStatus.COMPLETED;
     }
 
-    public void cancelled() {
+    public void cancelled(final PaymentCompletionType paymentCompletionType) {
         this.orderStatus = OrderStatus.CANCELED;
-        this.payment.cancel();
+        this.payment.cancel(paymentCompletionType);
     }
 
     public void failed() {
