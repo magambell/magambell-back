@@ -3,7 +3,7 @@ package com.magambell.server.user.app.port.in.dto;
 import com.magambell.server.common.enums.ErrorCode;
 import com.magambell.server.common.exception.InvalidRequestException;
 import com.magambell.server.user.domain.enums.UserRole;
-import com.magambell.server.user.domain.model.User;
+import com.magambell.server.user.domain.entity.User;
 
 public record UserDTO(String email, String password, String name, String phoneNumber, UserRole userRole) {
 

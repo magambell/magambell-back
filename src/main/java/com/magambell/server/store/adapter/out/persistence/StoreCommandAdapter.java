@@ -12,10 +12,10 @@ import com.magambell.server.store.app.port.out.StoreCommandPort;
 import com.magambell.server.store.app.port.out.response.EditStoreImageResponseDTO;
 import com.magambell.server.store.app.port.out.response.StorePreSignedUrlImage;
 import com.magambell.server.store.app.port.out.response.StoreRegisterResponseDTO;
-import com.magambell.server.store.domain.model.Store;
-import com.magambell.server.store.domain.model.StoreImage;
+import com.magambell.server.store.domain.entity.Store;
+import com.magambell.server.store.domain.entity.StoreImage;
 import com.magambell.server.store.domain.repository.StoreRepository;
-import com.magambell.server.user.domain.model.User;
+import com.magambell.server.user.domain.entity.User;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 

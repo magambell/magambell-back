@@ -1,8 +1,11 @@
-package com.magambell.server.review.domain.model;
+package com.magambell.server.review.domain.entity;
 
 import com.magambell.server.common.BaseTimeEntity;
+import com.magambell.server.review.domain.enums.SatisfactionReason;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -10,40 +13,28 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AccessLevel;
-import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Entity
-public class ReviewImage extends BaseTimeEntity {
+public class ReviewReason extends BaseTimeEntity {
 
-    @Column(name = "review_image_id")
+    @Column(name = "review_reason_id")
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     private Long id;
 
-    private String name;
-
-    @Column(name = "`order`")
-    private Integer order;
+    @Enumerated(EnumType.STRING)
+    private SatisfactionReason satisfactionReason;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "review_id")
     private Review review;
 
-    @Builder(access = AccessLevel.PRIVATE)
-    private ReviewImage(final String name, final Integer order) {
-        this.name = name;
-        this.order = order;
-    }
-
-    public static ReviewImage create(final String name, final Integer order) {
-        return ReviewImage.builder()
-                .name(name)
-                .order(order)
-                .build();
+    public ReviewReason(final SatisfactionReason satisfactionReason) {
+        this.satisfactionReason = satisfactionReason;
     }
 
     public void addReview(final Review review) {

@@ -2,10 +2,10 @@ package com.magambell.server.order.app.port.in.dto;
 
 import static com.magambell.server.order.domain.enums.OrderStatus.PENDING;
 
-import com.magambell.server.goods.domain.model.Goods;
-import com.magambell.server.order.domain.model.Order;
-import com.magambell.server.order.domain.model.OrderGoods;
-import com.magambell.server.user.domain.model.User;
+import com.magambell.server.goods.domain.entity.Goods;
+import com.magambell.server.order.domain.entity.Order;
+import com.magambell.server.order.domain.entity.OrderGoods;
+import com.magambell.server.user.domain.entity.User;
 import java.time.LocalDateTime;
 
 public record CreateOrderDTO(

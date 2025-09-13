@@ -1,11 +1,11 @@
-package com.magambell.server.user.domain.model;
+package com.magambell.server.user.domain.entity;
 
 import com.magambell.server.common.BaseTimeEntity;
-import com.magambell.server.favorite.domain.model.Favorite;
-import com.magambell.server.notification.domain.model.FcmToken;
-import com.magambell.server.order.domain.model.Order;
-import com.magambell.server.review.domain.model.Review;
-import com.magambell.server.store.domain.model.Store;
+import com.magambell.server.favorite.domain.entity.Favorite;
+import com.magambell.server.notification.domain.entity.FcmToken;
+import com.magambell.server.order.domain.entity.Order;
+import com.magambell.server.review.domain.entity.Review;
+import com.magambell.server.store.domain.entity.Store;
 import com.magambell.server.user.app.port.in.dto.UserDTO;
 import com.magambell.server.user.app.port.in.dto.UserSocialAccountDTO;
 import com.magambell.server.user.domain.enums.UserRole;

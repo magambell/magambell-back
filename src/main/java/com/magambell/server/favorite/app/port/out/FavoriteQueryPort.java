@@ -1,9 +1,9 @@
 package com.magambell.server.favorite.app.port.out;
 
 import com.magambell.server.favorite.app.port.out.response.FavoriteStoreListDTOResponse;
-import com.magambell.server.favorite.domain.model.Favorite;
-import com.magambell.server.store.domain.model.Store;
-import com.magambell.server.user.domain.model.User;
+import com.magambell.server.favorite.domain.entity.Favorite;
+import com.magambell.server.store.domain.entity.Store;
+import com.magambell.server.user.domain.entity.User;
 import java.util.List;
 import org.springframework.data.domain.Pageable;
 

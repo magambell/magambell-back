@@ -1,14 +1,14 @@
-package com.magambell.server.store.domain.model;
+package com.magambell.server.store.domain.entity;
 
 import com.magambell.server.common.BaseTimeEntity;
-import com.magambell.server.favorite.domain.model.Favorite;
-import com.magambell.server.goods.domain.model.Goods;
-import com.magambell.server.notification.domain.model.FcmToken;
+import com.magambell.server.favorite.domain.entity.Favorite;
+import com.magambell.server.goods.domain.entity.Goods;
+import com.magambell.server.notification.domain.entity.FcmToken;
 import com.magambell.server.store.app.port.in.dto.RegisterStoreDTO;
 import com.magambell.server.store.domain.enums.Approved;
 import com.magambell.server.store.domain.enums.Bank;
 import com.magambell.server.user.domain.enums.UserRole;
-import com.magambell.server.user.domain.model.User;
+import com.magambell.server.user.domain.entity.User;
 import io.hypersistence.utils.hibernate.id.Tsid;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;

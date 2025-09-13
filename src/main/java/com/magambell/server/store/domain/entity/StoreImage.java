@@ -1,4 +1,4 @@
-package com.magambell.server.store.domain.model;
+package com.magambell.server.store.domain.entity;
 
 import com.magambell.server.common.BaseTimeEntity;
 import jakarta.persistence.Column;

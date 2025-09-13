@@ -4,7 +4,7 @@ import com.magambell.server.common.annotation.Adapter;
 import com.magambell.server.common.enums.ErrorCode;
 import com.magambell.server.common.exception.NotFoundException;
 import com.magambell.server.goods.app.port.out.GoodsQueryPort;
-import com.magambell.server.goods.domain.model.Goods;
+import com.magambell.server.goods.domain.entity.Goods;
 import com.magambell.server.goods.domain.repository.GoodsRepository;
 import java.time.LocalDateTime;
 import java.util.List;

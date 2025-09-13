@@ -3,9 +3,9 @@ package com.magambell.server.goods.adapter.out.persistence;
 import com.magambell.server.common.annotation.Adapter;
 import com.magambell.server.goods.app.port.in.dto.RegisterGoodsDTO;
 import com.magambell.server.goods.app.port.out.GoodsCommandPort;
-import com.magambell.server.goods.domain.model.Goods;
+import com.magambell.server.goods.domain.entity.Goods;
 import com.magambell.server.goods.domain.repository.GoodsRepository;
-import com.magambell.server.store.domain.model.Store;
+import com.magambell.server.store.domain.entity.Store;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

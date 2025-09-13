@@ -1,7 +1,7 @@
-package com.magambell.server.order.domain.model;
+package com.magambell.server.order.domain.entity;
 
 import com.magambell.server.common.BaseTimeEntity;
-import com.magambell.server.goods.domain.model.Goods;
+import com.magambell.server.goods.domain.entity.Goods;
 import com.magambell.server.order.app.port.in.dto.CreateOrderDTO;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

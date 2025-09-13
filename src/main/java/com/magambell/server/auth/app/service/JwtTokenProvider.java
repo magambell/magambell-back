@@ -2,8 +2,8 @@ package com.magambell.server.auth.app.service;
 
 import com.magambell.server.auth.app.port.in.dto.RefreshTokenDTO;
 import com.magambell.server.auth.app.port.out.RefreshTokenQueryPort;
+import com.magambell.server.auth.domain.entity.RefreshToken;
 import com.magambell.server.auth.domain.model.JwtToken;
-import com.magambell.server.auth.domain.model.RefreshToken;
 import com.magambell.server.common.enums.ErrorCode;
 import com.magambell.server.common.exception.TokenExpiredException;
 import com.magambell.server.user.domain.enums.UserRole;

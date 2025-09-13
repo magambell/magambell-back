@@ -2,10 +2,10 @@ package com.magambell.server.favorite.adapter.out.persistence;
 
 import com.magambell.server.common.annotation.Adapter;
 import com.magambell.server.favorite.app.port.out.FavoriteCommandPort;
-import com.magambell.server.favorite.domain.model.Favorite;
+import com.magambell.server.favorite.domain.entity.Favorite;
 import com.magambell.server.favorite.domain.repository.FavoriteRepository;
-import com.magambell.server.store.domain.model.Store;
-import com.magambell.server.user.domain.model.User;
+import com.magambell.server.store.domain.entity.Store;
+import com.magambell.server.user.domain.entity.User;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

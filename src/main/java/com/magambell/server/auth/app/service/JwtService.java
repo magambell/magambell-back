@@ -3,8 +3,8 @@ package com.magambell.server.auth.app.service;
 import static com.magambell.server.auth.app.service.JwtTokenProvider.ACCESS_PREFIX_STRING;
 import static com.magambell.server.auth.app.service.JwtTokenProvider.CLAIMS_USER_ROLE;
 
+import com.magambell.server.auth.domain.entity.RefreshToken;
 import com.magambell.server.auth.domain.model.JwtToken;
-import com.magambell.server.auth.domain.model.RefreshToken;
 import com.magambell.server.common.enums.ErrorCode;
 import com.magambell.server.common.exception.TokenExpiredException;
 import com.magambell.server.user.domain.enums.UserRole;

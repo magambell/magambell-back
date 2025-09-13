@@ -4,8 +4,8 @@ import com.magambell.server.auth.domain.ProviderType;
 import com.magambell.server.common.enums.ErrorCode;
 import com.magambell.server.common.exception.InvalidRequestException;
 import com.magambell.server.user.domain.enums.UserRole;
-import com.magambell.server.user.domain.model.User;
-import com.magambell.server.user.domain.model.UserSocialAccount;
+import com.magambell.server.user.domain.entity.User;
+import com.magambell.server.user.domain.entity.UserSocialAccount;
 
 public record UserSocialAccountDTO(
         String email,

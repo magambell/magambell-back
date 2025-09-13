@@ -1,7 +1,7 @@
 package com.magambell.server.goods.app.port.in.request;
 
 import com.magambell.server.goods.app.port.in.dto.RegisterGoodsDTO;
-import com.magambell.server.store.domain.model.Store;
+import com.magambell.server.store.domain.entity.Store;
 import java.time.LocalDateTime;
 
 public record RegisterGoodsServiceRequest(

@@ -1,11 +1,11 @@
 package com.magambell.server.favorite.domain.repository;
 
-import static com.magambell.server.favorite.domain.model.QFavorite.favorite;
-import static com.magambell.server.goods.domain.model.QGoods.goods;
-import static com.magambell.server.stock.domain.model.QStock.stock;
-import static com.magambell.server.store.domain.model.QStore.store;
-import static com.magambell.server.store.domain.model.QStoreImage.storeImage;
-import static com.magambell.server.user.domain.model.QUser.user;
+import static com.magambell.server.favorite.domain.entity.QFavorite.favorite;
+import static com.magambell.server.goods.domain.entity.QGoods.goods;
+import static com.magambell.server.stock.domain.entity.QStock.stock;
+import static com.magambell.server.store.domain.entity.QStore.store;
+import static com.magambell.server.store.domain.entity.QStoreImage.storeImage;
+import static com.magambell.server.user.domain.entity.QUser.user;
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.group.GroupBy.list;
 

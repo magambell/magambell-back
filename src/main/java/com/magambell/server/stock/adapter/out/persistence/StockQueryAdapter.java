@@ -4,7 +4,7 @@ import com.magambell.server.common.annotation.Adapter;
 import com.magambell.server.common.enums.ErrorCode;
 import com.magambell.server.common.exception.NotFoundException;
 import com.magambell.server.stock.app.port.out.StockQueryPort;
-import com.magambell.server.stock.domain.model.Stock;
+import com.magambell.server.stock.domain.entity.Stock;
 import com.magambell.server.stock.domain.repository.StockRepository;
 import lombok.RequiredArgsConstructor;
 

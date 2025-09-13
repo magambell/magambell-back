@@ -1,4 +1,4 @@
-package com.magambell.server.stock.domain.model;
+package com.magambell.server.stock.domain.entity;
 
 import static com.magambell.server.stock.domain.enums.StockType.CANCEL;
 import static com.magambell.server.stock.domain.enums.StockType.ORDER;
@@ -6,7 +6,7 @@ import static com.magambell.server.stock.domain.enums.StockType.ORDER;
 import com.magambell.server.common.BaseTimeEntity;
 import com.magambell.server.common.enums.ErrorCode;
 import com.magambell.server.common.exception.InvalidRequestException;
-import com.magambell.server.goods.domain.model.Goods;
+import com.magambell.server.goods.domain.entity.Goods;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;

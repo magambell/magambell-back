@@ -1,13 +1,13 @@
 package com.magambell.server.review.domain.repository;
 
-import static com.magambell.server.goods.domain.model.QGoods.goods;
-import static com.magambell.server.order.domain.model.QOrder.order;
-import static com.magambell.server.order.domain.model.QOrderGoods.orderGoods;
-import static com.magambell.server.review.domain.model.QReview.review;
-import static com.magambell.server.review.domain.model.QReviewImage.reviewImage;
-import static com.magambell.server.review.domain.model.QReviewReason.reviewReason;
-import static com.magambell.server.store.domain.model.QStore.store;
-import static com.magambell.server.user.domain.model.QUser.user;
+import static com.magambell.server.goods.domain.entity.QGoods.goods;
+import static com.magambell.server.order.domain.entity.QOrder.order;
+import static com.magambell.server.order.domain.entity.QOrderGoods.orderGoods;
+import static com.magambell.server.review.domain.entity.QReview.review;
+import static com.magambell.server.review.domain.entity.QReviewImage.reviewImage;
+import static com.magambell.server.review.domain.entity.QReviewReason.reviewReason;
+import static com.magambell.server.store.domain.entity.QStore.store;
+import static com.magambell.server.user.domain.entity.QUser.user;
 import static com.querydsl.core.group.GroupBy.groupBy;
 import static com.querydsl.core.group.GroupBy.set;
 

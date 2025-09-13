@@ -13,8 +13,8 @@ import com.magambell.server.payment.app.port.in.request.PaymentRedirectPaidServi
 import com.magambell.server.payment.app.port.in.request.PortOneWebhookServiceRequest;
 import com.magambell.server.payment.app.port.out.PaymentQueryPort;
 import com.magambell.server.payment.app.port.out.PortOnePort;
+import com.magambell.server.payment.domain.entity.Payment;
 import com.magambell.server.payment.domain.enums.PaymentCompletionType;
-import com.magambell.server.payment.domain.model.Payment;
 import com.magambell.server.payment.infra.PortOnePaymentResponse;
 import com.magambell.server.stock.app.port.in.StockUseCase;
 import lombok.RequiredArgsConstructor;

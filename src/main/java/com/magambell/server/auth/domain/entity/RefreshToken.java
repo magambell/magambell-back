@@ -1,4 +1,4 @@
-package com.magambell.server.auth.domain.model;
+package com.magambell.server.auth.domain.entity;
 
 
 import com.magambell.server.auth.app.port.in.dto.RefreshTokenDTO;
