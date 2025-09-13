@@ -1,9 +1,9 @@
 package com.magambell.server.goods.app.port.in.dto;
 
-import com.magambell.server.goods.domain.model.Goods;
+import com.magambell.server.goods.domain.entity.Goods;
 import com.magambell.server.stock.domain.enums.StockType;
-import com.magambell.server.stock.domain.model.StockHistory;
-import com.magambell.server.store.domain.model.Store;
+import com.magambell.server.stock.domain.entity.StockHistory;
+import com.magambell.server.store.domain.entity.Store;
 import java.time.LocalDateTime;
 
 public record RegisterGoodsDTO(

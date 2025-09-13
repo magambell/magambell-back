@@ -8,10 +8,10 @@ import com.magambell.server.review.app.port.in.dto.RegisterReviewDTO;
 import com.magambell.server.review.app.port.out.ReviewCommandPort;
 import com.magambell.server.review.app.port.out.response.ReviewPreSignedUrlImage;
 import com.magambell.server.review.app.port.out.response.ReviewRegisterResponseDTO;
-import com.magambell.server.review.domain.model.Review;
-import com.magambell.server.review.domain.model.ReviewImage;
+import com.magambell.server.review.domain.entity.Review;
+import com.magambell.server.review.domain.entity.ReviewImage;
 import com.magambell.server.review.domain.repository.ReviewRepository;
-import com.magambell.server.user.domain.model.User;
+import com.magambell.server.user.domain.entity.User;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 

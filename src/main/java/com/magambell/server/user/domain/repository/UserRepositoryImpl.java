@@ -1,18 +1,18 @@
 package com.magambell.server.user.domain.repository;
 
-import static com.magambell.server.goods.domain.model.QGoods.goods;
-import static com.magambell.server.order.domain.model.QOrder.order;
-import static com.magambell.server.order.domain.model.QOrderGoods.orderGoods;
-import static com.magambell.server.store.domain.model.QStore.store;
-import static com.magambell.server.user.domain.model.QUser.user;
-import static com.magambell.server.user.domain.model.QUserSocialAccount.userSocialAccount;
+import static com.magambell.server.goods.domain.entity.QGoods.goods;
+import static com.magambell.server.order.domain.entity.QOrder.order;
+import static com.magambell.server.order.domain.entity.QOrderGoods.orderGoods;
+import static com.magambell.server.store.domain.entity.QStore.store;
+import static com.magambell.server.user.domain.entity.QUser.user;
+import static com.magambell.server.user.domain.entity.QUserSocialAccount.userSocialAccount;
 
 import com.magambell.server.auth.domain.ProviderType;
 import com.magambell.server.order.domain.enums.OrderStatus;
 import com.magambell.server.user.app.port.out.dto.MyPageStatsDTO;
 import com.magambell.server.user.app.port.out.dto.UserInfoDTO;
 import com.magambell.server.user.domain.enums.UserStatus;
-import com.magambell.server.user.domain.model.User;
+import com.magambell.server.user.domain.entity.User;
 import com.querydsl.core.Tuple;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;

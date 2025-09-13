@@ -1,6 +1,6 @@
 package com.magambell.server.auth.domain.repository;
 
-import com.magambell.server.auth.domain.model.RefreshToken;
+import com.magambell.server.auth.domain.entity.RefreshToken;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 

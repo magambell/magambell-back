@@ -1,7 +1,7 @@
 package com.magambell.server.user.domain.repository;
 
 import com.magambell.server.user.domain.enums.UserStatus;
-import com.magambell.server.user.domain.model.User;
+import com.magambell.server.user.domain.entity.User;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 

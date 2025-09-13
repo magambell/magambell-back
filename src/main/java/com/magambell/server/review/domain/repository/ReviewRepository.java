@@ -1,7 +1,7 @@
 package com.magambell.server.review.domain.repository;
 
 import com.magambell.server.review.domain.enums.ReviewStatus;
-import com.magambell.server.review.domain.model.Review;
+import com.magambell.server.review.domain.entity.Review;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 

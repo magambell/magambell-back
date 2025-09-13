@@ -5,7 +5,7 @@ import com.magambell.server.notification.app.port.in.request.DeleteStoreOpenFcmT
 import com.magambell.server.notification.app.port.in.request.NotifyStoreOpenRequest;
 import com.magambell.server.notification.app.port.in.request.SaveFcmTokenServiceRequest;
 import com.magambell.server.notification.app.port.in.request.SaveStoreOpenFcmTokenServiceRequest;
-import com.magambell.server.user.domain.model.User;
+import com.magambell.server.user.domain.entity.User;
 import java.time.LocalDateTime;
 import java.util.Set;
 

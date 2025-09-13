@@ -1,4 +1,4 @@
-package com.magambell.server.user.domain.model;
+package com.magambell.server.user.domain.entity;
 
 import com.magambell.server.common.BaseTimeEntity;
 import com.magambell.server.user.app.port.in.dto.UserEmailDTO;

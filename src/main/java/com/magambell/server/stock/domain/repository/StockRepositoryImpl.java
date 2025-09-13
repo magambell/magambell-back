@@ -1,8 +1,8 @@
 package com.magambell.server.stock.domain.repository;
 
-import static com.magambell.server.stock.domain.model.QStock.stock;
+import static com.magambell.server.stock.domain.entity.QStock.stock;
 
-import com.magambell.server.stock.domain.model.Stock;
+import com.magambell.server.stock.domain.entity.Stock;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import jakarta.persistence.LockModeType;
 import java.util.Optional;

@@ -3,7 +3,7 @@ package com.magambell.server.user.domain.repository;
 import com.magambell.server.auth.domain.ProviderType;
 import com.magambell.server.user.app.port.out.dto.MyPageStatsDTO;
 import com.magambell.server.user.app.port.out.dto.UserInfoDTO;
-import com.magambell.server.user.domain.model.User;
+import com.magambell.server.user.domain.entity.User;
 import java.util.Optional;
 
 public interface UserRepositoryCustom {

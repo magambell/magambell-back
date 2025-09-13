@@ -6,8 +6,8 @@ import com.magambell.server.store.app.port.in.request.SearchStoreListServiceRequ
 import com.magambell.server.store.app.port.out.response.OwnerStoreDetailDTO;
 import com.magambell.server.store.app.port.out.response.StoreAdminListDTO;
 import com.magambell.server.store.app.port.out.response.StoreListDTOResponse;
-import com.magambell.server.store.domain.model.Store;
-import com.magambell.server.store.domain.model.StoreImage;
+import com.magambell.server.store.domain.entity.Store;
+import com.magambell.server.store.domain.entity.StoreImage;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.domain.Pageable;

@@ -3,7 +3,7 @@ package com.magambell.server.order.adapter.out.persistence;
 import com.magambell.server.common.annotation.Adapter;
 import com.magambell.server.order.app.port.in.dto.CreateOrderDTO;
 import com.magambell.server.order.app.port.out.OrderCommandPort;
-import com.magambell.server.order.domain.model.Order;
+import com.magambell.server.order.domain.entity.Order;
 import com.magambell.server.order.domain.repository.OrderRepository;
 import lombok.RequiredArgsConstructor;
 

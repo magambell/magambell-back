@@ -1,6 +1,6 @@
 package com.magambell.server.goods.domain.repository;
 
-import com.magambell.server.goods.domain.model.Goods;
+import com.magambell.server.goods.domain.entity.Goods;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;

@@ -1,4 +1,4 @@
-package com.magambell.server.goods.domain.model;
+package com.magambell.server.goods.domain.entity;
 
 import static com.magambell.server.goods.domain.enums.SaleStatus.OFF;
 import static com.magambell.server.goods.domain.enums.SaleStatus.ON;
@@ -10,10 +10,10 @@ import com.magambell.server.goods.app.port.in.dto.EditGoodsDTO;
 import com.magambell.server.goods.app.port.in.dto.RegisterGoodsDTO;
 import com.magambell.server.goods.domain.enums.SaleStatus;
 import com.magambell.server.stock.domain.enums.StockType;
-import com.magambell.server.stock.domain.model.Stock;
-import com.magambell.server.stock.domain.model.StockHistory;
-import com.magambell.server.store.domain.model.Store;
-import com.magambell.server.user.domain.model.User;
+import com.magambell.server.stock.domain.entity.Stock;
+import com.magambell.server.stock.domain.entity.StockHistory;
+import com.magambell.server.store.domain.entity.Store;
+import com.magambell.server.user.domain.entity.User;
 import io.hypersistence.utils.hibernate.id.Tsid;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;

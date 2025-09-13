@@ -1,13 +1,13 @@
-package com.magambell.server.order.domain.model;
+package com.magambell.server.order.domain.entity;
 
 import com.magambell.server.common.BaseTimeEntity;
 import com.magambell.server.order.app.port.in.dto.CreateOrderDTO;
 import com.magambell.server.order.domain.enums.OrderStatus;
 import com.magambell.server.order.domain.enums.PickupNotificationStatus;
 import com.magambell.server.order.domain.enums.RejectReason;
+import com.magambell.server.payment.domain.entity.Payment;
 import com.magambell.server.payment.domain.enums.PaymentCompletionType;
-import com.magambell.server.payment.domain.model.Payment;
-import com.magambell.server.user.domain.model.User;
+import com.magambell.server.user.domain.entity.User;
 import io.hypersistence.utils.hibernate.id.Tsid;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;

@@ -14,7 +14,7 @@ import com.magambell.server.user.app.port.out.OAuthClient;
 import com.magambell.server.user.app.port.out.UserCommandPort;
 import com.magambell.server.user.app.port.out.UserQueryPort;
 import com.magambell.server.user.domain.enums.UserRole;
-import com.magambell.server.user.domain.model.User;
+import com.magambell.server.user.domain.entity.User;
 import com.magambell.server.user.domain.repository.UserRepository;
 import com.magambell.server.user.domain.repository.UserSocialAccountRepository;
 import java.util.Collections;
