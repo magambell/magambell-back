@@ -40,6 +40,7 @@ public class SecurityConfig {
                 "/api/v1/verify/social",
                 "/api/v1/auth/**",
                 "/magambell/health",
+                "/magambell/prometheus",
                 "/api/v1/payment/**",
                 "/favicon.ico",
                 "/error"
