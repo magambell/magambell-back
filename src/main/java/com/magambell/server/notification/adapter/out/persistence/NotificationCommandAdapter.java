@@ -2,9 +2,9 @@ package com.magambell.server.notification.adapter.out.persistence;
 
 import com.magambell.server.common.annotation.Adapter;
 import com.magambell.server.notification.app.port.out.NotificationCommandPort;
-import com.magambell.server.notification.domain.model.FcmToken;
+import com.magambell.server.notification.domain.entity.FcmToken;
 import com.magambell.server.notification.domain.repository.FcmTokenRepository;
-import com.magambell.server.user.domain.model.User;
+import com.magambell.server.user.domain.entity.User;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor

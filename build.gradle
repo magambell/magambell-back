@@ -67,6 +67,9 @@ dependencies {
 
     // fcm
     implementation 'com.google.firebase:firebase-admin:9.5.0'
+
+    // prometheus
+    implementation 'io.micrometer:micrometer-registry-prometheus'
 }
 
 tasks.named('test') {

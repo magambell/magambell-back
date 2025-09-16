@@ -1,12 +1,12 @@
-package com.magambell.server.review.domain.model;
+package com.magambell.server.review.domain.entity;
 
 import com.magambell.server.common.BaseTimeEntity;
 import com.magambell.server.common.enums.ErrorCode;
 import com.magambell.server.common.exception.InvalidRequestException;
-import com.magambell.server.order.domain.model.OrderGoods;
+import com.magambell.server.order.domain.entity.OrderGoods;
 import com.magambell.server.review.app.port.in.dto.RegisterReviewDTO;
 import com.magambell.server.review.domain.enums.ReviewStatus;
-import com.magambell.server.user.domain.model.User;
+import com.magambell.server.user.domain.entity.User;
 import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

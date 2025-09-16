@@ -1,8 +1,8 @@
-package com.magambell.server.notification.domain.model;
+package com.magambell.server.notification.domain.entity;
 
 import com.magambell.server.common.BaseTimeEntity;
-import com.magambell.server.store.domain.model.Store;
-import com.magambell.server.user.domain.model.User;
+import com.magambell.server.store.domain.entity.Store;
+import com.magambell.server.user.domain.entity.User;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;

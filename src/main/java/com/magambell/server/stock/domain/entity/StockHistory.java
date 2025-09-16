@@ -1,7 +1,7 @@
-package com.magambell.server.stock.domain.model;
+package com.magambell.server.stock.domain.entity;
 
 import com.magambell.server.common.BaseTimeEntity;
-import com.magambell.server.goods.domain.model.Goods;
+import com.magambell.server.goods.domain.entity.Goods;
 import com.magambell.server.stock.domain.enums.StockType;
 import io.hypersistence.utils.hibernate.id.Tsid;
 import jakarta.persistence.Column;

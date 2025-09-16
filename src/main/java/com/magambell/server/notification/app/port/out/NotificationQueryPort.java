@@ -1,9 +1,9 @@
 package com.magambell.server.notification.app.port.out;
 
 import com.magambell.server.notification.app.port.out.dto.FcmTokenDTO;
-import com.magambell.server.notification.domain.model.FcmToken;
-import com.magambell.server.store.domain.model.Store;
-import com.magambell.server.user.domain.model.User;
+import com.magambell.server.notification.domain.entity.FcmToken;
+import com.magambell.server.store.domain.entity.Store;
+import com.magambell.server.user.domain.entity.User;
 import java.util.List;
 import java.util.Set;
 

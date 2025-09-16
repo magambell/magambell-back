@@ -1,8 +1,8 @@
 package com.magambell.server.order.app.port.in.request;
 
-import com.magambell.server.goods.domain.model.Goods;
+import com.magambell.server.goods.domain.entity.Goods;
 import com.magambell.server.order.app.port.in.dto.CreateOrderDTO;
-import com.magambell.server.user.domain.model.User;
+import com.magambell.server.user.domain.entity.User;
 import java.time.LocalDateTime;
 
 public record CreateOrderServiceRequest(

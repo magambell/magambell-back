@@ -4,7 +4,7 @@ import com.magambell.server.common.annotation.Adapter;
 import com.magambell.server.common.enums.ErrorCode;
 import com.magambell.server.common.exception.NotFoundException;
 import com.magambell.server.payment.app.port.out.PaymentQueryPort;
-import com.magambell.server.payment.domain.model.Payment;
+import com.magambell.server.payment.domain.entity.Payment;
 import com.magambell.server.payment.domain.repository.PaymentRepository;
 import lombok.RequiredArgsConstructor;
 

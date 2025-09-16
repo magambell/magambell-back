@@ -1,14 +1,14 @@
-package com.magambell.server.payment.domain.model;
+package com.magambell.server.payment.domain.entity;
 
 import static com.magambell.server.payment.app.service.PaymentService.MERCHANT_UID_PREFIX;
 
 import com.magambell.server.common.BaseTimeEntity;
-import com.magambell.server.order.domain.model.Order;
+import com.magambell.server.order.domain.entity.Order;
 import com.magambell.server.payment.app.port.in.dto.CreatePaymentDTO;
 import com.magambell.server.payment.domain.enums.PaymentCompletionType;
 import com.magambell.server.payment.domain.enums.PaymentStatus;
 import com.magambell.server.payment.infra.PortOnePaymentResponse;
-import com.magambell.server.user.domain.model.User;
+import com.magambell.server.user.domain.entity.User;
 import io.hypersistence.utils.hibernate.id.Tsid;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;

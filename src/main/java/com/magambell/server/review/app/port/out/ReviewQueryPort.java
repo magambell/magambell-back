@@ -1,12 +1,12 @@
 package com.magambell.server.review.app.port.out;
 
-import com.magambell.server.order.domain.model.OrderGoods;
+import com.magambell.server.order.domain.entity.OrderGoods;
 import com.magambell.server.review.app.port.in.request.ReviewListServiceRequest;
 import com.magambell.server.review.app.port.in.request.ReviewRatingAllServiceRequest;
 import com.magambell.server.review.app.port.out.response.ReviewListDTO;
 import com.magambell.server.review.app.port.out.response.ReviewRatingSummaryDTO;
-import com.magambell.server.review.domain.model.Review;
-import com.magambell.server.user.domain.model.User;
+import com.magambell.server.review.domain.entity.Review;
+import com.magambell.server.user.domain.entity.User;
 import java.util.List;
 import org.springframework.data.domain.Pageable;
 

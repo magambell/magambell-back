@@ -1,6 +1,6 @@
 package com.magambell.server.favorite.domain.repository;
 
-import com.magambell.server.favorite.domain.model.Favorite;
+import com.magambell.server.favorite.domain.entity.Favorite;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -1,8 +1,8 @@
 package com.magambell.server.notification.domain.repository;
 
-import static com.magambell.server.notification.domain.model.QFcmToken.fcmToken;
-import static com.magambell.server.store.domain.model.QStore.store;
-import static com.magambell.server.user.domain.model.QUser.user;
+import static com.magambell.server.notification.domain.entity.QFcmToken.fcmToken;
+import static com.magambell.server.store.domain.entity.QStore.store;
+import static com.magambell.server.user.domain.entity.QUser.user;
 
 import com.magambell.server.notification.app.port.out.dto.FcmTokenDTO;
 import com.magambell.server.user.domain.enums.UserStatus;

@@ -1,12 +1,12 @@
 package com.magambell.server.goods.domain.repository;
 
-import static com.magambell.server.goods.domain.model.QGoods.goods;
-import static com.magambell.server.stock.domain.model.QStock.stock;
-import static com.magambell.server.store.domain.model.QStore.store;
-import static com.magambell.server.user.domain.model.QUser.user;
+import static com.magambell.server.goods.domain.entity.QGoods.goods;
+import static com.magambell.server.stock.domain.entity.QStock.stock;
+import static com.magambell.server.store.domain.entity.QStore.store;
+import static com.magambell.server.user.domain.entity.QUser.user;
 
+import com.magambell.server.goods.domain.entity.Goods;
 import com.magambell.server.goods.domain.enums.SaleStatus;
-import com.magambell.server.goods.domain.model.Goods;
 import com.magambell.server.store.domain.enums.Approved;
 import com.magambell.server.user.domain.enums.UserStatus;
 import com.querydsl.jpa.impl.JPAQueryFactory;

@@ -1,6 +1,6 @@
 package com.magambell.server.notification.domain.repository;
 
-import com.magambell.server.notification.domain.model.FcmToken;
+import com.magambell.server.notification.domain.entity.FcmToken;
 import java.util.List;
 import java.util.Optional;
 import org.springframework.data.jpa.repository.JpaRepository;
