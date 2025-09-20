@@ -10,6 +10,7 @@ import static com.magambell.server.user.domain.entity.QUser.user;
 
 import com.magambell.server.payment.domain.entity.Payment;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import jakarta.persistence.LockModeType;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 
@@ -29,6 +30,7 @@ public class PaymentRepositoryImpl implements PaymentRepositoryCustom {
                         .join(goods.store, store).fetchJoin()
                         .join(store.user, user).fetchJoin()
                         .where(payment.merchantUid.eq(merchantUid))
+                        .setLockMode(LockModeType.PESSIMISTIC_WRITE)
                         .fetchOne()
         );
     }
