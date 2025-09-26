@@ -14,8 +14,8 @@ public class PaymentQueryAdapter implements PaymentQueryPort {
     private final PaymentRepository paymentRepository;
 
     @Override
-    public Payment findByMerchantUidJoinOrder(final String merchantUid) {
-        return paymentRepository.findByMerchantUidJoinOrder(merchantUid)
+    public Payment findByMerchantUidWithLockAndRelations(final String merchantUid) {
+        return paymentRepository.findByMerchantUidWithLockAndRelations(merchantUid)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.PAYMENT_NOT_FOUND));
     }
 }
