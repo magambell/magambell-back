@@ -4,5 +4,5 @@ import com.magambell.server.payment.domain.entity.Payment;
 import java.util.Optional;
 
 public interface PaymentRepositoryCustom {
-    Optional<Payment> findByMerchantUidJoinOrder(String merchantUid);
+    Optional<Payment> findByMerchantUidWithLockAndRelations(String merchantUid);
 }

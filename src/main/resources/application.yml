@@ -119,7 +119,7 @@ management:
     web:
       base-path: /magambell
       exposure:
-        include: health
+        include: health, prometheus
 
 ---
 spring:
