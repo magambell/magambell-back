@@ -28,7 +28,8 @@ public class CorsConfig {
                 "http://192.168.219.103:3000",
                 "https://magambell-dev.vercel.app",
                 "https://magambell-test.vercel.app",
-                "https://magambell.com"
+                "https://magambell.com",
+                "https://dev.mgbell-server.run"
         ));
 
         config.setAllowedHeaders(List.of("*"));
