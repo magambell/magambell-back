@@ -7,16 +7,14 @@ import com.magambell.server.order.app.port.out.OrderQueryPort;
 import com.magambell.server.order.domain.entity.OrderGoods;
 import com.magambell.server.order.domain.enums.OrderStatus;
 import com.magambell.server.review.app.port.in.ReviewUseCase;
-import com.magambell.server.review.app.port.in.request.DeleteReviewServiceRequest;
-import com.magambell.server.review.app.port.in.request.RegisterReviewServiceRequest;
-import com.magambell.server.review.app.port.in.request.ReviewListServiceRequest;
-import com.magambell.server.review.app.port.in.request.ReviewMyServiceRequest;
-import com.magambell.server.review.app.port.in.request.ReviewRatingAllServiceRequest;
+import com.magambell.server.review.app.port.in.dto.ReportReviewDTO;
+import com.magambell.server.review.app.port.in.request.*;
 import com.magambell.server.review.app.port.out.ReviewCommandPort;
 import com.magambell.server.review.app.port.out.ReviewQueryPort;
 import com.magambell.server.review.app.port.out.response.ReviewListDTO;
 import com.magambell.server.review.app.port.out.response.ReviewRatingSummaryDTO;
 import com.magambell.server.review.app.port.out.response.ReviewRegisterResponseDTO;
+import com.magambell.server.review.app.port.out.response.ReviewReportListDTO;
 import com.magambell.server.review.domain.entity.Review;
 import com.magambell.server.user.app.port.out.UserQueryPort;
 import com.magambell.server.user.domain.entity.User;
@@ -70,6 +68,21 @@ public class ReviewService implements ReviewUseCase {
         User user = userQueryPort.findById(request.userId());
         Review review = reviewQueryPort.findByIdAndUserId(request.reviewId(), user.getId());
         review.delete();
+    }
+
+    @Transactional
+    @Override
+    public void reportReview(final ReportReviewServiceRequest request) {
+        User user = userQueryPort.findById(request.userId());
+        Review review = reviewQueryPort.findById(request.reviewId());
+
+        // 여기부터 하기
+        reviewCommandPort.reportReview(new ReportReviewDTO(review, user));
+    }
+
+    @Override
+    public List<ReviewReportListDTO> getReviewReportList(final ReviewReportListServiceRequest request) {
+        return reviewQueryPort.getReviewReportList(request, PageRequest.of(request.page() - 1, request.size()));
     }
 
     private void validateOrderStatus(final OrderGoods orderGoods) {

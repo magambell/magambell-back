@@ -1,13 +1,11 @@
 package com.magambell.server.review.app.port.in;
 
-import com.magambell.server.review.app.port.in.request.DeleteReviewServiceRequest;
-import com.magambell.server.review.app.port.in.request.RegisterReviewServiceRequest;
-import com.magambell.server.review.app.port.in.request.ReviewListServiceRequest;
-import com.magambell.server.review.app.port.in.request.ReviewMyServiceRequest;
-import com.magambell.server.review.app.port.in.request.ReviewRatingAllServiceRequest;
+import com.magambell.server.review.app.port.in.request.*;
 import com.magambell.server.review.app.port.out.response.ReviewListDTO;
 import com.magambell.server.review.app.port.out.response.ReviewRatingSummaryDTO;
 import com.magambell.server.review.app.port.out.response.ReviewRegisterResponseDTO;
+import com.magambell.server.review.app.port.out.response.ReviewReportListDTO;
+
 import java.util.List;
 
 public interface ReviewUseCase {
@@ -20,4 +18,10 @@ public interface ReviewUseCase {
     List<ReviewListDTO> getReviewListByUser(ReviewMyServiceRequest request);
 
     void deleteReview(DeleteReviewServiceRequest request);
+
+    void reportReview(ReportReviewServiceRequest request);
+
+    List<ReviewReportListDTO> getReviewReportList(ReviewReportListServiceRequest request);
+
+
 }

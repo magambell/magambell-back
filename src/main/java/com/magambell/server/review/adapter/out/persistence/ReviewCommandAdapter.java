@@ -5,11 +5,14 @@ import com.magambell.server.common.s3.S3InputPort;
 import com.magambell.server.common.s3.dto.ImageRegister;
 import com.magambell.server.common.s3.dto.TransformedImageDTO;
 import com.magambell.server.review.app.port.in.dto.RegisterReviewDTO;
+import com.magambell.server.review.app.port.in.dto.ReportReviewDTO;
 import com.magambell.server.review.app.port.out.ReviewCommandPort;
 import com.magambell.server.review.app.port.out.response.ReviewPreSignedUrlImage;
 import com.magambell.server.review.app.port.out.response.ReviewRegisterResponseDTO;
 import com.magambell.server.review.domain.entity.Review;
 import com.magambell.server.review.domain.entity.ReviewImage;
+import com.magambell.server.review.domain.entity.ReviewReport;
+import com.magambell.server.review.domain.repository.ReviewReportRepository;
 import com.magambell.server.review.domain.repository.ReviewRepository;
 import com.magambell.server.user.domain.entity.User;
 import java.util.List;
@@ -22,6 +25,7 @@ public class ReviewCommandAdapter implements ReviewCommandPort {
     private static final String IMAGE_PREFIX = "REVIEW";
 
     private final ReviewRepository reviewRepository;
+    private final ReviewReportRepository reviewReportRepository;
     private final S3InputPort s3InputPort;
 
     @Override
@@ -36,6 +40,11 @@ public class ReviewCommandAdapter implements ReviewCommandPort {
         reviewRepository.save(review);
 
         return new ReviewRegisterResponseDTO(review.getId(), reviewPreSignedUrlImages);
+    }
+
+    @Override
+    public void reportReview(ReportReviewDTO dto) {
+        reviewReportRepository.save(ReviewReport.create(dto));
     }
 
     private List<TransformedImageDTO> checkAndAddImages(final List<ImageRegister> image, final User user) {

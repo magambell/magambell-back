@@ -2,18 +2,23 @@ package com.magambell.server.store.adapter.out.persistence;
 
 import com.magambell.server.common.annotation.Adapter;
 import com.magambell.server.common.enums.ErrorCode;
+import com.magambell.server.common.exception.DuplicateException;
 import com.magambell.server.common.exception.NotFoundException;
+import com.magambell.server.common.exception.TokenExpiredException;
 import com.magambell.server.common.s3.S3InputPort;
 import com.magambell.server.common.s3.dto.ImageRegister;
 import com.magambell.server.common.s3.dto.TransformedImageDTO;
 import com.magambell.server.store.adapter.in.web.StoreImagesRegister;
+import com.magambell.server.store.app.port.in.dto.OpenRegionDTO;
 import com.magambell.server.store.app.port.in.dto.RegisterStoreDTO;
 import com.magambell.server.store.app.port.out.StoreCommandPort;
 import com.magambell.server.store.app.port.out.response.EditStoreImageResponseDTO;
 import com.magambell.server.store.app.port.out.response.StorePreSignedUrlImage;
 import com.magambell.server.store.app.port.out.response.StoreRegisterResponseDTO;
+import com.magambell.server.store.domain.entity.OpenRegion;
 import com.magambell.server.store.domain.entity.Store;
 import com.magambell.server.store.domain.entity.StoreImage;
+import com.magambell.server.store.domain.repository.OpenRegionRepository;
 import com.magambell.server.store.domain.repository.StoreRepository;
 import com.magambell.server.user.domain.entity.User;
 import java.util.List;
@@ -27,6 +32,7 @@ public class StoreCommandAdapter implements StoreCommandPort {
 
     private final StoreRepository storeRepository;
     private final S3InputPort s3InputPort;
+    private final OpenRegionRepository openRegionRepository;
 
     @Override
     public StoreRegisterResponseDTO registerStore(final RegisterStoreDTO dto) {
@@ -65,6 +71,16 @@ public class StoreCommandAdapter implements StoreCommandPort {
                 store);
 
         return new EditStoreImageResponseDTO(store.getId(), storePreSignedUrlImages);
+    }
+
+    @Override
+    public void registerOpenRegion(final OpenRegionDTO dto) {
+        openRegionRepository.findByRegion(dto.region())
+                .ifPresent(region -> {
+                    throw new DuplicateException(ErrorCode.DUPLICATE_OPEN_REGION_REQUEST);
+                });
+
+        openRegionRepository.save(OpenRegion.create(dto));
     }
 
     private List<StorePreSignedUrlImage> addImagesAndGetPreSignedUrlImage(final List<TransformedImageDTO> imageDTOList,

@@ -3,18 +3,18 @@ package com.magambell.server.review.adapter;
 import com.magambell.server.common.Response;
 import com.magambell.server.common.security.CustomUserDetails;
 import com.magambell.server.common.swagger.BaseResponse;
-import com.magambell.server.review.adapter.in.web.RegisterReviewRequest;
-import com.magambell.server.review.adapter.in.web.ReviewListRequest;
-import com.magambell.server.review.adapter.in.web.ReviewMyRequest;
-import com.magambell.server.review.adapter.in.web.ReviewRatingAllRequest;
+import com.magambell.server.review.adapter.in.web.*;
 import com.magambell.server.review.adapter.out.persistence.ReviewListResponse;
 import com.magambell.server.review.adapter.out.persistence.ReviewRatingSummaryResponse;
 import com.magambell.server.review.adapter.out.persistence.ReviewRegisterResponse;
+import com.magambell.server.review.adapter.out.persistence.ReviewReportListResponse;
 import com.magambell.server.review.app.port.in.ReviewUseCase;
 import com.magambell.server.review.app.port.in.request.DeleteReviewServiceRequest;
+import com.magambell.server.review.app.port.in.request.ReportReviewServiceRequest;
 import com.magambell.server.review.app.port.out.response.ReviewListDTO;
 import com.magambell.server.review.app.port.out.response.ReviewRatingSummaryDTO;
 import com.magambell.server.review.app.port.out.response.ReviewRegisterResponseDTO;
+import com.magambell.server.review.app.port.out.response.ReviewReportListDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -22,18 +22,13 @@ import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+@Slf4j
 @Tag(name = "Review", description = "Review API")
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/review")
@@ -105,4 +100,36 @@ public class ReviewController {
 
         return new Response<>();
     }
+
+    // TODO 크몽 리뷰 신고하기
+
+    @PreAuthorize("hasRole('CUSTOMER')")
+    @Operation(summary = "리뷰 신고")
+    @ApiResponse(responseCode = "200", content = {
+            @Content(schema = @Schema(implementation = BaseResponse.class))})
+    @PostMapping("/report/{reviewId}")
+    public Response<BaseResponse> reportReview(
+            @PathVariable Long reviewId,
+            @AuthenticationPrincipal final CustomUserDetails customUserDetails
+    ) {
+        reviewUseCase.reportReview(new ReportReviewServiceRequest(reviewId, customUserDetails.userId()));
+
+        return new Response<>();
+    }
+
+    // TODO 크몽 리뷰 신고 내역 확인
+    @PreAuthorize("{hasRole('ADMIN')}")
+    @Operation(summary = "리뷰 신고 리스트")
+    @ApiResponse(responseCode = "200", content = {
+            @Content(schema = @Schema(implementation = ReviewReportListResponse.class))})
+    @GetMapping("/report")
+    public Response<ReviewReportListResponse> getReviewReportList(
+            @ModelAttribute @Validated final ReviewReportListRequest request
+    ) {
+        List<ReviewReportListDTO> reviewReportList = reviewUseCase.getReviewReportList(request.toServiceRequest());
+        return new Response<>(new ReviewReportListResponse(reviewReportList));
+    }
+
+
+    //  )
 }

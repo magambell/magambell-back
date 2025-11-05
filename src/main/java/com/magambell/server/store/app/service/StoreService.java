@@ -3,24 +3,14 @@ package com.magambell.server.store.app.service;
 import com.magambell.server.common.enums.ErrorCode;
 import com.magambell.server.common.exception.DuplicateException;
 import com.magambell.server.common.exception.InvalidRequestException;
+import com.magambell.server.review.adapter.out.persistence.ReviewListResponse;
 import com.magambell.server.store.adapter.in.web.StoreImagesRegister;
-import com.magambell.server.store.adapter.out.persistence.StoreAdminListResponse;
-import com.magambell.server.store.adapter.out.persistence.StoreDetailResponse;
-import com.magambell.server.store.adapter.out.persistence.StoreImagesResponse;
-import com.magambell.server.store.adapter.out.persistence.StoreListResponse;
+import com.magambell.server.store.adapter.out.persistence.*;
 import com.magambell.server.store.app.port.in.StoreUseCase;
-import com.magambell.server.store.app.port.in.request.CloseStoreListServiceRequest;
-import com.magambell.server.store.app.port.in.request.EditStoreImageServiceRequest;
-import com.magambell.server.store.app.port.in.request.RegisterStoreServiceRequest;
-import com.magambell.server.store.app.port.in.request.SearchStoreListServiceRequest;
-import com.magambell.server.store.app.port.in.request.StoreApproveServiceRequest;
-import com.magambell.server.store.app.port.in.request.WaitingStoreListServiceRequest;
+import com.magambell.server.store.app.port.in.request.*;
 import com.magambell.server.store.app.port.out.StoreCommandPort;
 import com.magambell.server.store.app.port.out.StoreQueryPort;
-import com.magambell.server.store.app.port.out.response.EditStoreImageResponseDTO;
-import com.magambell.server.store.app.port.out.response.OwnerStoreDetailDTO;
-import com.magambell.server.store.app.port.out.response.StorePreSignedUrlImage;
-import com.magambell.server.store.app.port.out.response.StoreRegisterResponseDTO;
+import com.magambell.server.store.app.port.out.response.*;
 import com.magambell.server.store.domain.enums.Approved;
 import com.magambell.server.store.domain.entity.Store;
 import com.magambell.server.user.app.port.out.UserQueryPort;
@@ -115,6 +105,18 @@ public class StoreService implements StoreUseCase {
         EditStoreImageResponseDTO editStoreImageResponseDTO = changeStoreImage(store, request.storeImagesRegisters());
         return new StoreImagesResponse(String.valueOf(editStoreImageResponseDTO.id()),
                 editStoreImageResponseDTO.storePreSignedUrlImages());
+    }
+
+    @Override
+    @Transactional
+    public void registerOpenRegion(final RegisterOpenRegionServiceRequest request, final Long userId) {
+        User user = userQueryPort.findById(userId);
+        storeCommandPort.registerOpenRegion(request.toOpenRegionDTO(request.region(), user));
+    }
+
+    @Override
+    public List<OpenRegionListDTO> getOpenRegionList(final OpenRegionListServiceRequest request) {
+        return storeQueryPort.getOpenRegionList(request, PageRequest.of(request.page() - 1, request.size()));
     }
 
     private void checkDuplicateStore(final User user) {
