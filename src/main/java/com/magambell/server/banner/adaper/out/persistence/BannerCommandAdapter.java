@@ -37,6 +37,11 @@ public class BannerCommandAdapter implements BannerCommandPort {
         return new BannerRegisterResponseDTO(banner.getId(), bannerPreSignedUrlImage);
     }
 
+    @Override
+    public List<Banner> getBannerList() {
+        return bannerRepository.getBannerList();
+    }
+
 
     private BannerPreSignedUrlImage getPreSignedUrlImage(final TransformedImageDTO imageDTO) {
         return new BannerPreSignedUrlImage(imageDTO.id(), imageDTO.putUrl());

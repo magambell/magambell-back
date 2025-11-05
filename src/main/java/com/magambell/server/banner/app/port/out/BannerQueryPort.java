@@ -2,6 +2,7 @@ package com.magambell.server.banner.app.port.out;
 
 import com.magambell.server.banner.app.port.in.dto.RegisterBannerDTO;
 import com.magambell.server.banner.app.port.out.response.BannerRegisterResponseDTO;
+import com.magambell.server.banner.domain.entity.Banner;
 import com.magambell.server.store.adapter.out.persistence.StoreDetailResponse;
 import com.magambell.server.store.app.port.in.dto.RegisterStoreDTO;
 import com.magambell.server.store.app.port.in.request.CloseStoreListServiceRequest;
@@ -17,5 +18,7 @@ import java.util.List;
 import java.util.Optional;
 
 public interface BannerQueryPort {
+
+    List<Banner> getBannerList();
 
 }

@@ -1,14 +1,12 @@
 package com.magambell.server.banner.adaper;
 
 import com.magambell.server.banner.adaper.in.web.RegisterBannerRequest;
+import com.magambell.server.banner.adaper.out.persistence.BannerImageResponse;
 import com.magambell.server.banner.adaper.out.persistence.BannerImagesResponse;
 import com.magambell.server.banner.app.port.in.BannerUseCase;
 import com.magambell.server.common.Response;
 import com.magambell.server.common.security.CustomUserDetails;
-import com.magambell.server.common.swagger.BaseResponse;
-import com.magambell.server.store.adapter.in.web.*;
 import com.magambell.server.store.adapter.out.persistence.*;
-import com.magambell.server.store.app.port.out.response.OpenRegionListDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -19,8 +17,6 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @Tag(name = "Banner", description = "Banner API")
 @RequiredArgsConstructor
@@ -33,12 +29,22 @@ public class BannerController {
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "배너 등록")
     @ApiResponse(responseCode = "200", content = {
-            @Content(schema = @Schema(implementation = BannerImagesResponse.class))})
+            @Content(schema = @Schema(implementation = BannerImageResponse.class))})
     @PostMapping("")
-    public Response<BannerImagesResponse> registerBanner(
+    public Response<BannerImageResponse> registerBanner(
             @RequestBody @Validated final RegisterBannerRequest request
     ) {
         return new Response<>(bannerUseCase.registerBanner(request.toServiceRequest()));
+    }
+
+    @Operation(summary = "배너 이미지 조회")
+    @ApiResponse(responseCode = "200", content = {
+            @Content(schema = @Schema(implementation = BannerImagesResponse.class))}
+    )
+    @GetMapping("/images")
+    public Response<BannerImagesResponse> getBannerImageList(
+            @AuthenticationPrincipal final CustomUserDetails customUserDetails) {
+        return new Response<>(bannerUseCase.getBannerImageList());
     }
 
 

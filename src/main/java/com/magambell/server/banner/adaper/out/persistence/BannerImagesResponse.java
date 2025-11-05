@@ -6,7 +6,6 @@ import com.magambell.server.store.app.port.out.response.StorePreSignedUrlImage;
 import java.util.List;
 
 public record BannerImagesResponse(
-        String id,
-        BannerPreSignedUrlImage bannerPreSignedUrlImage
+        List<BannerPreSignedUrlImage> bannerPreSignedUrlImages
 ) {
 }
