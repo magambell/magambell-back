@@ -3,8 +3,10 @@ package com.magambell.server.review.app.port.out;
 import com.magambell.server.order.domain.entity.OrderGoods;
 import com.magambell.server.review.app.port.in.request.ReviewListServiceRequest;
 import com.magambell.server.review.app.port.in.request.ReviewRatingAllServiceRequest;
+import com.magambell.server.review.app.port.in.request.ReviewReportListServiceRequest;
 import com.magambell.server.review.app.port.out.response.ReviewListDTO;
 import com.magambell.server.review.app.port.out.response.ReviewRatingSummaryDTO;
+import com.magambell.server.review.app.port.out.response.ReviewReportListDTO;
 import com.magambell.server.review.domain.entity.Review;
 import com.magambell.server.user.domain.entity.User;
 import java.util.List;
@@ -20,4 +22,9 @@ public interface ReviewQueryPort {
     List<ReviewListDTO> getReviewListByUser(User user, Pageable pageable);
 
     Review findByIdAndUserId(Long reviewId, Long userId);
+
+    Review findById(Long reviewId);
+
+    List<ReviewReportListDTO> getReviewReportList(ReviewReportListServiceRequest request, Pageable pageable);
+
 }

@@ -1,16 +1,12 @@
 package com.magambell.server.store.app.port.in;
 
-import com.magambell.server.store.adapter.out.persistence.StoreAdminListResponse;
-import com.magambell.server.store.adapter.out.persistence.StoreDetailResponse;
-import com.magambell.server.store.adapter.out.persistence.StoreImagesResponse;
-import com.magambell.server.store.adapter.out.persistence.StoreListResponse;
-import com.magambell.server.store.app.port.in.request.CloseStoreListServiceRequest;
-import com.magambell.server.store.app.port.in.request.EditStoreImageServiceRequest;
-import com.magambell.server.store.app.port.in.request.RegisterStoreServiceRequest;
-import com.magambell.server.store.app.port.in.request.SearchStoreListServiceRequest;
-import com.magambell.server.store.app.port.in.request.StoreApproveServiceRequest;
-import com.magambell.server.store.app.port.in.request.WaitingStoreListServiceRequest;
+import com.magambell.server.review.adapter.out.persistence.ReviewListResponse;
+import com.magambell.server.store.adapter.out.persistence.*;
+import com.magambell.server.store.app.port.in.request.*;
+import com.magambell.server.store.app.port.out.response.OpenRegionListDTO;
 import com.magambell.server.store.app.port.out.response.OwnerStoreDetailDTO;
+
+import java.util.List;
 
 public interface StoreUseCase {
     StoreImagesResponse registerStore(RegisterStoreServiceRequest request, Long userId);
@@ -30,4 +26,9 @@ public interface StoreUseCase {
     StoreImagesResponse getStoreImageList(Long userId, Long storeId);
 
     StoreImagesResponse editStoreImage(EditStoreImageServiceRequest request);
+
+    void registerOpenRegion(RegisterOpenRegionServiceRequest request, Long userId);
+
+    List<OpenRegionListDTO> getOpenRegionList(OpenRegionListServiceRequest request);
+
 }

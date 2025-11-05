@@ -6,11 +6,14 @@ import com.magambell.server.common.exception.NotFoundException;
 import com.magambell.server.order.domain.entity.OrderGoods;
 import com.magambell.server.review.app.port.in.request.ReviewListServiceRequest;
 import com.magambell.server.review.app.port.in.request.ReviewRatingAllServiceRequest;
+import com.magambell.server.review.app.port.in.request.ReviewReportListServiceRequest;
 import com.magambell.server.review.app.port.out.ReviewQueryPort;
 import com.magambell.server.review.app.port.out.response.ReviewListDTO;
 import com.magambell.server.review.app.port.out.response.ReviewRatingSummaryDTO;
+import com.magambell.server.review.app.port.out.response.ReviewReportListDTO;
 import com.magambell.server.review.domain.enums.ReviewStatus;
 import com.magambell.server.review.domain.entity.Review;
+import com.magambell.server.review.domain.repository.ReviewReportRepository;
 import com.magambell.server.review.domain.repository.ReviewRepository;
 import com.magambell.server.user.domain.entity.User;
 import java.util.List;
@@ -22,6 +25,7 @@ import org.springframework.data.domain.Pageable;
 public class ReviewQueryAdapter implements ReviewQueryPort {
 
     private final ReviewRepository reviewRepository;
+    public final ReviewReportRepository reviewReportRepository;
 
     @Override
     public boolean existsOrderAndReview(final OrderGoods orderGoods, final User user) {
@@ -49,4 +53,16 @@ public class ReviewQueryAdapter implements ReviewQueryPort {
         return reviewRepository.findByIdAndUserIdAndReviewStatus(reviewId, userId, ReviewStatus.ACTIVE)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.REVIEW_NOT_FOUND));
     }
+
+    @Override
+    public Review findById(final Long reviewId) {
+        return reviewRepository.findByIdAndReviewStatus(reviewId, ReviewStatus.ACTIVE)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.REVIEW_NOT_FOUND));
+    }
+
+    @Override
+    public List<ReviewReportListDTO> getReviewReportList(final ReviewReportListServiceRequest request, final Pageable pageable) {
+        return reviewReportRepository.getReviewReportList(request, pageable);
+    }
+
 }

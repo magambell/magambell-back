@@ -9,7 +9,11 @@ public interface S3InputPort {
 
     List<TransformedImageDTO> saveImages(String imagePrefix, List<ImageRegister> imageRegisters, User user);
 
+    TransformedImageDTO saveImage(String imagePrefix, ImageRegister imageRegister);
+
     String getImagePrefix(String imagePrefix, ImageRegister imageRegister, User user);
+
+    String getImagePrefix(String imagePrefix, ImageRegister imageRegister);
 
     void deleteS3Objects(String imagePrefix, User user);
 

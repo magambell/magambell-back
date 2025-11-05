@@ -3,18 +3,13 @@ package com.magambell.server.store.adapter;
 import com.magambell.server.common.Response;
 import com.magambell.server.common.security.CustomUserDetails;
 import com.magambell.server.common.swagger.BaseResponse;
-import com.magambell.server.store.adapter.in.web.CloseStoreListRequest;
-import com.magambell.server.store.adapter.in.web.EditStoreImageRequest;
-import com.magambell.server.store.adapter.in.web.RegisterStoreRequest;
-import com.magambell.server.store.adapter.in.web.SearchStoreListRequest;
-import com.magambell.server.store.adapter.in.web.StoreApproveRequest;
-import com.magambell.server.store.adapter.in.web.WaitingStoreListRequest;
-import com.magambell.server.store.adapter.out.persistence.OwnerStoreDetailResponse;
-import com.magambell.server.store.adapter.out.persistence.StoreAdminListResponse;
-import com.magambell.server.store.adapter.out.persistence.StoreDetailResponse;
-import com.magambell.server.store.adapter.out.persistence.StoreImagesResponse;
-import com.magambell.server.store.adapter.out.persistence.StoreListResponse;
+import com.magambell.server.review.adapter.in.web.ReviewListRequest;
+import com.magambell.server.review.adapter.out.persistence.ReviewListResponse;
+import com.magambell.server.review.app.port.out.response.ReviewListDTO;
+import com.magambell.server.store.adapter.in.web.*;
+import com.magambell.server.store.adapter.out.persistence.*;
 import com.magambell.server.store.app.port.in.StoreUseCase;
+import com.magambell.server.store.app.port.out.response.OpenRegionListDTO;
 import com.magambell.server.store.app.port.out.response.OwnerStoreDetailDTO;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -33,6 +28,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.List;
 
 @Tag(name = "Store", description = "Store API")
 @RequiredArgsConstructor
@@ -141,4 +138,30 @@ public class StoreController {
             @RequestBody @Validated final EditStoreImageRequest editStoreImageRequest) {
         return new Response<>(storeUseCase.editStoreImage(editStoreImageRequest.toService(customUserDetails.userId())));
     }
+
+    @PreAuthorize("hasRole('CUSTOMER')")
+    @Operation(summary = "지역 오픈 요청")
+    @ApiResponse(responseCode = "200", content = {
+            @Content(schema = @Schema(implementation = BaseResponse.class))})
+    @PostMapping("/region")
+    public Response<StoreImagesResponse> registerOpenRegion(
+            @RequestBody @Validated final OpenRegionRequest request,
+            @AuthenticationPrincipal final CustomUserDetails customUserDetails
+    ) {
+        storeUseCase.registerOpenRegion(request.toServiceRequest(), customUserDetails.userId());
+        return new Response<>();
+    }
+
+    @PreAuthorize("{hasRole('ADMIN')}")
+    @Operation(summary = "지역 오픈 요청 리스트")
+    @ApiResponse(responseCode = "200", content = {
+            @Content(schema = @Schema(implementation = OpenRegionListResponse.class))})
+    @GetMapping("/region")
+    public Response<OpenRegionListResponse> getOpenRegionList(
+            @ModelAttribute @Validated final OpenRegionListRequest request
+    ) {
+        List<OpenRegionListDTO> openRegionList = storeUseCase.getOpenRegionList(request.toService());
+        return new Response<>(new OpenRegionListResponse(openRegionList));
+    }
+
 }

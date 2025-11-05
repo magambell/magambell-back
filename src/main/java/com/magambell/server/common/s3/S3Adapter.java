@@ -35,6 +35,19 @@ public class S3Adapter implements S3InputPort {
     }
 
     @Override
+    public TransformedImageDTO saveImage(final String imagePrefix,
+                                                final ImageRegister imageRegister) {
+
+        String getImagePrefix = getImagePrefix(imagePrefix, imageRegister);
+
+        return new TransformedImageDTO(
+                imageRegister.id(),
+                getCloudFrontSignedUrl(getImagePrefix),
+                s3Client.getPreSignedUrl(getImagePrefix)
+        );
+    }
+
+    @Override
     public void deleteS3Objects(final String imagePrefix, final User user) {
         s3Client.listObjectKeys(
                         imagePrefix + "/" + user.getUserRole() + "/" + user.getId()
@@ -46,6 +59,12 @@ public class S3Adapter implements S3InputPort {
     public String getImagePrefix(final String imagePrefix, final ImageRegister imageRegisters,
                                  final User user) {
         return imagePrefix + "/" + user.getUserRole() + "/" + user.getId() + "/" + imageRegisters.id() + "_"
+                + imageRegisters.key();
+    }
+
+    @Override
+    public String getImagePrefix(final String imagePrefix, final ImageRegister imageRegisters) {
+        return imagePrefix + "/" + imageRegisters.id() + "_"
                 + imageRegisters.key();
     }
 

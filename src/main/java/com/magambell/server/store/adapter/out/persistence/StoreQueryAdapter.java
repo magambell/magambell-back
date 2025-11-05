@@ -4,13 +4,16 @@ import com.magambell.server.common.annotation.Adapter;
 import com.magambell.server.common.enums.ErrorCode;
 import com.magambell.server.common.exception.NotFoundException;
 import com.magambell.server.store.app.port.in.request.CloseStoreListServiceRequest;
+import com.magambell.server.store.app.port.in.request.OpenRegionListServiceRequest;
 import com.magambell.server.store.app.port.in.request.SearchStoreListServiceRequest;
 import com.magambell.server.store.app.port.out.StoreQueryPort;
+import com.magambell.server.store.app.port.out.response.OpenRegionListDTO;
 import com.magambell.server.store.app.port.out.response.OwnerStoreDetailDTO;
 import com.magambell.server.store.app.port.out.response.StoreAdminListDTO;
 import com.magambell.server.store.app.port.out.response.StoreListDTOResponse;
 import com.magambell.server.store.domain.entity.Store;
 import com.magambell.server.store.domain.entity.StoreImage;
+import com.magambell.server.store.domain.repository.OpenRegionRepository;
 import com.magambell.server.store.domain.repository.StoreRepository;
 import com.magambell.server.user.domain.entity.User;
 import java.util.List;
@@ -23,6 +26,7 @@ import org.springframework.data.domain.Pageable;
 public class StoreQueryAdapter implements StoreQueryPort {
 
     private final StoreRepository storeRepository;
+    private final OpenRegionRepository openRegionRepository;
 
     @Override
     public boolean existsByUser(final User user) {
@@ -82,5 +86,10 @@ public class StoreQueryAdapter implements StoreQueryPort {
     @Override
     public Store getStoreAndStoreImages(final Long storeId) {
         return storeRepository.getStoreAndStoreImages(storeId);
+    }
+
+    @Override
+    public List<OpenRegionListDTO> getOpenRegionList(OpenRegionListServiceRequest request, Pageable pageable) {
+        return openRegionRepository.getOpenRegionList(request, pageable);
     }
 }
