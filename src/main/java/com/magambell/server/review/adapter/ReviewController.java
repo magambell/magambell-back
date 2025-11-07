@@ -20,13 +20,14 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @Slf4j
 @Tag(name = "Review", description = "Review API")
@@ -101,8 +102,6 @@ public class ReviewController {
         return new Response<>();
     }
 
-    // TODO 크몽 리뷰 신고하기
-
     @PreAuthorize("hasRole('CUSTOMER')")
     @Operation(summary = "리뷰 신고")
     @ApiResponse(responseCode = "200", content = {
@@ -117,8 +116,7 @@ public class ReviewController {
         return new Response<>();
     }
 
-    // TODO 크몽 리뷰 신고 내역 확인
-    @PreAuthorize("{hasRole('ADMIN')}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "리뷰 신고 리스트")
     @ApiResponse(responseCode = "200", content = {
             @Content(schema = @Schema(implementation = ReviewReportListResponse.class))})
