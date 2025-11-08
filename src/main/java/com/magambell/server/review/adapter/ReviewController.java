@@ -58,9 +58,15 @@ public class ReviewController {
             @Content(schema = @Schema(implementation = ReviewListResponse.class))})
     @GetMapping("")
     public Response<ReviewListResponse> getReviewList(
-            @ModelAttribute @Validated final ReviewListRequest request
+            @ModelAttribute @Validated final ReviewListRequest request,
+            @AuthenticationPrincipal final CustomUserDetails customUserDetails
     ) {
-        List<ReviewListDTO> reviewList = reviewUseCase.getReviewList(request.toServiceRequest());
+        Long userId = null;
+        if(customUserDetails != null) {
+            userId = customUserDetails.userId();
+        }
+
+        List<ReviewListDTO> reviewList = reviewUseCase.getReviewList(request.toServiceRequest(userId));
         return new Response<>(new ReviewListResponse(reviewList));
     }
 

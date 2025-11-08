@@ -7,6 +7,7 @@ import com.magambell.server.review.app.port.in.request.ReviewReportListServiceRe
 import com.magambell.server.review.app.port.out.response.ReviewListDTO;
 import com.magambell.server.review.app.port.out.response.ReviewRatingSummaryDTO;
 import com.magambell.server.review.app.port.out.response.ReviewReportListDTO;
+import com.magambell.server.review.domain.entity.ReviewReport;
 import com.magambell.server.review.domain.enums.ReviewStatus;
 import com.magambell.server.user.domain.enums.UserStatus;
 import com.querydsl.core.BooleanBuilder;
@@ -58,6 +59,16 @@ public class ReviewReportRepositoryImpl implements ReviewReportRepositoryCustom 
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .fetch();
+    }
+
+    @Override
+    public ReviewReport getReviewReportByReviewIdAndUserId(Long reviewId, Long userId) {
+        return queryFactory
+                .select(reviewReport)
+                .from(reviewReport)
+                .where(reviewReport.review.id.eq(reviewId)
+                        .and(reviewReport.user.id.eq(userId)))
+                .fetchOne();
     }
 
 }

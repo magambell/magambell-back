@@ -14,7 +14,7 @@ public record ReviewListRequest(
         @Positive(message = "화면에 개수를 주세요.")
         Integer size
 ) {
-    public ReviewListServiceRequest toServiceRequest() {
-        return new ReviewListServiceRequest(goodsId, imageCheck, page, size);
+    public ReviewListServiceRequest toServiceRequest(Long userId) {
+        return new ReviewListServiceRequest(userId, goodsId, imageCheck, page, size);
     }
 }

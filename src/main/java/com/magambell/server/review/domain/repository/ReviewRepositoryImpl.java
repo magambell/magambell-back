@@ -6,6 +6,7 @@ import static com.magambell.server.order.domain.entity.QOrderGoods.orderGoods;
 import static com.magambell.server.review.domain.entity.QReview.review;
 import static com.magambell.server.review.domain.entity.QReviewImage.reviewImage;
 import static com.magambell.server.review.domain.entity.QReviewReason.reviewReason;
+import static com.magambell.server.review.domain.entity.QReviewReport.reviewReport;
 import static com.magambell.server.store.domain.entity.QStore.store;
 import static com.magambell.server.user.domain.entity.QUser.user;
 import static com.querydsl.core.group.GroupBy.groupBy;
@@ -45,7 +46,7 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
             conditions.and(reviewImage.isNotNull());
         }
 
-        return getReviewListDTOS(pageable, conditions);
+        return getReviewListDTOS(pageable, conditions, request.userId());
     }
 
     @Override
@@ -112,10 +113,23 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
         BooleanBuilder conditions = new BooleanBuilder();
         conditions.and(review.user.id.eq(userId));
         conditions.and(review.reviewStatus.eq(ReviewStatus.ACTIVE));
-        return getReviewListDTOS(pageable, conditions);
+        return getReviewListDTOS(pageable, conditions, null);
     }
 
-    private List<ReviewListDTO> getReviewListDTOS(final Pageable pageable, final BooleanBuilder conditions) {
+    private List<ReviewListDTO> getReviewListDTOS(final Pageable pageable, final BooleanBuilder conditions, final Long userId) {
+        // userId가 존재한다면, 해당 유저가 신고한 reviewId 목록 제외
+        if (userId != null) {
+            List<Long> reportedReviewIds = queryFactory
+                    .select(reviewReport.review.id)
+                    .from(reviewReport)
+                    .where(reviewReport.user.id.eq(userId))
+                    .fetch();
+
+            if (!reportedReviewIds.isEmpty()) {
+                conditions.and(review.id.notIn(reportedReviewIds));
+            }
+        }
+
         List<Long> reviewIds = queryFactory
                 .select(review.id)
                 .from(review)
