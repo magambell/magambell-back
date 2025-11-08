@@ -4,9 +4,10 @@ import com.magambell.server.common.annotation.Adapter;
 import com.magambell.server.common.s3.dto.ImageRegister;
 import com.magambell.server.common.s3.dto.TransformedImageDTO;
 import com.magambell.server.user.domain.entity.User;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
+
+import java.util.List;
 
 @RequiredArgsConstructor
 @Adapter
@@ -36,9 +37,10 @@ public class S3Adapter implements S3InputPort {
 
     @Override
     public TransformedImageDTO saveImage(final String imagePrefix,
-                                                final ImageRegister imageRegister) {
+                                         final ImageRegister imageRegister,
+                                         final Long id) {
 
-        String getImagePrefix = getImagePrefix(imagePrefix, imageRegister);
+        String getImagePrefix = getImagePrefix(imagePrefix, imageRegister, id);
 
         return new TransformedImageDTO(
                 imageRegister.id(),
@@ -56,6 +58,14 @@ public class S3Adapter implements S3InputPort {
     }
 
     @Override
+    public void deleteS3Objects(final String imagePrefix, Long id) {
+        s3Client.listObjectKeys(
+                        imagePrefix + "/" + id
+                )
+                .forEach(s3Client::deleteObjectS3);
+    }
+
+    @Override
     public String getImagePrefix(final String imagePrefix, final ImageRegister imageRegisters,
                                  final User user) {
         return imagePrefix + "/" + user.getUserRole() + "/" + user.getId() + "/" + imageRegisters.id() + "_"
@@ -63,8 +73,8 @@ public class S3Adapter implements S3InputPort {
     }
 
     @Override
-    public String getImagePrefix(final String imagePrefix, final ImageRegister imageRegisters) {
-        return imagePrefix + "/" + imageRegisters.id() + "_"
+    public String getImagePrefix(final String imagePrefix, final ImageRegister imageRegisters, final Long id) {
+        return imagePrefix + "/" + id + "/" + imageRegisters.id() + "_"
                 + imageRegisters.key();
     }
 

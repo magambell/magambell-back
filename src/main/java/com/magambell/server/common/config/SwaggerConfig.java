@@ -27,7 +27,7 @@ public class SwaggerConfig {
         return new OpenAPI()
                 .info(apiInfo())
                 .addSecurityItem(securityRequirement)
-                .addServersItem(new Server().url("https://dev.mgbell-server.run"))
+//                .addServersItem(new Server().url("https://dev.mgbell-server.run"))
                 .addServersItem(new Server().url("http://localhost:8080"))
                 .components(components);
     }

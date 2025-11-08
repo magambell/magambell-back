@@ -1,19 +1,17 @@
 package com.magambell.server.banner.adaper.out.persistence;
 
+import com.magambell.server.banner.adaper.in.web.BannerImagesRegister;
 import com.magambell.server.banner.app.port.in.dto.RegisterBannerDTO;
 import com.magambell.server.banner.app.port.out.BannerCommandPort;
 import com.magambell.server.banner.app.port.out.response.BannerPreSignedUrlImage;
 import com.magambell.server.banner.app.port.out.response.BannerRegisterResponseDTO;
+import com.magambell.server.banner.app.port.out.response.EditBannerImageResponseDTO;
 import com.magambell.server.banner.domain.entity.Banner;
 import com.magambell.server.banner.domain.repository.BannerRepository;
 import com.magambell.server.common.annotation.Adapter;
 import com.magambell.server.common.s3.S3InputPort;
+import com.magambell.server.common.s3.dto.ImageRegister;
 import com.magambell.server.common.s3.dto.TransformedImageDTO;
-import com.magambell.server.store.app.port.out.response.StorePreSignedUrlImage;
-import com.magambell.server.store.app.port.out.response.StoreRegisterResponseDTO;
-import com.magambell.server.store.domain.entity.Store;
-import com.magambell.server.store.domain.entity.StoreImage;
-import com.magambell.server.user.domain.entity.User;
 import lombok.RequiredArgsConstructor;
 
 import java.util.List;
@@ -29,10 +27,11 @@ public class BannerCommandAdapter implements BannerCommandPort {
 
     @Override
     public BannerRegisterResponseDTO registerBanner(final RegisterBannerDTO dto) {
-        TransformedImageDTO transformedImageDTO = s3InputPort.saveImage(IMAGE_PREFIX, dto.toImage());
+        Banner banner = bannerRepository.save(Banner.create(dto.bannerImagesRegister().id()));
+        TransformedImageDTO transformedImageDTO = s3InputPort.saveImage(IMAGE_PREFIX, dto.toImage(), banner.getId());
+        banner.modifyUrl(transformedImageDTO.getUrl());
 
-        Banner banner = bannerRepository.save(Banner.create(dto.name(), dto.order()));
-        BannerPreSignedUrlImage bannerPreSignedUrlImage = getPreSignedUrlImage(transformedImageDTO);
+        BannerPreSignedUrlImage bannerPreSignedUrlImage = getBannerPreSignedUrlImage(banner.getId(), transformedImageDTO);
 
         return new BannerRegisterResponseDTO(banner.getId(), bannerPreSignedUrlImage);
     }
@@ -42,8 +41,29 @@ public class BannerCommandAdapter implements BannerCommandPort {
         return bannerRepository.getBannerList();
     }
 
+    @Override
+    public EditBannerImageResponseDTO editBannerImage(Banner banner, BannerImagesRegister bannerImagesRegister) {
 
-    private BannerPreSignedUrlImage getPreSignedUrlImage(final TransformedImageDTO imageDTO) {
-        return new BannerPreSignedUrlImage(imageDTO.id(), imageDTO.putUrl());
+        s3InputPort.deleteS3Objects(IMAGE_PREFIX, banner.getId());
+
+        ImageRegister imageRegister = new ImageRegister(bannerImagesRegister.id(), bannerImagesRegister.key());
+        TransformedImageDTO transformedImageDTO = s3InputPort.saveImage(IMAGE_PREFIX, imageRegister, banner.getId());
+        banner.modifyUrl(transformedImageDTO.getUrl());
+
+        BannerPreSignedUrlImage bannerPreSignedUrlImage = getBannerPreSignedUrlImage(banner.getId(), transformedImageDTO);
+
+
+        return new EditBannerImageResponseDTO(banner.getId(), bannerPreSignedUrlImage);
+    }
+
+    @Override
+    public void delete(Banner banner) {
+        s3InputPort.deleteS3Objects(IMAGE_PREFIX, banner.getId());
+        bannerRepository.delete(banner);
+    }
+
+
+    private BannerPreSignedUrlImage getBannerPreSignedUrlImage(final Long bannerId, final TransformedImageDTO imageDTO) {
+        return new BannerPreSignedUrlImage(bannerId, imageDTO.id(), imageDTO.putUrl());
     }
 }

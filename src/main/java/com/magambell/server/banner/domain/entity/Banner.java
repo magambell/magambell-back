@@ -17,21 +17,28 @@ public class Banner extends BaseTimeEntity {
     @Id
     private Long id;
 
-    private String name;
+    private String url;
 
     @Column(name = "`order`")
     private Integer order;
 
     @Builder(access = AccessLevel.PRIVATE)
-    private Banner(final String name, final Integer order) {
-        this.name = name;
+    private Banner(final String url, final Integer order) {
+        this.url = url;
         this.order = order;
     }
 
-    public static Banner create(final String name, final Integer order) {
+    public static Banner create(final Integer order) {
         return Banner.builder()
-                .name(name)
                 .order(order)
                 .build();
+    }
+
+    public void modifyUrl(final String url) {
+        this.url = url;
+    }
+
+    public void modifyOrder(final Integer order) {
+        this.order = order;
     }
 }

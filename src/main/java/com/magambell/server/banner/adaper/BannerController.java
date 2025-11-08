@@ -1,12 +1,14 @@
 package com.magambell.server.banner.adaper;
 
+import com.magambell.server.banner.adaper.in.web.EditBannerImageRequest;
 import com.magambell.server.banner.adaper.in.web.RegisterBannerRequest;
 import com.magambell.server.banner.adaper.out.persistence.BannerImageResponse;
 import com.magambell.server.banner.adaper.out.persistence.BannerImagesResponse;
 import com.magambell.server.banner.app.port.in.BannerUseCase;
+import com.magambell.server.banner.app.port.in.request.DeleteBannerServiceRequest;
 import com.magambell.server.common.Response;
 import com.magambell.server.common.security.CustomUserDetails;
-import com.magambell.server.store.adapter.out.persistence.*;
+import com.magambell.server.common.swagger.BaseResponse;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
@@ -47,5 +49,28 @@ public class BannerController {
         return new Response<>(bannerUseCase.getBannerImageList());
     }
 
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "배너 이미지 수정")
+    @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(
+            implementation = BannerImageResponse.class))})
+    @PatchMapping("")
+    public Response<BannerImageResponse> editBannerImage(
+            @AuthenticationPrincipal final CustomUserDetails customUserDetails,
+            @RequestBody @Validated final EditBannerImageRequest editBannerImageRequest) {
+        return new Response<>(bannerUseCase.editBannerImage(editBannerImageRequest.toService()));
+    }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "배너 이미지 삭제")
+    @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(
+            implementation = BannerImageResponse.class))})
+    @DeleteMapping("/{bannerId}")
+    public Response<BaseResponse> deleteBannerImage(
+            @PathVariable Long bannerId,
+            @AuthenticationPrincipal final CustomUserDetails customUserDetails) {
+
+        bannerUseCase.deleteBanner(new DeleteBannerServiceRequest(bannerId));
+        return new Response<>();
+    }
 
 }
