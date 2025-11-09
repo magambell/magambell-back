@@ -196,7 +196,7 @@ class ReviewServiceTest {
                 orderGoods
         );
         reviewRepository.save(Review.create(dto));
-        ReviewListServiceRequest request = new ReviewListServiceRequest(goods.getId(), false, 1, 10);
+    ReviewListServiceRequest request = new ReviewListServiceRequest(goods.getId(), false, 1, 10);
 
         // when
         List<ReviewListDTO> reviewList = reviewService.getReviewList(request);
