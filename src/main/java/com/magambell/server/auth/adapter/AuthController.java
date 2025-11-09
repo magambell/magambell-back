@@ -31,6 +31,7 @@ public class AuthController {
 
     private final AuthUseCase authUseCase;
 
+    //test
     @Operation(summary = "oAuth 회원가입 및 로그인")
     @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(implementation = BaseResponse.class))})
     @PostMapping("/oauth/login")
