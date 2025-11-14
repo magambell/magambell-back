@@ -1,34 +1,17 @@
 package com.magambell.server.store.domain.repository;
 
-import static com.magambell.server.goods.domain.entity.QGoods.goods;
-import static com.magambell.server.order.domain.entity.QOrderGoods.orderGoods;
-import static com.magambell.server.review.domain.entity.QReview.review;
-import static com.magambell.server.stock.domain.entity.QStock.stock;
-import static com.magambell.server.store.domain.entity.QOpenRegion.openRegion;
-import static com.magambell.server.store.domain.enums.Approved.APPROVED;
-import static com.magambell.server.store.domain.enums.Approved.WAITING;
-import static com.magambell.server.store.domain.entity.QStore.store;
-import static com.magambell.server.store.domain.entity.QStoreImage.storeImage;
-import static com.magambell.server.user.domain.entity.QUser.user;
-import static com.querydsl.core.group.GroupBy.groupBy;
-import static com.querydsl.core.group.GroupBy.list;
-import static com.querydsl.core.group.GroupBy.set;
-import static com.querydsl.core.types.ExpressionUtils.count;
-
 import com.magambell.server.review.domain.enums.ReviewStatus;
 import com.magambell.server.store.adapter.out.persistence.StoreDetailResponse;
 import com.magambell.server.store.app.port.in.request.CloseStoreListServiceRequest;
-import com.magambell.server.store.app.port.in.request.OpenRegionListServiceRequest;
 import com.magambell.server.store.app.port.in.request.SearchStoreListServiceRequest;
 import com.magambell.server.store.app.port.out.dto.StoreDetailDTO;
-import com.magambell.server.store.app.port.out.response.OpenRegionListDTO;
 import com.magambell.server.store.app.port.out.response.OwnerStoreDetailDTO;
 import com.magambell.server.store.app.port.out.response.StoreAdminListDTO;
 import com.magambell.server.store.app.port.out.response.StoreListDTOResponse;
-import com.magambell.server.store.domain.enums.Approved;
-import com.magambell.server.store.domain.enums.SearchSortType;
 import com.magambell.server.store.domain.entity.Store;
 import com.magambell.server.store.domain.entity.StoreImage;
+import com.magambell.server.store.domain.enums.Approved;
+import com.magambell.server.store.domain.enums.SearchSortType;
 import com.magambell.server.user.domain.enums.UserStatus;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.Tuple;
@@ -38,11 +21,25 @@ import com.querydsl.core.types.dsl.BooleanExpression;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Pageable;
+
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-import lombok.RequiredArgsConstructor;
-import org.springframework.data.domain.Pageable;
+
+import static com.magambell.server.goods.domain.entity.QGoods.goods;
+import static com.magambell.server.goods.domain.entity.QGoodsImage.goodsImage;
+import static com.magambell.server.order.domain.entity.QOrderGoods.orderGoods;
+import static com.magambell.server.review.domain.entity.QReview.review;
+import static com.magambell.server.stock.domain.entity.QStock.stock;
+import static com.magambell.server.store.domain.entity.QStore.store;
+import static com.magambell.server.store.domain.entity.QStoreImage.storeImage;
+import static com.magambell.server.store.domain.enums.Approved.APPROVED;
+import static com.magambell.server.store.domain.enums.Approved.WAITING;
+import static com.magambell.server.user.domain.entity.QUser.user;
+import static com.querydsl.core.group.GroupBy.*;
+import static com.querydsl.core.types.ExpressionUtils.count;
 
 @RequiredArgsConstructor
 public class StoreRepositoryImpl implements StoreRepositoryCustom {
@@ -159,7 +156,8 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                                         stock.quantity,
                                         goods.saleStatus,
                                         store.latitude,
-                                        store.longitude
+                                        store.longitude,
+                                        store.parkingDescription
                                 )
                         )
                 );
@@ -201,6 +199,7 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                 .leftJoin(storeImage).on(storeImage.store.id.eq(store.id))
                 .leftJoin(goods).on(goods.store.id.eq(store.id))
                 .innerJoin(stock).on(stock.goods.id.eq(goods.id))
+                .leftJoin(goodsImage).on(goodsImage.goods.id.eq(goods.id))
                 .where(
                         store.user.id.eq(userId),
                         store.approved.eq(Approved.APPROVED),
@@ -224,6 +223,11 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                                                 goods.endTime,
                                                 goods.saleStatus,
                                                 stock.quantity
+                                        )),
+                                        list(Projections.constructor(OwnerStoreDetailDTO.GoodsImageInfo.class,
+                                                goodsImage.id,
+                                                goodsImage.goodsName,
+                                                goodsImage.imageUrl
                                         ))
                                 )
                         )

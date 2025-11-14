@@ -7,6 +7,7 @@ import com.magambell.server.store.app.port.in.dto.RegisterStoreDTO;
 import com.magambell.server.store.domain.enums.Approved;
 import com.magambell.server.store.domain.enums.Bank;
 import com.magambell.server.user.domain.entity.User;
+
 import java.util.List;
 
 public record RegisterStoreServiceRequest(
@@ -19,13 +20,15 @@ public record RegisterStoreServiceRequest(
         String businessNumber,
         Bank bankName,
         String bankAccount,
-        List<StoreImagesRegister> storeImagesRegisters
+        List<StoreImagesRegister> storeImagesRegisters,
+        String parkingDescription
 ) {
     public RegisterStoreServiceRequest(final String name, final String address, final Double latitude,
                                        final Double longitude, final String ownerName,
                                        final String ownerPhone, final String businessNumber, final Bank bankName,
                                        final String bankAccount,
-                                       final List<StoreImagesRegister> storeImagesRegisters) {
+                                       final List<StoreImagesRegister> storeImagesRegisters,
+                                       final String parkingDescription) {
         this.name = name;
         this.address = address;
         this.latitude = latitude;
@@ -36,6 +39,7 @@ public record RegisterStoreServiceRequest(
         this.bankName = bankName;
         this.bankAccount = bankAccount;
         this.storeImagesRegisters = validateImages(storeImagesRegisters);
+        this.parkingDescription = parkingDescription;
     }
 
     private String validatePhone(final String value) {
@@ -61,6 +65,6 @@ public record RegisterStoreServiceRequest(
 
     public RegisterStoreDTO toStoreDTO(final Approved approved, final User user) {
         return new RegisterStoreDTO(name, address, latitude, longitude, ownerName, ownerPhone, businessNumber, bankName,
-                bankAccount, storeImagesRegisters, approved, user);
+                bankAccount, storeImagesRegisters, approved, user, parkingDescription);
     }
 }

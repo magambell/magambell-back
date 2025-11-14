@@ -5,6 +5,8 @@ import com.magambell.server.review.domain.enums.SatisfactionReason;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
+import jakarta.validation.constraints.Size;
+
 import java.util.List;
 
 public record RegisterReviewRequest(
@@ -20,6 +22,7 @@ public record RegisterReviewRequest(
         @NotBlank(message = "구매 후기를 작성해 주세요.")
         String description,
 
+        @Size(max = 10, message = "이미지는 최대 10장까지 등록할 수 있습니다.")
         List<ReviewImageRegister> reviewImageRegisters
 ) {
 

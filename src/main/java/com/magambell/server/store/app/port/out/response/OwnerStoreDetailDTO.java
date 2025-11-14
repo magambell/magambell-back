@@ -1,6 +1,7 @@
 package com.magambell.server.store.app.port.out.response;
 
 import com.magambell.server.goods.domain.enums.SaleStatus;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
@@ -10,7 +11,8 @@ public record OwnerStoreDetailDTO(
         String storeName,
         String address,
         Set<String> storeImageUrls,
-        List<GoodsInfo> goodsList
+        List<GoodsInfo> goodsList,
+        List<GoodsImageInfo> goodsImageList
 ) {
     public record GoodsInfo(
             Long goodsId,
@@ -27,6 +29,13 @@ public record OwnerStoreDetailDTO(
         public String getGoodsId() {
             return String.valueOf(goodsId);
         }
+    }
+
+    public record GoodsImageInfo(
+            Long goodsImageId,
+            String goodsName,
+            String imageUrl
+    ) {
     }
 
     public String getStoreId() {

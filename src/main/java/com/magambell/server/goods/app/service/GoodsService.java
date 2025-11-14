@@ -3,12 +3,15 @@ package com.magambell.server.goods.app.service;
 import com.magambell.server.common.enums.ErrorCode;
 import com.magambell.server.common.exception.DuplicateException;
 import com.magambell.server.common.exception.NotFoundException;
+import com.magambell.server.goods.adapter.in.web.GoodsImagesRegister;
+import com.magambell.server.goods.adapter.out.persistence.GoodsImagesResponse;
 import com.magambell.server.goods.app.port.in.GoodsUseCase;
 import com.magambell.server.goods.app.port.in.request.ChangeGoodsStatusServiceRequest;
 import com.magambell.server.goods.app.port.in.request.EditGoodsServiceRequest;
 import com.magambell.server.goods.app.port.in.request.RegisterGoodsServiceRequest;
 import com.magambell.server.goods.app.port.out.GoodsCommandPort;
 import com.magambell.server.goods.app.port.out.GoodsQueryPort;
+import com.magambell.server.goods.app.port.out.response.EditGoodsImageResponseDTO;
 import com.magambell.server.goods.domain.entity.Goods;
 import com.magambell.server.goods.domain.enums.SaleStatus;
 import com.magambell.server.notification.app.port.in.NotificationUseCase;
@@ -17,12 +20,13 @@ import com.magambell.server.store.app.port.out.StoreQueryPort;
 import com.magambell.server.store.domain.entity.Store;
 import com.magambell.server.user.app.port.out.UserQueryPort;
 import com.magambell.server.user.domain.entity.User;
-import java.time.LocalDateTime;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.time.LocalDateTime;
+import java.util.List;
 
 @Slf4j
 @RequiredArgsConstructor
@@ -38,11 +42,12 @@ public class GoodsService implements GoodsUseCase {
 
     @Transactional
     @Override
-    public void registerGoods(final RegisterGoodsServiceRequest request, final Long userId) {
+    public GoodsImagesResponse registerGoods(final RegisterGoodsServiceRequest request, final Long userId) {
         User user = userQueryPort.findById(userId);
         Store store = getStore(user);
         existGoods(store);
-        goodsCommandPort.registerGoods(request.toDTO(store));
+
+        return new GoodsImagesResponse(goodsCommandPort.registerGoods(request.toDTO(store)).goodsPreSignedUrlImages());
     }
 
     @Transactional
@@ -59,9 +64,14 @@ public class GoodsService implements GoodsUseCase {
 
     @Transactional
     @Override
-    public void editGoods(final EditGoodsServiceRequest request) {
+    public GoodsImagesResponse editGoods(final EditGoodsServiceRequest request) {
         Goods goods = goodsQueryPort.findOwnedGoodsWithRelations(request.goodsId(), request.userId());
         goods.edit(request.toDTO());
+
+        EditGoodsImageResponseDTO editGoodsImageResponseDTO = changeGoodsImage(goods, request.goodsImagesRegisters());
+        return new GoodsImagesResponse(editGoodsImageResponseDTO.goodsPreSignedUrlImages());
+
+
     }
 
     @Transactional
@@ -80,5 +90,10 @@ public class GoodsService implements GoodsUseCase {
         if (goodsQueryPort.existsByStoreId(store.getId())) {
             throw new DuplicateException(ErrorCode.DUPLICATE_GOODS);
         }
+    }
+
+    private EditGoodsImageResponseDTO changeGoodsImage(final Goods goods,
+                                                       final List<GoodsImagesRegister> goodsImagesRegisters) {
+        return goodsCommandPort.editGoodsImage(goods, goodsImagesRegisters);
     }
 }

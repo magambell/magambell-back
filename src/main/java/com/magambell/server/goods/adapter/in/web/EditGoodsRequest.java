@@ -1,11 +1,10 @@
 package com.magambell.server.goods.adapter.in.web;
 
 import com.magambell.server.goods.app.port.in.request.EditGoodsServiceRequest;
-import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.NotNull;
-import jakarta.validation.constraints.Positive;
-import jakarta.validation.constraints.PositiveOrZero;
+import jakarta.validation.constraints.*;
+
 import java.time.LocalDateTime;
+import java.util.List;
 
 public record EditGoodsRequest(
 
@@ -34,11 +33,14 @@ public record EditGoodsRequest(
         Integer discount,
 
         @PositiveOrZero(message = "판매가는 0원 이상 이어야 합니다.")
-        Integer salePrice
+        Integer salePrice,
+
+        @NotEmpty(message = "상품 이미지는 필수입니다.")
+        List<GoodsImagesRegister> goodsImagesRegisters
 ) {
     public EditGoodsServiceRequest toService(final Long userId) {
         return new EditGoodsServiceRequest(goodsId, name, description, startTime, endTime, quantity, originalPrice,
                 discount,
-                salePrice, userId);
+                salePrice, userId, goodsImagesRegisters);
     }
 }

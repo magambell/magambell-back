@@ -18,11 +18,12 @@ import com.magambell.server.review.app.port.out.response.ReviewReportListDTO;
 import com.magambell.server.review.domain.entity.Review;
 import com.magambell.server.user.app.port.out.UserQueryPort;
 import com.magambell.server.user.domain.entity.User;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
+import java.util.List;
 
 @Transactional(readOnly = true)
 @RequiredArgsConstructor
@@ -86,6 +87,7 @@ public class ReviewService implements ReviewUseCase {
     }
 
     private void validateOrderStatus(final OrderGoods orderGoods) {
+        System.out.println(orderGoods.getOrder().getOrderStatus());
         if (orderGoods.getOrder().getOrderStatus() != OrderStatus.COMPLETED) {
             throw new InvalidRequestException(ErrorCode.INVALID_ORDER_STATUS_COMPLETED);
         }

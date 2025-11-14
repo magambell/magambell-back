@@ -2,10 +2,11 @@ package com.magambell.server.store.app.port.in.dto;
 
 import com.magambell.server.common.s3.dto.ImageRegister;
 import com.magambell.server.store.adapter.in.web.StoreImagesRegister;
+import com.magambell.server.store.domain.entity.Store;
 import com.magambell.server.store.domain.enums.Approved;
 import com.magambell.server.store.domain.enums.Bank;
-import com.magambell.server.store.domain.entity.Store;
 import com.magambell.server.user.domain.entity.User;
+
 import java.util.List;
 
 public record RegisterStoreDTO(
@@ -20,7 +21,8 @@ public record RegisterStoreDTO(
         String bankAccount,
         List<StoreImagesRegister> storeImagesRegisters,
         Approved approved,
-        User user
+        User user,
+        String parkingDescription
 ) {
     public Store toEntity() {
         return Store.create(this);

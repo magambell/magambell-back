@@ -36,6 +36,22 @@ public class S3Adapter implements S3InputPort {
     }
 
     @Override
+    public List<TransformedImageDTO> saveImages(final String imagePrefix,
+                                                final List<ImageRegister> imageRegisters, final Long id) {
+        return imageRegisters.stream()
+                .map(image -> {
+                    String getImagePrefix = getImagePrefix(imagePrefix, image, id);
+
+                    return new TransformedImageDTO(
+                            image.id(),
+                            getCloudFrontSignedUrl(getImagePrefix),
+                            s3Client.getPreSignedUrl(getImagePrefix)
+                    );
+                })
+                .toList();
+    }
+
+    @Override
     public TransformedImageDTO saveImage(final String imagePrefix,
                                          final ImageRegister imageRegister,
                                          final Long id) {

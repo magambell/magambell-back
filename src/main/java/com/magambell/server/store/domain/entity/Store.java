@@ -7,25 +7,17 @@ import com.magambell.server.notification.domain.entity.FcmToken;
 import com.magambell.server.store.app.port.in.dto.RegisterStoreDTO;
 import com.magambell.server.store.domain.enums.Approved;
 import com.magambell.server.store.domain.enums.Bank;
-import com.magambell.server.user.domain.enums.UserRole;
 import com.magambell.server.user.domain.entity.User;
+import com.magambell.server.user.domain.enums.UserRole;
 import io.hypersistence.utils.hibernate.id.Tsid;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
-import java.util.ArrayList;
-import java.util.List;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -48,6 +40,8 @@ public class Store extends BaseTimeEntity {
     private Bank bankName;
 
     private String bankAccount;
+
+    private String parkingDescription;
 
     @Enumerated(EnumType.STRING)
     private Approved approved;

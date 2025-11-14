@@ -10,6 +10,8 @@ public interface S3InputPort {
 
     List<TransformedImageDTO> saveImages(String imagePrefix, List<ImageRegister> imageRegisters, User user);
 
+    List<TransformedImageDTO> saveImages(String imagePrefix, List<ImageRegister> imageRegister, Long id);
+
     TransformedImageDTO saveImage(String imagePrefix, ImageRegister imageRegister, Long id);
 
     String getImagePrefix(String imagePrefix, ImageRegister imageRegister, User user);
