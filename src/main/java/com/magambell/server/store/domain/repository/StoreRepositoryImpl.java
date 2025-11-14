@@ -157,7 +157,9 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                                         goods.discount,
                                         goods.description,
                                         stock.quantity,
-                                        goods.saleStatus
+                                        goods.saleStatus,
+                                        store.latitude,
+                                        store.longitude
                                 )
                         )
                 );

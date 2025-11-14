@@ -80,7 +80,9 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
                                                 )),
                                                 set(review.id),
                                                 payment.payType,
-                                                payment.easyPayProvider
+                                                payment.easyPayProvider,
+                                                store.latitude,
+                                                store.longitude
                                         )
                                 )
                 );

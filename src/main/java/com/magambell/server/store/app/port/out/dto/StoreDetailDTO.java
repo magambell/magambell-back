@@ -18,7 +18,9 @@ public record StoreDetailDTO(
         Integer discount,
         String description,
         Integer quantity,
-        SaleStatus saleStatus
+        SaleStatus saleStatus,
+        Double latitude,
+        Double longitude
 ) {
     public StoreDetailResponse toResponse(Long reviewCount,
                                           Double averageRating) {
@@ -28,6 +30,6 @@ public record StoreDetailDTO(
 
         return new StoreDetailResponse(String.valueOf(storeId), String.valueOf(goodsId), storeName, address, images,
                 startTime, endTime, originalPrice,
-                salePrice, discount, description, quantity, saleStatus, reviewCount, roundedRating);
+                salePrice, discount, description, quantity, saleStatus, latitude, longitude, reviewCount, roundedRating);
     }
 }

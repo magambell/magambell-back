@@ -18,7 +18,10 @@ public record StoreDetailResponse(
         String description,
         Integer quantity,
         SaleStatus saleStatus,
+        Double latitude,
+        Double longitude,
         Long reviewCount,
         Double averageRating
+
 ) {
 }
