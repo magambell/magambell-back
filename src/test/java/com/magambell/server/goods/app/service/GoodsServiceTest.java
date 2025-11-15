@@ -1,10 +1,17 @@
 package com.magambell.server.goods.app.service;
 
+
+
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.doNothing;
+import static reactor.core.publisher.Mono.when;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.magambell.server.auth.domain.ProviderType;
+import com.magambell.server.common.s3.S3Adapter;
+import com.magambell.server.common.s3.S3Client;
+import com.magambell.server.common.s3.S3InputPort;
 import com.magambell.server.goods.adapter.in.web.GoodsImagesRegister;
 import com.magambell.server.goods.app.port.in.dto.RegisterGoodsDTO;
 import com.magambell.server.goods.app.port.in.request.ChangeGoodsStatusServiceRequest;
@@ -65,6 +72,15 @@ class GoodsServiceTest {
     @MockBean
     private FirebaseNotificationSender firebaseNotificationSender;
 
+    @MockBean
+    private S3Adapter s3Adapter;
+
+    @MockBean
+    private S3Client s3Client;
+
+//    @MockBean
+//    private S3InputPort s3InputPort;
+
     private User user;
     private Store store;
 
@@ -95,6 +111,10 @@ class GoodsServiceTest {
         store = registerStoreDTO.toEntity();
         user.addStore(store);
         user = userRepository.save(user);
+
+        doNothing().when(s3Adapter).deleteS3Objects(anyString(), any(User.class));
+        doNothing().when(s3Adapter).deleteS3Objects(anyString(), anyLong());
+
     }
 
     @AfterEach
@@ -115,7 +135,7 @@ class GoodsServiceTest {
                 "상품설명",
                 LocalDateTime.of(2025, 1, 1, 9, 0), LocalDateTime.of(2025, 1, 1, 18, 0),
                 3, 10000, 10, 9000,
-                List.of(new GoodsImagesRegister(0, "test", "상품명"))
+                List.of()
         );
 
         // when
@@ -153,10 +173,12 @@ class GoodsServiceTest {
                 LocalDateTime.of(2025, 1, 13, 9, 0),
                 LocalDateTime.of(2025, 1, 13, 18, 0),
                 5, 20000, 10, 16000, user.getId(),
-                List.of(new GoodsImagesRegister(0, "test", "상품명"))
+                List.of()
         );
 
         // when
+        doNothing().when(s3Client)
+                .deleteObjectS3("");
         goodsService.editGoods(request);
 
         // then
