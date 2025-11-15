@@ -10,6 +10,7 @@ import com.magambell.server.common.exception.InvalidRequestException;
 import com.magambell.server.common.exception.NotEqualException;
 import com.magambell.server.common.exception.NotFoundException;
 import com.magambell.server.common.security.CustomUserDetails;
+import com.magambell.server.goods.adapter.in.web.GoodsImagesRegister;
 import com.magambell.server.goods.app.port.in.dto.RegisterGoodsDTO;
 import com.magambell.server.goods.domain.entity.Goods;
 import com.magambell.server.goods.domain.repository.GoodsRepository;
@@ -250,7 +251,8 @@ class UserServiceTest {
                 "9876543210",
                 List.of(),
                 Approved.APPROVED,
-                owner);
+                owner,
+                "주차장");
         Store store = registerStoreDTO.toEntity();
 
         // 상품 생성
@@ -258,7 +260,8 @@ class UserServiceTest {
                 LocalDateTime.now().minusHours(1),
                 LocalDateTime.now().plusHours(2),
                 120, 10000, 10, 9000, "",
-                store
+                store,
+                List.of(new GoodsImagesRegister(0, "test", "상품명"))
         );
         Goods goods = Goods.create(registerGoodsDTO);
         store.addGoods(goods);

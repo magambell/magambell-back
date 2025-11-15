@@ -90,6 +90,7 @@ spring:
   config:
     activate:
       on-profile: dev
+    import: classpath:/secretkey.properties
   datasource:
     hikari:
       minimum-idle: 0
@@ -99,7 +100,8 @@ spring:
       connection-timeout: 5000
       auto-commit: false
     driver-class-name: org.mariadb.jdbc.Driver
-    url: jdbc:mariadb://${SERVER_HOST}:3306/magambell
+#    url: jdbc:mariadb://${SERVER_HOST}:3306/magambell
+    url: ${SERVER_HOST}
     username: ${MARIA_USERNAME}
     password: ${MARIA_PASSWORD}
   aws:
@@ -113,6 +115,7 @@ spring:
     database-platform: org.hibernate.dialect.MariaDBDialect
     hibernate:
       ddl-auto: none
+#      ddl-auto: update
 
 management:
   endpoints:

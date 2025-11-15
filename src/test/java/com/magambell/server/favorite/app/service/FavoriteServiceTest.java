@@ -8,6 +8,7 @@ import com.magambell.server.favorite.app.port.in.request.FavoriteStoreListServic
 import com.magambell.server.favorite.app.port.out.response.FavoriteStoreListDTOResponse;
 import com.magambell.server.favorite.domain.entity.Favorite;
 import com.magambell.server.favorite.domain.repository.FavoriteRepository;
+import com.magambell.server.goods.adapter.in.web.GoodsImagesRegister;
 import com.magambell.server.goods.app.port.in.dto.RegisterGoodsDTO;
 import com.magambell.server.goods.domain.entity.Goods;
 import com.magambell.server.goods.domain.repository.GoodsRepository;
@@ -84,7 +85,8 @@ class FavoriteServiceTest {
                 "102391485",
                 List.of(),
                 Approved.APPROVED,
-                owner
+                owner,
+                "주차장"
         );
         store = registerStoreDTO.toEntity();
         owner.addStore(store);
@@ -205,14 +207,16 @@ class FavoriteServiceTest {
                 "102391485",
                 List.of(),
                 Approved.APPROVED,
-                owner
+                owner,
+                "주차장"
         );
 
         Store store = registerStoreDTO.toEntity();
 
         RegisterGoodsDTO registerGoodsDTO = new RegisterGoodsDTO(
                 LocalDateTime.of(2025, 1, 1, 9, 0), LocalDateTime.of(2025, 1, 1, 18, 0),
-                i, 10000, 10, 9000, "상품설명", store
+                i, 10000, 10, 9000, "상품설명", store,
+                List.of(new GoodsImagesRegister(0, "test", "상품명"))
         );
         owner.addStore(store);
 

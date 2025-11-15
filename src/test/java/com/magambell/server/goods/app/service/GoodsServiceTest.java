@@ -5,6 +5,7 @@ import static org.mockito.Mockito.doNothing;
 
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.magambell.server.auth.domain.ProviderType;
+import com.magambell.server.goods.adapter.in.web.GoodsImagesRegister;
 import com.magambell.server.goods.app.port.in.dto.RegisterGoodsDTO;
 import com.magambell.server.goods.app.port.in.request.ChangeGoodsStatusServiceRequest;
 import com.magambell.server.goods.app.port.in.request.EditGoodsServiceRequest;
@@ -88,7 +89,8 @@ class GoodsServiceTest {
                 "102391485",
                 List.of(),
                 Approved.APPROVED,
-                user
+                user,
+                "주차장"
         );
         store = registerStoreDTO.toEntity();
         user.addStore(store);
@@ -112,7 +114,8 @@ class GoodsServiceTest {
         RegisterGoodsServiceRequest req = new RegisterGoodsServiceRequest(
                 "상품설명",
                 LocalDateTime.of(2025, 1, 1, 9, 0), LocalDateTime.of(2025, 1, 1, 18, 0),
-                3, 10000, 10, 9000
+                3, 10000, 10, 9000,
+                List.of(new GoodsImagesRegister(0, "test", "상품명"))
         );
 
         // when
@@ -136,7 +139,9 @@ class GoodsServiceTest {
                 LocalDateTime.of(2025, 1, 1, 18, 0),
                 3, 10000, 10, 9000,
                 "상품설명",
-                store);
+                store,
+                List.of(new GoodsImagesRegister(0, "test", "상품명"))
+                );
         Store store = dto.store();
         Goods dtoGoods = dto.toGoods();
 
@@ -147,7 +152,8 @@ class GoodsServiceTest {
                 "상품 설명2",
                 LocalDateTime.of(2025, 1, 13, 9, 0),
                 LocalDateTime.of(2025, 1, 13, 18, 0),
-                5, 20000, 10, 16000, user.getId()
+                5, 20000, 10, 16000, user.getId(),
+                List.of(new GoodsImagesRegister(0, "test", "상품명"))
         );
 
         // when
@@ -182,7 +188,9 @@ class GoodsServiceTest {
                 LocalDateTime.of(2025, 1, 1, 18, 0),
                 3, 10000, 10, 9000,
                 "상품설명",
-                store);
+                store,
+                List.of(new GoodsImagesRegister(0, "test", "상품명"))
+                );
         Store store = dto.store();
         Goods dtoGoods = dto.toGoods();
 
@@ -214,7 +222,9 @@ class GoodsServiceTest {
                 LocalDateTime.of(2025, 1, 1, 18, 0),
                 3, 10000, 10, 9000,
                 "상품설명",
-                store);
+                store,
+                List.of(new GoodsImagesRegister(0, "test", "상품명"))
+        );
         Store store = dto.store();
         Goods dtoGoods = dto.toGoods();
 

@@ -81,7 +81,8 @@ class NotificationServiceTest {
                 "102391485",
                 List.of(),
                 Approved.APPROVED,
-                user
+                user,
+                "주차장"
         );
         store = registerStoreDTO.toEntity();
         user.addStore(store);
