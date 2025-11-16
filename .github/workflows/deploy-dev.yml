@@ -60,6 +60,7 @@ jobs:
           username: ubuntu
           host: ${{ secrets.DEV_EC2_HOST }}
           key: ${{ secrets.DEV_EC2_PRIVATE_KEY }}
+          host_key: ${{ secrets.DEV_SSH_KNOWN_HOSTS }}
           timeout: 30s
           command_timeout: 20m
           script: |

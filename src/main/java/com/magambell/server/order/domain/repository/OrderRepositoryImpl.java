@@ -25,6 +25,8 @@ import com.magambell.server.user.domain.enums.UserStatus;
 import com.magambell.server.user.domain.entity.QUser;
 import com.querydsl.core.BooleanBuilder;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.dsl.CaseBuilder;
+import com.querydsl.core.types.dsl.NumberExpression;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.time.LocalDateTime;
 import java.util.List;
@@ -39,6 +41,21 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
 
     @Override
     public List<OrderListDTO> getOrderList(final Pageable pageable, final Long userId) {
+        LocalDateTime now = LocalDateTime.now();
+
+        // 상태 기반 우선순위
+        NumberExpression<Integer> statusOrder = new CaseBuilder()
+                .when(order.orderStatus.eq(OrderStatus.ACCEPTED)).then(1)
+                .when(order.orderStatus.eq(OrderStatus.PAID)).then(2)
+                .otherwise(3);
+
+        // ACCEPTED 중 pickupTime 지나간 것 우선
+        NumberExpression<Integer> acceptedPickupPriority = new CaseBuilder()
+                .when(order.orderStatus.eq(OrderStatus.ACCEPTED)
+                        .and(order.pickupTime.before(now)))
+                .then(1)
+                .otherwise(2);
+
         return queryFactory
                 .select(order, orderGoods, goods, store, storeImage, user, review, payment)
                 .from(order)
@@ -58,7 +75,11 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
                                         order.orderStatus.ne(OrderStatus.PENDING)
                                 )
                 )
-                .orderBy(order.createdAt.desc())
+                .orderBy(
+                        statusOrder.asc(),                 // 상태 우선순위
+                        acceptedPickupPriority.asc(),      // ACCEPTED 중 pickupTime 지난 순
+                        order.createdAt.desc()             // 나머지는 생성일 기준
+                )
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
                 .transform(
