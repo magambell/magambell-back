@@ -54,17 +54,13 @@ jobs:
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG --build-arg JAR_FILE=build/libs/*.jar .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
 
-      - name: Add DEV host to known_hosts
-        run: |
-          mkdir -p ~/.ssh
-          ssh-keyscan -H ${{ secrets.DEV_EC2_HOST }} >> ~/.ssh/known_hosts
-
       - name: Deploy to Dev
         uses: appleboy/ssh-action@master
         with:
           username: ubuntu
           host: ${{ secrets.DEV_EC2_HOST }}
           key: ${{ secrets.DEV_EC2_PRIVATE_KEY }}
+          strict_host_key_checking: false # 추후에 삭제
           timeout: 30s
           command_timeout: 20m
           script: |
