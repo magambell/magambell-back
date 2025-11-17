@@ -40,9 +40,9 @@ jobs:
         run: |
           if ! aws ecr describe-repositories --repository-names ${{ secrets.DEV_ECR_REPOSITORY }} &>/dev/null; then
             echo "Creating ECR repository: ${{ secrets.DEV_ECR_REPOSITORY }}"
-              aws ecr create-repository --repository-name ${{ secrets.DEV_ECR_REPOSITORY }}
-            else
-              echo "ECR repository already exists: ${{ secrets.DEV_ECR_REPOSITORY }}"
+            aws ecr create-repository --repository-name ${{ secrets.DEV_ECR_REPOSITORY }}
+          else
+            echo "ECR repository already exists: ${{ secrets.DEV_ECR_REPOSITORY }}"
           fi
 
       - name: Build, tag, push
