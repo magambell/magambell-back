@@ -11,5 +11,4 @@ public class MagambellApplication {
 		SpringApplication.run(MagambellApplication.class, args);
 	}
 
-
 }
