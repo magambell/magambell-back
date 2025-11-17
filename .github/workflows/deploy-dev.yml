@@ -40,9 +40,9 @@ jobs:
         run: |
           if ! aws ecr describe-repositories --repository-names ${{ secrets.DEV_ECR_REPOSITORY }} &>/dev/null; then
             echo "Creating ECR repository: ${{ secrets.DEV_ECR_REPOSITORY }}"
-            aws ecr create-repository --repository-name ${{ secrets.DEV_ECR_REPOSITORY }}
-          else
-            echo "ECR repository already exists: ${{ secrets.DEV_ECR_REPOSITORY }}"
+              aws ecr create-repository --repository-name ${{ secrets.DEV_ECR_REPOSITORY }}
+            else
+              echo "ECR repository already exists: ${{ secrets.DEV_ECR_REPOSITORY }}"
           fi
 
       - name: Build, tag, push
@@ -53,11 +53,6 @@ jobs:
         run: |
           docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG --build-arg JAR_FILE=build/libs/*.jar .
           docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-
-      - name: Add Dev server to known_hosts
-        run: |
-          mkdir -p ~/.ssh
-          ssh-keyscan -H ${{ secrets.DEV_EC2_HOST }} >> ~/.ssh/known_hosts
 
       - name: Deploy to Dev
         uses: appleboy/ssh-action@master
