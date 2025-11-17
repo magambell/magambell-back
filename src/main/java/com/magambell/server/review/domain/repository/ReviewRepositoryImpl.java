@@ -1,17 +1,5 @@
 package com.magambell.server.review.domain.repository;
 
-import static com.magambell.server.goods.domain.entity.QGoods.goods;
-import static com.magambell.server.order.domain.entity.QOrder.order;
-import static com.magambell.server.order.domain.entity.QOrderGoods.orderGoods;
-import static com.magambell.server.review.domain.entity.QReview.review;
-import static com.magambell.server.review.domain.entity.QReviewImage.reviewImage;
-import static com.magambell.server.review.domain.entity.QReviewReason.reviewReason;
-import static com.magambell.server.review.domain.entity.QReviewReport.reviewReport;
-import static com.magambell.server.store.domain.entity.QStore.store;
-import static com.magambell.server.user.domain.entity.QUser.user;
-import static com.querydsl.core.group.GroupBy.groupBy;
-import static com.querydsl.core.group.GroupBy.set;
-
 import com.magambell.server.order.domain.enums.OrderStatus;
 import com.magambell.server.review.app.port.in.request.ReviewListServiceRequest;
 import com.magambell.server.review.app.port.in.request.ReviewRatingAllServiceRequest;
@@ -25,9 +13,21 @@ import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.Expressions;
 import com.querydsl.core.types.dsl.NumberPath;
 import com.querydsl.jpa.impl.JPAQueryFactory;
-import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
+
+import java.util.List;
+
+import static com.magambell.server.goods.domain.entity.QGoods.goods;
+import static com.magambell.server.order.domain.entity.QOrder.order;
+import static com.magambell.server.order.domain.entity.QOrderGoods.orderGoods;
+import static com.magambell.server.review.domain.entity.QReview.review;
+import static com.magambell.server.review.domain.entity.QReviewImage.reviewImage;
+import static com.magambell.server.review.domain.entity.QReviewReport.reviewReport;
+import static com.magambell.server.store.domain.entity.QStore.store;
+import static com.magambell.server.user.domain.entity.QUser.user;
+import static com.querydsl.core.group.GroupBy.groupBy;
+import static com.querydsl.core.group.GroupBy.set;
 
 @RequiredArgsConstructor
 public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
@@ -77,7 +77,7 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
 
         long totalCount = 0;
         long ratingSum = 0;
-        long rating2 = 0, rating3 = 0, rating4 = 0, rating5 = 0;
+        long rating1 = 0, rating2 = 0, rating3 = 0;
 
         for (Tuple tuple : results) {
             Integer rating = tuple.get(review.rating);
@@ -88,10 +88,9 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
                 ratingSum += rating * count;
 
                 switch (rating) {
+                    case 1 -> rating1 = count;
                     case 2 -> rating2 = count;
                     case 3 -> rating3 = count;
-                    case 4 -> rating4 = count;
-                    case 5 -> rating5 = count;
                 }
             }
         }
@@ -101,10 +100,9 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
         return new ReviewRatingSummaryDTO(
                 averageRating,
                 totalCount,
+                rating1,
                 rating2,
-                rating3,
-                rating4,
-                rating5
+                rating3
         );
     }
 
@@ -134,7 +132,6 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
                 .select(review.id)
                 .from(review)
                 .leftJoin(reviewImage).on(reviewImage.review.id.eq(review.id))
-                .leftJoin(reviewReason).on(reviewReason.review.id.eq(review.id))
                 .innerJoin(orderGoods).on(orderGoods.id.eq(review.orderGoods.id))
                 .innerJoin(order).on(order.id.eq(orderGoods.order.id))
                 .innerJoin(goods).on(goods.id.eq(orderGoods.goods.id))
@@ -147,10 +144,9 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
                 .fetch();
 
         return queryFactory
-                .select(review, reviewImage, reviewReason, order, orderGoods, goods, store, user)
+                .select(review, reviewImage, order, orderGoods, goods, store, user)
                 .from(review)
                 .leftJoin(reviewImage).on(reviewImage.review.id.eq(review.id))
-                .leftJoin(reviewReason).on(reviewReason.review.id.eq(review.id))
                 .innerJoin(orderGoods).on(orderGoods.id.eq(review.orderGoods.id))
                 .innerJoin(order).on(order.id.eq(orderGoods.order.id))
                 .innerJoin(goods).on(goods.id.eq(orderGoods.goods.id))
@@ -165,7 +161,6 @@ public class ReviewRepositoryImpl implements ReviewRepositoryCustom {
                                                 ReviewListDTO.class,
                                                 review.id,
                                                 review.rating,
-                                                set(reviewReason.satisfactionReason),
                                                 review.description,
                                                 review.createdAt,
                                                 set(reviewImage.name),
