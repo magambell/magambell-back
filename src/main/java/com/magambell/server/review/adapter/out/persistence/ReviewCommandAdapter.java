@@ -1,6 +1,8 @@
 package com.magambell.server.review.adapter.out.persistence;
 
 import com.magambell.server.common.annotation.Adapter;
+import com.magambell.server.common.enums.ErrorCode;
+import com.magambell.server.common.exception.InvalidRequestException;
 import com.magambell.server.common.s3.S3InputPort;
 import com.magambell.server.common.s3.dto.ImageRegister;
 import com.magambell.server.common.s3.dto.TransformedImageDTO;
@@ -44,6 +46,11 @@ public class ReviewCommandAdapter implements ReviewCommandPort {
 
     @Override
     public void reportReview(ReportReviewDTO dto) {
+        ReviewReport reviewReport = reviewReportRepository.getReviewReportByReviewIdAndUserId(dto.review().getId(), dto.user().getId());
+        if(reviewReport != null) {
+            throw new InvalidRequestException(ErrorCode.REVIEW_ALREADY_REPORTED);
+        }
+
         reviewReportRepository.save(ReviewReport.create(dto));
     }
 

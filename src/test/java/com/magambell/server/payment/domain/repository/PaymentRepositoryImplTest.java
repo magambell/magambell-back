@@ -4,6 +4,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import com.magambell.server.auth.domain.ProviderType;
+import com.magambell.server.goods.adapter.in.web.GoodsImagesRegister;
 import com.magambell.server.goods.app.port.in.dto.RegisterGoodsDTO;
 import com.magambell.server.goods.domain.entity.Goods;
 import com.magambell.server.goods.domain.repository.GoodsRepository;
@@ -113,7 +114,8 @@ class PaymentRepositoryImplTest {
                 "9876543210",
                 List.of(),
                 Approved.APPROVED,
-                owner);
+                owner,
+                "주차장");
         Store store = registerStoreDTO.toEntity();
 
         // 상품 생성
@@ -121,7 +123,8 @@ class PaymentRepositoryImplTest {
                 LocalDateTime.now().minusHours(1),
                 LocalDateTime.now().plusHours(2),
                 120, 10000, 10, 9000, "",
-                store
+                store,
+                List.of(new GoodsImagesRegister(0, "test", "상품명"))
         );
         goods = Goods.create(registerGoodsDTO);
         store.addGoods(goods);

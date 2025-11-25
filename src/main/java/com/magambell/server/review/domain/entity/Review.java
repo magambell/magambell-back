@@ -7,26 +7,14 @@ import com.magambell.server.order.domain.entity.OrderGoods;
 import com.magambell.server.review.app.port.in.dto.RegisterReviewDTO;
 import com.magambell.server.review.domain.enums.ReviewStatus;
 import com.magambell.server.user.domain.entity.User;
-import jakarta.persistence.CascadeType;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.OneToOne;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
+import jakarta.persistence.*;
 import lombok.AccessLevel;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
@@ -56,8 +44,6 @@ public class Review extends BaseTimeEntity {
     @OneToMany(mappedBy = "review", cascade = CascadeType.ALL)
     private List<ReviewImage> reviewImages = new ArrayList<>();
 
-    @OneToMany(mappedBy = "review", cascade = CascadeType.ALL)
-    private List<ReviewReason> reviewReasons = new ArrayList<>();
 
     @Builder(access = AccessLevel.PRIVATE)
     private Review(final Integer rating, final String description, final ReviewStatus reviewStatus) {
@@ -77,25 +63,11 @@ public class Review extends BaseTimeEntity {
                 .reviewStatus(ReviewStatus.ACTIVE)
                 .build();
 
-        List<ReviewReason> list = Optional.ofNullable(dto.satisfactionReasons())
-                .orElse(List.of())
-                .stream()
-                .map(ReviewReason::new)
-                .toList();
-
         review.addUser(dto.user());
         review.addOrderGoods(dto.orderGoods());
-        if (!list.isEmpty()) {
-            review.addReviewReasons(list);
-        }
 
         return review;
 
-    }
-
-    private void addReviewReasons(final List<ReviewReason> reviewReasons) {
-        this.reviewReasons.addAll(reviewReasons);
-        reviewReasons.forEach(reviewReason -> reviewReason.addReview(this));
     }
 
     private void addOrderGoods(final OrderGoods orderGoods) {

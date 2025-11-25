@@ -1,6 +1,7 @@
 package com.magambell.server.store.adapter.out.persistence;
 
 import com.magambell.server.goods.domain.enums.SaleStatus;
+
 import java.time.LocalDateTime;
 import java.util.Set;
 
@@ -18,7 +19,11 @@ public record StoreDetailResponse(
         String description,
         Integer quantity,
         SaleStatus saleStatus,
+        Double latitude,
+        Double longitude,
+        String parkingDescription,
         Long reviewCount,
         Double averageRating
+
 ) {
 }

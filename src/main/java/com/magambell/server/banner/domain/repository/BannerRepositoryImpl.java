@@ -24,6 +24,7 @@ public class BannerRepositoryImpl implements BannerRepositoryCustom {
         return queryFactory
                 .select(banner)
                 .from(banner)
+                .orderBy(banner.order.asc())
                 .fetch();
     }
 

@@ -76,6 +76,8 @@ public enum ErrorCode {
     FAVORITE_NOT_FOUND("즐겨찾기한 매장을 찾을 수 없습니다."),
     FCM_NOT_FOUND("알림 설정한 매장을 찾을 수 없습니다."),
     REVIEW_NOT_FOUND("리뷰를 찾을 수 없습니다."),
+    BANNER_NOT_FOUND("배너가 존재하지 않았습니다."),
+
 
     JWT_VERIFY_EXPIRED("인증정보가 만료 됐습니다."),
     JWT_VALIDATE_ERROR("유효한 인증정보가 아닙니다."),
@@ -83,7 +85,12 @@ public enum ErrorCode {
 
     FIREBASE_INIT_FAILED("Firebase 초기화에 실패했습니다."),
     FIREBASE_SEND_FAILED("Firebase 메세지 발송에 실패했습니다."),
-    OAUTH_APPLE_PARSE_FAILED("사용자 정보를 가져오는데 실패했습니다.");
+    OAUTH_APPLE_PARSE_FAILED("사용자 정보를 가져오는데 실패했습니다."),
+
+    REVIEW_ALREADY_REPORTED("이미 신고한 리뷰입니다."),
+
+    ;
+
     
     private final String message;
 }

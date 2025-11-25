@@ -3,9 +3,6 @@ package com.magambell.server.store.adapter;
 import com.magambell.server.common.Response;
 import com.magambell.server.common.security.CustomUserDetails;
 import com.magambell.server.common.swagger.BaseResponse;
-import com.magambell.server.review.adapter.in.web.ReviewListRequest;
-import com.magambell.server.review.adapter.out.persistence.ReviewListResponse;
-import com.magambell.server.review.app.port.out.response.ReviewListDTO;
 import com.magambell.server.store.adapter.in.web.*;
 import com.magambell.server.store.adapter.out.persistence.*;
 import com.magambell.server.store.app.port.in.StoreUseCase;
@@ -20,14 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -152,7 +142,7 @@ public class StoreController {
         return new Response<>();
     }
 
-    @PreAuthorize("{hasRole('ADMIN')}")
+    @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "지역 오픈 요청 리스트")
     @ApiResponse(responseCode = "200", content = {
             @Content(schema = @Schema(implementation = OpenRegionListResponse.class))})

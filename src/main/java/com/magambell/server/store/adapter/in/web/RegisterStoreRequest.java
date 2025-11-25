@@ -5,6 +5,7 @@ import com.magambell.server.store.domain.enums.Bank;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.NotNull;
+
 import java.util.List;
 
 public record RegisterStoreRequest(
@@ -36,7 +37,10 @@ public record RegisterStoreRequest(
         String bankAccount,
 
         @NotEmpty(message = "대표 이미지는 필수입니다.")
-        List<StoreImagesRegister> storeImagesRegisters
+        List<StoreImagesRegister> storeImagesRegisters,
+
+        String parkingDescription
+
 ) {
     public RegisterStoreServiceRequest toServiceRequest() {
         return new RegisterStoreServiceRequest(
@@ -49,6 +53,7 @@ public record RegisterStoreRequest(
                 businessNumber,
                 bankName,
                 bankAccount,
-                storeImagesRegisters);
+                storeImagesRegisters,
+                parkingDescription);
     }
 }

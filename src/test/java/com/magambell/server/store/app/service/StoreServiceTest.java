@@ -7,6 +7,7 @@ import static org.mockito.Mockito.doNothing;
 import com.magambell.server.auth.domain.ProviderType;
 import com.magambell.server.common.s3.S3Client;
 import com.magambell.server.common.s3.dto.ImageRegister;
+import com.magambell.server.goods.adapter.in.web.GoodsImagesRegister;
 import com.magambell.server.goods.app.port.in.dto.RegisterGoodsDTO;
 import com.magambell.server.goods.domain.entity.Goods;
 import com.magambell.server.goods.domain.repository.GoodsRepository;
@@ -110,7 +111,8 @@ class StoreServiceTest {
                 "123491923",
                 Bank.KB국민,
                 "102391485",
-                List.of(new StoreImagesRegister(0, "test"))
+                List.of(new StoreImagesRegister(0, "test")),
+                "주차장"
         );
 
         // when
@@ -285,7 +287,8 @@ class StoreServiceTest {
                 "102391485",
                 List.of(),
                 Approved.APPROVED,
-                user
+                user,
+                "주차장"
         );
 
         Store store = registerStoreDTO.toEntity();
@@ -294,7 +297,8 @@ class StoreServiceTest {
 
         RegisterGoodsDTO registerGoodsDTO = new RegisterGoodsDTO(
                 LocalDateTime.of(2025, 1, 1, 9, 0), LocalDateTime.of(2025, 1, 1, 18, 0),
-                i, 10000, 10, 9000, "상품설명", store
+                i, 10000, 10, 9000, "상품설명", store, List.of(new GoodsImagesRegister(0, "test", "상품명"))
+
         );
         user.addStore(store);
 

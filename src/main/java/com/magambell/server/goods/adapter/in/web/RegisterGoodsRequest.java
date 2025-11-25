@@ -5,7 +5,9 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
+
 import java.time.LocalDateTime;
+import java.util.List;
 
 public record RegisterGoodsRequest(
 
@@ -28,12 +30,15 @@ public record RegisterGoodsRequest(
         Integer discount,
 
         @PositiveOrZero(message = "판매가는 0원 이상 이어야 합니다.")
-        Integer salePrice
+        Integer salePrice,
+
+//        @NotEmpty(message = "상품 이미지는 필수입니다.")
+        List<GoodsImagesRegister> goodsImagesRegisters
 
 ) {
     public RegisterGoodsServiceRequest toService() {
         return new RegisterGoodsServiceRequest(
-                description, startTime, endTime, quantity, originalPrice, discount, salePrice
+                description, startTime, endTime, quantity, originalPrice, discount, salePrice, goodsImagesRegisters
         );
     }
 }

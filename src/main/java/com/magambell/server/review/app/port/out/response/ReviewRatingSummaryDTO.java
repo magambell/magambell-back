@@ -5,13 +5,11 @@ import com.magambell.server.review.adapter.out.persistence.ReviewRatingSummaryRe
 public record ReviewRatingSummaryDTO(
         Double averageRating,
         Long totalCount,
+        Long rating1Count,
         Long rating2Count,
-        Long rating3Count,
-        Long rating4Count,
-        Long rating5Count
+        Long rating3Count
 ) {
     public ReviewRatingSummaryResponse toResponse() {
-        return new ReviewRatingSummaryResponse(averageRating, totalCount, rating2Count, rating3Count, rating4Count,
-                rating5Count);
+        return new ReviewRatingSummaryResponse(averageRating, totalCount, rating1Count, rating2Count, rating3Count);
     }
 }

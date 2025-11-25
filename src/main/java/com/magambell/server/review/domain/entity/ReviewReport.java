@@ -1,10 +1,7 @@
 package com.magambell.server.review.domain.entity;
 
-import com.magambell.server.auth.app.port.in.dto.RefreshTokenDTO;
-import com.magambell.server.auth.domain.entity.RefreshToken;
 import com.magambell.server.common.BaseTimeEntity;
 import com.magambell.server.review.app.port.in.dto.ReportReviewDTO;
-import com.magambell.server.review.domain.enums.SatisfactionReason;
 import com.magambell.server.user.domain.entity.User;
 import jakarta.persistence.*;
 import lombok.AccessLevel;

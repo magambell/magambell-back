@@ -1,23 +1,14 @@
 package com.magambell.server.banner.app.port.in.request;
 
 import com.magambell.server.banner.adaper.in.web.BannerImagesRegister;
+import com.magambell.server.banner.app.port.in.dto.RegisterBannerDTO;
 import com.magambell.server.common.enums.ErrorCode;
 import com.magambell.server.common.exception.InvalidRequestException;
-import com.magambell.server.banner.app.port.in.dto.RegisterBannerDTO;
-
-
-import java.util.List;
 
 public record RegisterBannerServiceRequest(
-        String name,
-        Integer order,
         BannerImagesRegister bannerImagesRegister
 ) {
-    public RegisterBannerServiceRequest(final String name,
-                                        final Integer order,
-                                        final BannerImagesRegister bannerImagesRegister) {
-        this.name = name;
-        this.order = order;
+    public RegisterBannerServiceRequest(final BannerImagesRegister bannerImagesRegister) {
         this.bannerImagesRegister = validateImages(bannerImagesRegister);
     }
 
@@ -29,6 +20,6 @@ public record RegisterBannerServiceRequest(
     }
 
     public RegisterBannerDTO toBannerDTO() {
-        return new RegisterBannerDTO(name, order, bannerImagesRegister);
+        return new RegisterBannerDTO(bannerImagesRegister);
     }
 }
