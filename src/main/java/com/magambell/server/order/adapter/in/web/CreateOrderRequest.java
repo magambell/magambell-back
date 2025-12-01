@@ -1,5 +1,6 @@
 package com.magambell.server.order.adapter.in.web;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.magambell.server.order.app.port.in.request.CreateOrderServiceRequest;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
@@ -16,6 +17,7 @@ public record CreateOrderRequest(
         @PositiveOrZero(message = "주문 금액은 0원 이상 이어야 합니다.")
         Integer totalPrice,
 
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
         @NotNull(message = "픽업시간을 설정해 주세요.")
         LocalDateTime pickupTime,
         String memo
