@@ -65,7 +65,8 @@ public class Store extends BaseTimeEntity {
     @Builder(access = AccessLevel.PRIVATE)
     private Store(final String name, final String address, final Double latitude, final Double longitude,
                   final String ownerName, final String ownerPhone,
-                  final String businessNumber, final Bank bankName, final String bankAccount, final Approved approved) {
+                  final String businessNumber, final Bank bankName, final String bankAccount, final Approved approved,
+                  final String parkingDescription) {
         this.name = name;
         this.address = address;
         this.latitude = latitude;
@@ -76,6 +77,7 @@ public class Store extends BaseTimeEntity {
         this.bankName = bankName;
         this.bankAccount = bankAccount;
         this.approved = approved;
+        this.parkingDescription = parkingDescription;
     }
 
     public static Store create(final RegisterStoreDTO dto) {
@@ -90,6 +92,7 @@ public class Store extends BaseTimeEntity {
                 .bankName(dto.bankName())
                 .bankAccount(dto.bankAccount())
                 .approved(dto.approved())
+                .parkingDescription(dto.parkingDescription())
                 .build();
     }
 

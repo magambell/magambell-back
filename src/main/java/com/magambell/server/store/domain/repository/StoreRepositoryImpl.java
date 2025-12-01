@@ -228,7 +228,8 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                                                 goodsImage.id,
                                                 goodsImage.goodsName,
                                                 goodsImage.imageUrl
-                                        ))
+                                        )),
+                                        store.parkingDescription
                                 )
                         )
                 );
