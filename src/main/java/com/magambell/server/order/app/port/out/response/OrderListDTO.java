@@ -18,7 +18,8 @@ public record OrderListDTO(
         String payType,
         String easyPayProvider,
         Double latitude,
-        Double longitude
+        Double longitude,
+        LocalDateTime pickupTime
 ) {
     public record OrderGoodsInfo(
             Long orderGoodsId,
