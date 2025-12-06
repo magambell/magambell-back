@@ -16,6 +16,7 @@ import com.magambell.server.order.app.port.in.request.RejectOrderServiceRequest;
 import com.magambell.server.order.app.port.out.OrderCommandPort;
 import com.magambell.server.order.app.port.out.OrderQueryPort;
 import com.magambell.server.order.app.port.out.response.CreateOrderResponseDTO;
+import java.time.LocalTime;
 import com.magambell.server.order.app.port.out.response.OrderDetailDTO;
 import com.magambell.server.order.app.port.out.response.OrderListDTO;
 import com.magambell.server.order.app.port.out.response.OrderStoreListDTO;
@@ -196,7 +197,12 @@ public class OrderService implements OrderUseCase {
             throw new InvalidRequestException(ErrorCode.INVALID_TOTAL_PRICE);
         }
 
-        if (request.pickupTime().isBefore(goods.getStartTime()) || request.pickupTime().isAfter(goods.getEndTime())) {
+        // 픽업 시간의 시간 부분만 추출하여 상품의 판매 시간대와 비교
+        LocalTime pickupLocalTime = request.pickupTime().toLocalTime();
+        LocalTime goodsStartTime = goods.getStartTime().toLocalTime();
+        LocalTime goodsEndTime = goods.getEndTime().toLocalTime();
+        
+        if (pickupLocalTime.isBefore(goodsStartTime) || pickupLocalTime.isAfter(goodsEndTime)) {
             throw new InvalidRequestException(ErrorCode.INVALID_PICKUP_TIME);
         }
 

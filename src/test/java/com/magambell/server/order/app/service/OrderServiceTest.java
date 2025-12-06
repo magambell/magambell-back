@@ -250,13 +250,15 @@ class OrderServiceTest {
 
         // then
         assertThat(orderStoreList.size()).isEqualTo(10);
-        assertThat(orderStoreList.get(0)).extracting("orderStatus", "pickupTime", "quantity", "totalPrice")
-                .contains(
-                        COMPLETED,
-                        LocalDateTime.of(2025, 6, 30, 17, 30),
-                        30,
-                        9000
-                );
+        OrderStoreListDTO firstOrder = orderStoreList.get(0);
+        assertThat(firstOrder.orderStatus()).isEqualTo(COMPLETED);
+        assertThat(firstOrder.quantity()).isEqualTo(30);
+        assertThat(firstOrder.totalPrice()).isEqualTo(9000);
+        // 픽업 시간이 상품 판매 시간대 내에 있는지 확인
+        assertThat(firstOrder.pickupTime().toLocalTime()).isBetween(
+                goods.getStartTime().toLocalTime(),
+                goods.getEndTime().toLocalTime()
+        );
     }
 
     @DisplayName("사장님 주문 목록 - 대기(PAID)")
@@ -274,21 +276,26 @@ class OrderServiceTest {
 
         // then
         assertThat(orderStoreList.size()).isEqualTo(10);
-        assertThat(orderStoreList.get(0)).extracting("orderStatus", "pickupTime", "quantity", "totalPrice")
-                .contains(
-                        PAID,
-                        LocalDateTime.of(2025, 6, 30, 17, 30),
-                        30,
-                        9000
-                );
+        OrderStoreListDTO firstOrder = orderStoreList.get(0);
+        assertThat(firstOrder.orderStatus()).isEqualTo(PAID);
+        assertThat(firstOrder.quantity()).isEqualTo(30);
+        assertThat(firstOrder.totalPrice()).isEqualTo(9000);
+        // 픽업 시간이 상품 판매 시간대 내에 있는지 확인
+        assertThat(firstOrder.pickupTime().toLocalTime()).isBetween(
+                goods.getStartTime().toLocalTime(),
+                goods.getEndTime().toLocalTime()
+        );
     }
 
     @DisplayName("사장님이 주문을 승인하면 상태가 ACCEPTED로 변경된다.")
     @Test
     void approveOrder() throws FirebaseMessagingException {
         // given
-        CreateOrderDTO createOrderDTO = new CreateOrderDTO(user, goods, 1, 9000, LocalDateTime.of(2025, 6, 30, 17, 30),
-                "test");
+        LocalDateTime pickupTime = LocalDateTime.of(
+                LocalDateTime.now().plusDays(1).toLocalDate(),
+                goods.getStartTime().plusMinutes(30).toLocalTime()
+        );
+        CreateOrderDTO createOrderDTO = new CreateOrderDTO(user, goods, 1, 9000, pickupTime, "test");
         Order order = createOrderDTO.toOrder();
         order.paid();
         orderRepository.save(order);
@@ -299,7 +306,7 @@ class OrderServiceTest {
         // when
         doNothing().when(firebaseNotificationSender)
                 .send("testToken", "테스트 매장", "테스트 매장");
-        orderService.approveOrder(order.getId(), owner.getId(), LocalDateTime.of(2025, 6, 30, 13, 30));
+        orderService.approveOrder(order.getId(), owner.getId(), LocalDateTime.now());
 
         // then
         Order result = orderRepository.findById(order.getId()).orElseThrow();
@@ -378,8 +385,11 @@ class OrderServiceTest {
     @Test
     void completedOrder() {
         // given
-        CreateOrderDTO createOrderDTO = new CreateOrderDTO(user, goods, 1, 9000, LocalDateTime.of(2025, 6, 30, 17, 30),
-                "test");
+        LocalDateTime pickupTime = LocalDateTime.of(
+                LocalDateTime.now().plusDays(1).toLocalDate(),
+                goods.getStartTime().plusMinutes(30).toLocalTime()
+        );
+        CreateOrderDTO createOrderDTO = new CreateOrderDTO(user, goods, 1, 9000, pickupTime, "test");
         Order order = createOrderDTO.toOrder();
         order.accepted();
         orderRepository.save(order);
@@ -395,17 +405,61 @@ class OrderServiceTest {
         assertThat(result.getOrderStatus()).isEqualTo(COMPLETED);
     }
 
+    @DisplayName("픽업 시간이 상품 판매 시간대(LocalTime)에 맞으면 주문 생성 성공")
+    @Test
+    void createOrderWithValidPickupTimeOnDifferentDate() {
+        // given
+        // 상품 시간대: 오늘 13:00 ~ 16:00 (현재-1시간 ~ 현재+2시간)
+        // 픽업 시간: 내일 14:30 (시간대는 맞지만 날짜는 다름)
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime tomorrow = now.plusDays(1);
+        // 정확한 시간 설정 (나노초 차이 방지)
+        LocalDateTime pickupTime = LocalDateTime.of(
+                tomorrow.toLocalDate(),
+                now.plusMinutes(90).toLocalTime()
+        );
+        
+        CreateOrderServiceRequest request = new CreateOrderServiceRequest(
+                goods.getId(),
+                1,
+                9000,
+                pickupTime,
+                "내일 픽업"
+        );
+
+        // when
+        orderService.createOrder(request, user.getId(), now);
+
+        // then
+        Order order = orderRepository.findAll().get(0);
+        assertThat(order).isNotNull();
+        // 픽업 시간이 내일이고, 시간대가 상품 판매 시간 내에 있는지 확인
+        assertThat(order.getPickupTime().toLocalDate()).isEqualTo(tomorrow.toLocalDate());
+        assertThat(order.getPickupTime().toLocalTime()).isBetween(
+                goods.getStartTime().toLocalTime(),
+                goods.getEndTime().toLocalTime()
+        );
+    }
+
     private Order createOrder(int i) {
-        CreateOrderDTO createOrderDTO = new CreateOrderDTO(user, goods, i, 9000, LocalDateTime.of(2025, 6, 30, 17, 30),
-                "test");
+        // 상품의 판매 시간대 내의 픽업 시간 설정
+        LocalDateTime pickupTime = LocalDateTime.of(
+                LocalDateTime.now().plusDays(1).toLocalDate(), // 내일
+                goods.getStartTime().plusMinutes(30).toLocalTime() // 판매 시작 30분 후
+        );
+        CreateOrderDTO createOrderDTO = new CreateOrderDTO(user, goods, i, 9000, pickupTime, "test");
         Order createOrder = createOrderDTO.toOrder();
         createOrder.completed();
         return createOrder;
     }
 
     private Order createOrderPaid(int i) {
-        CreateOrderDTO createOrderDTO = new CreateOrderDTO(user, goods, i, 9000, LocalDateTime.of(2025, 6, 30, 17, 30),
-                "test");
+        // 상품의 판매 시간대 내의 픽업 시간 설정
+        LocalDateTime pickupTime = LocalDateTime.of(
+                LocalDateTime.now().plusDays(1).toLocalDate(), // 내일
+                goods.getStartTime().plusMinutes(30).toLocalTime() // 판매 시작 30분 후
+        );
+        CreateOrderDTO createOrderDTO = new CreateOrderDTO(user, goods, i, 9000, pickupTime, "test");
         Order createOrder = createOrderDTO.toOrder();
         createOrder.paid();
         return createOrder;

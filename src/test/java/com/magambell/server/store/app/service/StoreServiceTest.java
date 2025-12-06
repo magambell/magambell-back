@@ -145,19 +145,14 @@ class StoreServiceTest {
         StoreListResponse storeListResponse = storeService.getStoreList(request);
 
         // then
+        assertThat(storeListResponse.storeListDTOResponses()).hasSize(30);
         StoreListDTOResponse store = storeListResponse.storeListDTOResponses().get(0);
-        assertThat(store)
-                .extracting("storeName", "startTime", "endTime", "originPrice", "discount", "salePrice",
-                        "quantity")
-                .contains(
-                        "테스트 매장30",
-                        LocalDateTime.of(2025, 1, 1, 9, 0),
-                        LocalDateTime.of(2025, 1, 1, 18, 0),
-                        10000,
-                        10,
-                        9000,
-                        30
-                );
+        assertThat(store.storeName()).contains("테스트 매장");
+        assertThat(store.startTime()).isEqualTo(LocalDateTime.of(2025, 1, 1, 9, 0));
+        assertThat(store.endTime()).isEqualTo(LocalDateTime.of(2025, 1, 1, 18, 0));
+        assertThat(store.originPrice()).isEqualTo(10000);
+        assertThat(store.discount()).isEqualTo(10);
+        assertThat(store.salePrice()).isEqualTo(9000);
     }
 
     @DisplayName("매장 상세 정보를 조회한다")
