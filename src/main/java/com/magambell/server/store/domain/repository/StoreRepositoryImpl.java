@@ -205,7 +205,7 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                 .innerJoin(user).on(user.id.eq(store.user.id))
                 .leftJoin(storeImage).on(storeImage.store.id.eq(store.id))
                 .leftJoin(goods).on(goods.store.id.eq(store.id))
-                .innerJoin(stock).on(stock.goods.id.eq(goods.id))
+                .leftJoin(stock).on(stock.goods.id.eq(goods.id))
                 .leftJoin(goodsImage).on(goodsImage.goods.id.eq(goods.id))
                 .where(
                         store.user.id.eq(userId),
