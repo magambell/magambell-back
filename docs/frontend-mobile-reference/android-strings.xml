@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- 
+  이 파일은 Android 앱의 설정 파일입니다.
+  경로: android/app/src/main/res/values/strings.xml
+  백엔드 프로젝트와는 별도로 관리되어야 합니다.
+-->
+<resources>
+    <!-- Naver OAuth -->
+    <string name="client_id">BVHH2fcyVFbjZQFCNMY7</string>
+    <string name="client_secret">Lhpj63W9LZ</string>
+    <string name="client_name">bitepick</string>
+    
+    <!-- App Info -->
+    <string name="app_name">바이트픽</string>
+    
+    <!-- Kakao API -->
+    <string name="kakao_api_key">kakao95dd8f8b5095efb51722bccdfb11640b</string>
+
+    <!-- FCM 알림 채널 -->
+    <string name="fcm_notification_channel_id">high_importance_channel</string>
+    <string name="fcm_notification_channel_name">앱 알림</string>
+</resources>

@@ -41,3 +41,30 @@ out/
 /data/magambell-db.mv.db
 /config/firebase-service-account.json
 /data/magambell-db.trace.db
+
+### Environment & Credentials ###
+.env
+.env.*
+/credentials/
+/src/main/resources/firebase_service-account.json
+/src/main/resources/googleOAuth.json
+
+### Mobile/Frontend (참고용 - 별도 프로젝트) ###
+# Android strings.xml에는 API 키가 포함되므로 백업만 보관
+android/
+ios/
+# 프론트엔드 환경변수는 이미 .env* 패턴으로 무시됨
+
+### AWS & Secrets ###
+*.pem
+*.key
+*.p12
+*.jks
+awscredentials
+aws_credentials.json
+
+### Logs & Temp ###
+*.log
+*.tmp
+*.temp
+/logs/

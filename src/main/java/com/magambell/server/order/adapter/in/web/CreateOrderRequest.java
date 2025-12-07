@@ -17,7 +17,7 @@ public record CreateOrderRequest(
         @PositiveOrZero(message = "주문 금액은 0원 이상 이어야 합니다.")
         Integer totalPrice,
 
-        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss.SSS")
+        @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss[.SSS][XXX][X]")
         @NotNull(message = "픽업시간을 설정해 주세요.")
         LocalDateTime pickupTime,
         String memo

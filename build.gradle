@@ -9,7 +9,7 @@ version = '0.0.1-SNAPSHOT'
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(17)
+        languageVersion = JavaLanguageVersion.of(21)
     }
 }
 
@@ -74,6 +74,21 @@ dependencies {
 
 tasks.named('test') {
     useJUnitPlatform()
+}
+
+// .env.local 파일 로드
+bootRun {
+    if (project.hasProperty('loadEnv') || project.gradle.startParameter.taskNames.contains('bootRun')) {
+        def envFile = file('.env.local')
+        if (envFile.exists()) {
+            envFile.readLines().each { line ->
+                if (line && !line.startsWith('#') && line.contains('=')) {
+                    def (key, value) = line.split('=', 2)
+                    environment key.trim(), value.trim()
+                }
+            }
+        }
+    }
 }
 
 // FROM 디렉토리 설정 (querydsql)

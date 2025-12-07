@@ -1,5 +1,6 @@
 package com.magambell.server.store.domain.repository;
 
+import com.magambell.server.goods.adapter.in.web.GoodsImagesRegister;
 import com.magambell.server.review.domain.enums.ReviewStatus;
 import com.magambell.server.store.adapter.out.persistence.StoreDetailResponse;
 import com.magambell.server.store.app.port.in.request.CloseStoreListServiceRequest;
@@ -127,6 +128,7 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                 .from(store)
                 .leftJoin(storeImage).on(storeImage.store.id.eq(store.id))
                 .leftJoin(goods).on(goods.store.id.eq(store.id))
+                .leftJoin(goodsImage).on(goodsImage.goods.id.eq(goods.id))
                 .leftJoin(stock).on(stock.goods.id.eq(goods.id))
                 .leftJoin(orderGoods).on(orderGoods.goods.id.eq(goods.id))
                 .leftJoin(review).on(review.orderGoods.id.eq(orderGoods.id))
@@ -157,7 +159,12 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                                         goods.saleStatus,
                                         store.latitude,
                                         store.longitude,
-                                        store.parkingDescription
+                                        store.parkingDescription,
+                                        list(Projections.constructor(GoodsImagesRegister.class,
+                                                goodsImage.id.intValue(),
+                                                goodsImage.imageUrl,
+                                                goods.name
+                                        ))
                                 )
                         )
                 );
@@ -198,7 +205,7 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                 .innerJoin(user).on(user.id.eq(store.user.id))
                 .leftJoin(storeImage).on(storeImage.store.id.eq(store.id))
                 .leftJoin(goods).on(goods.store.id.eq(store.id))
-                .innerJoin(stock).on(stock.goods.id.eq(goods.id))
+                .leftJoin(stock).on(stock.goods.id.eq(goods.id))
                 .leftJoin(goodsImage).on(goodsImage.goods.id.eq(goods.id))
                 .where(
                         store.user.id.eq(userId),

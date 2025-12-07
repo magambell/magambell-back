@@ -103,7 +103,8 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
                                                 payment.payType,
                                                 payment.easyPayProvider,
                                                 store.latitude,
-                                                store.longitude
+                                                store.longitude,
+                                                order.pickupTime
                                         )
                                 )
                 );

@@ -4,6 +4,7 @@ import com.magambell.server.common.Response;
 import com.magambell.server.common.security.CustomUserDetails;
 import com.magambell.server.common.swagger.BaseResponse;
 import com.magambell.server.goods.adapter.in.web.ChangeGoodsStatusRequest;
+import com.magambell.server.goods.adapter.in.web.EditGoodsImagesRequest;
 import com.magambell.server.goods.adapter.in.web.EditGoodsRequest;
 import com.magambell.server.goods.adapter.in.web.RegisterGoodsRequest;
 import com.magambell.server.goods.adapter.out.persistence.GoodsImagesResponse;
@@ -65,6 +66,20 @@ public class GoodsController {
     ) {
 
         return new Response<>(goodsUseCase.editGoods(request.toService(customUserDetails.userId())));
+
+    }
+
+    @PreAuthorize("hasRole('OWNER')")
+    @Operation(summary = "마감백 이미지만 변경")
+    @ApiResponse(responseCode = "200", content = {
+            @Content(schema = @Schema(implementation = GoodsImagesResponse.class))})
+    @PatchMapping("/images")
+    public Response<GoodsImagesResponse> editGoodsImages(
+            @RequestBody @Validated final EditGoodsImagesRequest request,
+            @AuthenticationPrincipal final CustomUserDetails customUserDetails
+    ) {
+
+        return new Response<>(goodsUseCase.editGoodsImages(request.toService(customUserDetails.userId())));
 
     }
 }

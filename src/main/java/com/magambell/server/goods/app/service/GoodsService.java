@@ -7,6 +7,7 @@ import com.magambell.server.goods.adapter.in.web.GoodsImagesRegister;
 import com.magambell.server.goods.adapter.out.persistence.GoodsImagesResponse;
 import com.magambell.server.goods.app.port.in.GoodsUseCase;
 import com.magambell.server.goods.app.port.in.request.ChangeGoodsStatusServiceRequest;
+import com.magambell.server.goods.app.port.in.request.EditGoodsImagesServiceRequest;
 import com.magambell.server.goods.app.port.in.request.EditGoodsServiceRequest;
 import com.magambell.server.goods.app.port.in.request.RegisterGoodsServiceRequest;
 import com.magambell.server.goods.app.port.out.GoodsCommandPort;
@@ -72,6 +73,15 @@ public class GoodsService implements GoodsUseCase {
         return new GoodsImagesResponse(editGoodsImageResponseDTO.goodsPreSignedUrlImages());
 
 
+    }
+
+    @Transactional
+    @Override
+    public GoodsImagesResponse editGoodsImages(final EditGoodsImagesServiceRequest request) {
+        Goods goods = goodsQueryPort.findOwnedGoodsWithRelations(request.goodsId(), request.userId());
+        
+        EditGoodsImageResponseDTO editGoodsImageResponseDTO = changeGoodsImage(goods, request.goodsImagesRegisters());
+        return new GoodsImagesResponse(editGoodsImageResponseDTO.goodsPreSignedUrlImages());
     }
 
     @Transactional

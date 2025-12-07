@@ -32,7 +32,6 @@ public record RegisterGoodsRequest(
         @PositiveOrZero(message = "판매가는 0원 이상 이어야 합니다.")
         Integer salePrice,
 
-//        @NotEmpty(message = "상품 이미지는 필수입니다.")
         List<GoodsImagesRegister> goodsImagesRegisters
 
 ) {

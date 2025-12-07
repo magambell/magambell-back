@@ -1,8 +1,10 @@
 package com.magambell.server.store.adapter.out.persistence;
 
+import com.magambell.server.goods.adapter.in.web.GoodsImagesRegister;
 import com.magambell.server.goods.domain.enums.SaleStatus;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Set;
 
 public record StoreDetailResponse(
@@ -23,7 +25,8 @@ public record StoreDetailResponse(
         Double longitude,
         String parkingDescription,
         Long reviewCount,
-        Double averageRating
+        Double averageRating,
+        List<GoodsImagesRegister> goodsImages
 
 ) {
 }
