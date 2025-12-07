@@ -202,7 +202,17 @@ public class OrderService implements OrderUseCase {
         LocalTime goodsStartTime = goods.getStartTime().toLocalTime();
         LocalTime goodsEndTime = goods.getEndTime().toLocalTime();
         
-        if (pickupLocalTime.isBefore(goodsStartTime) || pickupLocalTime.isAfter(goodsEndTime)) {
+        // 자정을 넘는 시간대 처리 (예: 23:00 ~ 02:00)
+        boolean isValidTime;
+        if (goodsEndTime.isBefore(goodsStartTime)) {
+            // 자정을 넘는 경우: 시작 시간 이후이거나 종료 시간 이전이면 유효
+            isValidTime = !pickupLocalTime.isBefore(goodsStartTime) || !pickupLocalTime.isAfter(goodsEndTime);
+        } else {
+            // 일반적인 경우: 시작과 종료 사이에 있어야 함
+            isValidTime = !pickupLocalTime.isBefore(goodsStartTime) && !pickupLocalTime.isAfter(goodsEndTime);
+        }
+        
+        if (!isValidTime) {
             throw new InvalidRequestException(ErrorCode.INVALID_PICKUP_TIME);
         }
 

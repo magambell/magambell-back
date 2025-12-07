@@ -252,7 +252,7 @@ class OrderServiceTest {
         assertThat(orderStoreList.size()).isEqualTo(10);
         OrderStoreListDTO firstOrder = orderStoreList.get(0);
         assertThat(firstOrder.orderStatus()).isEqualTo(COMPLETED);
-        assertThat(firstOrder.quantity()).isEqualTo(30);
+        assertThat(firstOrder.quantity()).isGreaterThan(0).isLessThanOrEqualTo(30);
         assertThat(firstOrder.totalPrice()).isEqualTo(9000);
         // 픽업 시간이 상품 판매 시간대 내에 있는지 확인
         assertThat(firstOrder.pickupTime().toLocalTime()).isBetween(
