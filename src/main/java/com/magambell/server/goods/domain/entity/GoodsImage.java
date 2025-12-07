@@ -11,11 +11,12 @@ import lombok.*;
 @Setter
 @Builder
 @AllArgsConstructor
+@Table(name = "goods_image")
 public class GoodsImage extends BaseTimeEntity {
 
-    @Column(name = "goods_image_id")
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id")
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY)
