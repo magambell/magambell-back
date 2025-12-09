@@ -19,7 +19,6 @@ public record StoreDetailDTO(
         Integer originalPrice,
         Integer salePrice,
         Integer discount,
-        String description,
         Integer quantity,
         SaleStatus saleStatus,
         Double latitude,
@@ -35,6 +34,6 @@ public record StoreDetailDTO(
 
         return new StoreDetailResponse(String.valueOf(storeId), String.valueOf(goodsId), storeName, address, images,
                 startTime, endTime, originalPrice,
-                salePrice, discount, description, quantity, saleStatus, latitude, longitude, parkingDescription, reviewCount, roundedRating, goodsImages);
+                salePrice, discount, quantity, saleStatus, latitude, longitude, parkingDescription, reviewCount, roundedRating, goodsImages);
     }
 }

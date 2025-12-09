@@ -215,7 +215,7 @@ class FavoriteServiceTest {
 
         RegisterGoodsDTO registerGoodsDTO = new RegisterGoodsDTO(
                 LocalDateTime.of(2025, 1, 1, 9, 0), LocalDateTime.of(2025, 1, 1, 18, 0),
-                i, 10000, 10, 9000, "상품설명", store,
+                i, 10000, 10, 9000, store,
                 List.of(new GoodsImagesRegister(0, "test", "상품명"))
         );
         owner.addStore(store);

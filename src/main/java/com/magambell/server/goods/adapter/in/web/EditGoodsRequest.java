@@ -14,9 +14,6 @@ public record EditGoodsRequest(
         @NotBlank(message = "상품 이름을 입력해 주세요.")
         String name,
 
-        @NotBlank(message = "상품 설명을 입력해 주세요.")
-        String description,
-
         @NotNull(message = "판매 시작 시간은 선택해 주세요.")
         LocalDateTime startTime,
 
@@ -38,7 +35,7 @@ public record EditGoodsRequest(
         List<GoodsImagesRegister> goodsImagesRegisters
 ) {
     public EditGoodsServiceRequest toService(final Long userId) {
-        return new EditGoodsServiceRequest(goodsId, name, description, startTime, endTime, quantity, originalPrice,
+        return new EditGoodsServiceRequest(goodsId, name, startTime, endTime, quantity, originalPrice,
                 discount,
                 salePrice, userId, goodsImagesRegisters);
     }

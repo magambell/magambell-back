@@ -9,7 +9,6 @@ import java.util.List;
 public record EditGoodsServiceRequest(
         Long goodsId,
         String name,
-        String description,
         LocalDateTime startTime,
         LocalDateTime endTime,
         Integer quantity,
@@ -21,6 +20,6 @@ public record EditGoodsServiceRequest(
 
 ) {
     public EditGoodsDTO toDTO() {
-        return new EditGoodsDTO(name, description, startTime, endTime, quantity, originalPrice, discount, salePrice, goodsImagesRegisters);
+        return new EditGoodsDTO(name, startTime, endTime, quantity, originalPrice, discount, salePrice, goodsImagesRegisters);
     }
 }

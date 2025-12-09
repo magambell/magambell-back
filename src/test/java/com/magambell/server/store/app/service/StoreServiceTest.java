@@ -169,7 +169,6 @@ class StoreServiceTest {
         assertThat(result).isNotNull();
         assertThat(result.storeId()).isEqualTo(String.valueOf(store.getId()));
         assertThat(result.storeName()).isEqualTo("테스트 매장1");
-        assertThat(result.description()).isEqualTo("상품설명");
         assertThat(result.salePrice()).isEqualTo(9000);
         assertThat(result.images()).isEmpty();
     }
@@ -187,7 +186,6 @@ class StoreServiceTest {
         // then
         assertThat(ownerStoreInfo).isNotNull();
         assertThat(ownerStoreInfo.storeName()).isEqualTo("테스트 매장1");
-        assertThat(ownerStoreInfo.goodsList().get(0).description()).isEqualTo("상품설명");
         assertThat(ownerStoreInfo.goodsList().get(0).salePrice()).isEqualTo(9000);
     }
 
@@ -292,7 +290,7 @@ class StoreServiceTest {
 
         RegisterGoodsDTO registerGoodsDTO = new RegisterGoodsDTO(
                 LocalDateTime.of(2025, 1, 1, 9, 0), LocalDateTime.of(2025, 1, 1, 18, 0),
-                i, 10000, 10, 9000, "상품설명", store, List.of(new GoodsImagesRegister(0, "test", "상품명"))
+                i, 10000, 10, 9000, store, List.of(new GoodsImagesRegister(0, "test", "상품명"))
 
         );
         user.addStore(store);

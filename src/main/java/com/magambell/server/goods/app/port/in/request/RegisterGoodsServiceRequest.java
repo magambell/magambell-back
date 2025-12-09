@@ -8,7 +8,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public record RegisterGoodsServiceRequest(
-        String description,
         LocalDateTime startTime,
         LocalDateTime endTime,
         Integer quantity,
@@ -19,7 +18,7 @@ public record RegisterGoodsServiceRequest(
 ) {
 
     public RegisterGoodsDTO toDTO(Store store) {
-        return new RegisterGoodsDTO(startTime, endTime, quantity, originalPrice, discount, salePrice, description,
+        return new RegisterGoodsDTO(startTime, endTime, quantity, originalPrice, discount, salePrice,
                 store, goodsImageRegisters);
     }
 }

@@ -8,7 +8,6 @@ import java.util.List;
 
 public record EditGoodsDTO(
         String name,
-        String description,
         LocalDateTime startTime,
         LocalDateTime endTime,
         Integer quantity,

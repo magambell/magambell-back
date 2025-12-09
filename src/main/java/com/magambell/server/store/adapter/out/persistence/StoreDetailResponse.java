@@ -18,7 +18,6 @@ public record StoreDetailResponse(
         Integer originalPrice,
         Integer salePrice,
         Integer discount,
-        String description,
         Integer quantity,
         SaleStatus saleStatus,
         Double latitude,
