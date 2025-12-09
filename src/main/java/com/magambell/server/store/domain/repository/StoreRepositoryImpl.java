@@ -25,9 +25,11 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.Set;
 
 import static com.magambell.server.goods.domain.entity.QGoods.goods;
 import static com.magambell.server.goods.domain.entity.QGoodsImage.goodsImage;
@@ -124,51 +126,85 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
 
     @Override
     public Optional<StoreDetailResponse> getStoreDetail(final Long storeId) {
-        Map<Long, StoreDetailDTO> result = queryFactory
+        // 먼저 기본 store 정보 조회 (goodsImages 제외)
+        StoreDetailDTO storeDetail = queryFactory
+                .select(Projections.constructor(StoreDetailDTO.class,
+                        store.id,
+                        goods.id,
+                        store.name,
+                        store.address,
+                        Expressions.constant(Collections.emptySet()), // images - 나중에 set으로 변경
+                        goods.startTime,
+                        goods.endTime,
+                        goods.originalPrice,
+                        goods.salePrice,
+                        goods.discount,
+                        goods.description,
+                        stock.quantity,
+                        goods.saleStatus,
+                        store.latitude,
+                        store.longitude,
+                        store.parkingDescription,
+                        Expressions.constant(Collections.emptyList()) // goodsImages - 나중에 교체
+                ))
                 .from(store)
-                .leftJoin(storeImage).on(storeImage.store.id.eq(store.id))
                 .leftJoin(goods).on(goods.store.id.eq(store.id))
-                .leftJoin(goodsImage).on(goodsImage.goods.id.eq(goods.id))
                 .leftJoin(stock).on(stock.goods.id.eq(goods.id))
-                .leftJoin(orderGoods).on(orderGoods.goods.id.eq(goods.id))
-                .leftJoin(review).on(review.orderGoods.id.eq(orderGoods.id))
                 .innerJoin(user).on(user.id.eq(store.user.id))
                 .where(
                         store.id.eq(storeId)
-                                .and(
-                                        store.approved.eq(APPROVED)
-                                ).and(
-                                        user.userStatus.eq(UserStatus.ACTIVE)
-                                )
+                                .and(store.approved.eq(APPROVED))
+                                .and(user.userStatus.eq(UserStatus.ACTIVE))
                 )
-                .transform(
-                        groupBy(store.id).as(
-                                Projections.constructor(StoreDetailDTO.class,
-                                        store.id,
-                                        goods.id,
-                                        store.name,
-                                        store.address,
-                                        set(storeImage.name),
-                                        goods.startTime,
-                                        goods.endTime,
-                                        goods.originalPrice,
-                                        goods.salePrice,
-                                        goods.discount,
-                                        goods.description,
-                                        stock.quantity,
-                                        goods.saleStatus,
-                                        store.latitude,
-                                        store.longitude,
-                                        store.parkingDescription,
-                                        list(Projections.constructor(GoodsImagesRegister.class,
-                                                goodsImage.id.intValue(),
-                                                goodsImage.imageUrl,
-                                                goods.name
-                                        ))
-                                )
-                        )
-                );
+                .fetchOne();
 
+        if (storeDetail == null) {
+            return Optional.empty();
+        }
+
+        // storeImages 조회
+        List<String> storeImages = queryFactory
+                .select(storeImage.name)
+                .from(storeImage)
+                .where(storeImage.store.id.eq(storeId))
+                .fetch();
+        
+        // goodsImages 조회 (goods가 있는 경우만)
+        List<GoodsImagesRegister> goodsImages = Collections.emptyList();
+        if (storeDetail.goodsId() != null) {
+            goodsImages = queryFactory
+                    .select(Projections.constructor(GoodsImagesRegister.class,
+                            goodsImage.id.intValue(),
+                            goodsImage.imageUrl,
+                            goodsImage.goodsName
+                    ))
+                    .from(goodsImage)
+                    .where(goodsImage.goods.id.eq(storeDetail.goodsId()))
+                    .fetch();
+        }
+
+        // DTO 업데이트
+        StoreDetailDTO updatedDTO = new StoreDetailDTO(
+                storeDetail.storeId(),
+                storeDetail.goodsId(),
+                storeDetail.storeName(),
+                storeDetail.address(),
+                storeImages.isEmpty() ? Collections.emptySet() : Set.copyOf(storeImages),
+                storeDetail.startTime(),
+                storeDetail.endTime(),
+                storeDetail.originalPrice(),
+                storeDetail.salePrice(),
+                storeDetail.discount(),
+                storeDetail.description(),
+                storeDetail.quantity(),
+                storeDetail.saleStatus(),
+                storeDetail.latitude(),
+                storeDetail.longitude(),
+                storeDetail.parkingDescription(),
+                goodsImages
+        );
+
+        // Review 정보 조회
         Tuple aggregation = queryFactory
                 .select(
                         count(review.id),
@@ -181,21 +217,14 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                 .innerJoin(user).on(user.id.eq(store.user.id))
                 .where(
                         store.id.eq(storeId)
-                                .and(
-                                        store.approved.eq(APPROVED)
-                                )
-                                .and(
-                                        user.userStatus.eq(UserStatus.ACTIVE)
-                                )
-                                .and(
-                                        review.reviewStatus.eq(ReviewStatus.ACTIVE)
-                                )
+                                .and(store.approved.eq(APPROVED))
+                                .and(user.userStatus.eq(UserStatus.ACTIVE))
+                                .and(review.reviewStatus.eq(ReviewStatus.ACTIVE))
                 )
                 .fetchOne();
 
-        StoreDetailDTO storeDetailDTO = result.get(storeId);
         return Optional.of(
-                storeDetailDTO.toResponse(aggregation.get(0, Long.class), aggregation.get(1, Double.class)));
+                updatedDTO.toResponse(aggregation.get(0, Long.class), aggregation.get(1, Double.class)));
     }
 
     @Override

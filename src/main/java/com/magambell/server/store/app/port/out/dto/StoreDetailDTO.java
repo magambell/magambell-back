@@ -27,6 +27,15 @@ public record StoreDetailDTO(
         String parkingDescription,
         List<GoodsImagesRegister> goodsImages
 ) {
+    public StoreDetailDTO withGoodsImages(List<GoodsImagesRegister> newGoodsImages) {
+        return new StoreDetailDTO(
+                storeId, goodsId, storeName, address, images,
+                startTime, endTime, originalPrice, salePrice, discount,
+                description, quantity, saleStatus, latitude, longitude,
+                parkingDescription, newGoodsImages
+        );
+    }
+
     public StoreDetailResponse toResponse(Long reviewCount,
                                           Double averageRating) {
         Double roundedRating = averageRating != null
