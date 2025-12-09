@@ -132,7 +132,6 @@ class GoodsServiceTest {
     void registerGoods() {
         // given
         RegisterGoodsServiceRequest req = new RegisterGoodsServiceRequest(
-                "상품설명",
                 LocalDateTime.of(2025, 1, 1, 9, 0), LocalDateTime.of(2025, 1, 1, 18, 0),
                 3, 10000, 10, 9000,
                 List.of()
@@ -158,7 +157,6 @@ class GoodsServiceTest {
                 LocalDateTime.of(2025, 1, 1, 9, 0),
                 LocalDateTime.of(2025, 1, 1, 18, 0),
                 3, 10000, 10, 9000,
-                "상품설명",
                 store,
                 List.of(new GoodsImagesRegister(0, "test", "상품명"))
                 );
@@ -169,7 +167,6 @@ class GoodsServiceTest {
         Goods saveGoods = goodsRepository.save(dtoGoods);
 
         EditGoodsServiceRequest request = new EditGoodsServiceRequest(saveGoods.getId(), "이름 수정",
-                "상품 설명2",
                 LocalDateTime.of(2025, 1, 13, 9, 0),
                 LocalDateTime.of(2025, 1, 13, 18, 0),
                 5, 20000, 10, 16000, user.getId(),
@@ -184,11 +181,10 @@ class GoodsServiceTest {
         // then
         Goods goods = goodsRepository.findAll().get(0);
 
-        assertThat(goods).extracting("name", "description", "startTime", "endTime", "originalPrice", "discount",
+        assertThat(goods).extracting("name", "startTime", "endTime", "originalPrice", "discount",
                         "salePrice")
                 .contains(
                         "이름 수정",
-                        "상품 설명2",
                         LocalDateTime.of(2025, 1, 13, 9, 0),
                         LocalDateTime.of(2025, 1, 13, 18, 0),
                         20000,
@@ -209,7 +205,6 @@ class GoodsServiceTest {
                 LocalDateTime.of(2025, 1, 1, 9, 0),
                 LocalDateTime.of(2025, 1, 1, 18, 0),
                 3, 10000, 10, 9000,
-                "상품설명",
                 store,
                 List.of(new GoodsImagesRegister(0, "test", "상품명"))
                 );
@@ -243,7 +238,6 @@ class GoodsServiceTest {
                 LocalDateTime.of(2025, 1, 1, 9, 0),
                 LocalDateTime.of(2025, 1, 1, 18, 0),
                 3, 10000, 10, 9000,
-                "상품설명",
                 store,
                 List.of(new GoodsImagesRegister(0, "test", "상품명"))
         );

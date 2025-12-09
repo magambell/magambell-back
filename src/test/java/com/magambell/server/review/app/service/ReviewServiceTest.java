@@ -126,7 +126,7 @@ class ReviewServiceTest {
         RegisterGoodsDTO registerGoodsDTO = new RegisterGoodsDTO(
                 LocalDateTime.now().minusHours(1),
                 LocalDateTime.now().plusHours(2),
-                10, 10000, 10, 9000, "",
+                10, 10000, 10, 9000,
                 store,
                 List.of(new GoodsImagesRegister(0, "test", "상품명"))
         );

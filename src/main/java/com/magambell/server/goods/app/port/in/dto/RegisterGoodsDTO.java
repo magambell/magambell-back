@@ -17,7 +17,6 @@ public record RegisterGoodsDTO(
         Integer originalPrice,
         Integer discount,
         Integer salePrice,
-        String description,
         Store store,
         List<GoodsImagesRegister> goodsImagesRegisters
 

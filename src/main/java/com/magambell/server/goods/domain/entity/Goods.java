@@ -88,7 +88,6 @@ public class Goods extends BaseTimeEntity {
                 .originalPrice(dto.originalPrice())
                 .discount(dto.discount())
                 .salePrice(dto.salePrice())
-                .description(dto.description())
                 .saleStatus(OFF)
                 .build();
 
@@ -143,7 +142,6 @@ public class Goods extends BaseTimeEntity {
         this.originalPrice = dto.originalPrice();
         this.discount = dto.discount();
         this.salePrice = dto.salePrice();
-        this.description = dto.description();
 
         StockHistory stockHistory = StockHistory.create(StockType.MANUAL, this.stock.getQuantity(), dto.quantity(),
                 dto.quantity());

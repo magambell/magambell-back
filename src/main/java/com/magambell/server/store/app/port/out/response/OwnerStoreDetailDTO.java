@@ -21,7 +21,6 @@ public record OwnerStoreDetailDTO(
             Integer originPrice,
             Integer discount,
             Integer salePrice,
-            String description,
             LocalDateTime startTime,
             LocalDateTime endTime,
             SaleStatus saleStatus,
