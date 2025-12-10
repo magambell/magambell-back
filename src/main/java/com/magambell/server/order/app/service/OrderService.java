@@ -135,7 +135,15 @@ public class OrderService implements OrderUseCase {
 
         Payment payment = order.getPayment();
         stockUseCase.restoreStockIfNecessary(payment);
-        portOnePort.cancelPayment(payment.getTransactionId(), order.getTotalPrice(), "사장님 주문 취소");
+        
+        // 실제 결제가 있는 경우에만 PortOne 환불 처리
+        if (payment.getTransactionId() != null && !payment.getTransactionId().startsWith("test_")) {
+            portOnePort.cancelPayment(payment.getTransactionId(), order.getTotalPrice(), "사장님 주문 취소");
+        } else {
+            log.info("Test payment detected - skipping PortOne cancellation for transactionId: {}", 
+                    payment.getTransactionId());
+        }
+        
         notificationUseCase.notifyRejectOrder(order.getUser());
     }
 
@@ -150,7 +158,14 @@ public class OrderService implements OrderUseCase {
 
         Payment payment = order.getPayment();
         stockUseCase.restoreStockIfNecessary(payment);
-        portOnePort.cancelPayment(payment.getTransactionId(), order.getTotalPrice(), "고객님 주문 취소");
+        
+        // 실제 결제가 있는 경우에만 PortOne 환불 처리
+        if (payment.getTransactionId() != null && !payment.getTransactionId().startsWith("test_")) {
+            portOnePort.cancelPayment(payment.getTransactionId(), order.getTotalPrice(), "고객님 주문 취소");
+        } else {
+            log.info("Test payment detected - skipping PortOne cancellation for transactionId: {}", 
+                    payment.getTransactionId());
+        }
     }
 
     @Transactional
@@ -187,7 +202,15 @@ public class OrderService implements OrderUseCase {
             order.rejected(RejectReason.SYSTEM);
             Payment payment = order.getPayment();
             stockUseCase.restoreStockIfNecessary(payment);
-            portOnePort.cancelPayment(payment.getTransactionId(), order.getTotalPrice(), "시스템 주문 취소");
+            
+            // 실제 결제가 있는 경우에만 PortOne 환불 처리
+            if (payment.getTransactionId() != null && !payment.getTransactionId().startsWith("test_")) {
+                portOnePort.cancelPayment(payment.getTransactionId(), order.getTotalPrice(), "시스템 주문 취소");
+            } else {
+                log.info("Test payment detected - skipping PortOne cancellation for transactionId: {}", 
+                        payment.getTransactionId());
+            }
+            
             notificationUseCase.notifyRejectOrder(order.getUser());
         });
     }
