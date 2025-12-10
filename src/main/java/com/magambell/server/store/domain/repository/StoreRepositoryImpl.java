@@ -274,7 +274,24 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                         )
                 );
 
-        return result.values().stream().findFirst();
+        // imageUrl을 key로 변환
+        return result.values().stream()
+                .map(dto -> new OwnerStoreDetailDTO(
+                        dto.storeId(),
+                        dto.storeName(),
+                        dto.address(),
+                        dto.storeImageUrls(),
+                        dto.goodsList(),
+                        dto.goodsImageList().stream()
+                                .map(img -> new OwnerStoreDetailDTO.GoodsImageInfo(
+                                        img.goodsImageId(),
+                                        img.goodsName(),
+                                        extractKeyFromUrl(img.imageUrl())
+                                ))
+                                .toList(),
+                        dto.parkingDescription()
+                ))
+                .findFirst();
     }
 
     @Override
