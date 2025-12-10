@@ -101,7 +101,9 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
                                                 payment.easyPayProvider,
                                                 store.latitude,
                                                 store.longitude,
-                                                order.pickupTime
+                                                order.pickupTime,
+                                                store.address,
+                                                goods.discount
                                         )
                                 )
                 );
@@ -183,9 +185,7 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
                                                 orderGoods.quantity,
                                                 order.totalPrice,
                                                 customer.phoneNumber,
-                                                goods.name,
-                                                store.address,
-                                                goods.discount
+                                                goods.name
                                         )
                                 )
                 );

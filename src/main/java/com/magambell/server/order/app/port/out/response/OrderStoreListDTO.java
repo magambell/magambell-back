@@ -12,9 +12,7 @@ public record OrderStoreListDTO(
         Integer quantity,
         Integer totalPrice,
         String phoneNumber,
-        String goodsName,
-        String address,
-        Integer discount
+        String goodsName
 ) {
     public String getOrderId() {
         return String.valueOf(orderId);
