@@ -174,12 +174,19 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
             goodsImages = queryFactory
                     .select(Projections.constructor(GoodsImagesRegister.class,
                             goodsImage.id.intValue(),
-                            Expressions.stringTemplate("SUBSTRING_INDEX({0}, '/', -1)", goodsImage.imageUrl),
+                            goodsImage.imageUrl,
                             goodsImage.goodsName
                     ))
                     .from(goodsImage)
                     .where(goodsImage.goods.id.eq(storeDetail.goodsId()))
-                    .fetch();
+                    .fetch()
+                    .stream()
+                    .map(img -> new GoodsImagesRegister(
+                            img.id(),
+                            extractKeyFromUrl(img.key()),
+                            img.goodsName()
+                    ))
+                    .toList();
         }
 
         // DTO 업데이트
@@ -458,5 +465,13 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
             return orderGoods.count().desc().nullsLast();
         }
         return store.createdAt.desc();
+    }
+
+    private String extractKeyFromUrl(String imageUrl) {
+        if (imageUrl == null || imageUrl.isEmpty()) {
+            return imageUrl;
+        }
+        int lastSlashIndex = imageUrl.lastIndexOf('/');
+        return lastSlashIndex >= 0 ? imageUrl.substring(lastSlashIndex + 1) : imageUrl;
     }
 }
