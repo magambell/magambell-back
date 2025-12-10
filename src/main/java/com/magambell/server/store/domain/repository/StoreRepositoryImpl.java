@@ -174,7 +174,7 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
             goodsImages = queryFactory
                     .select(Projections.constructor(GoodsImagesRegister.class,
                             goodsImage.id.intValue(),
-                            goodsImage.imageUrl,
+                            Expressions.stringTemplate("SUBSTRING_INDEX({0}, '/', -1)", goodsImage.imageUrl),
                             goodsImage.goodsName
                     ))
                     .from(goodsImage)
