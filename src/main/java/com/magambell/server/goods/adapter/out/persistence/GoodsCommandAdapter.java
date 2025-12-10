@@ -19,6 +19,8 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Adapter
@@ -62,30 +64,73 @@ public class GoodsCommandAdapter implements GoodsCommandPort {
 
     @Override
     public EditGoodsImageResponseDTO editGoodsImage(Goods goods, List<GoodsImagesRegister> goodsImagesRegisters) {
+        // 기존 이미지 조회
+        List<GoodsImage> existingImages = goodsImageRepository.findByGoodsId(goods.getId());
+        Map<String, GoodsImage> existingImageMap = existingImages.stream()
+                .collect(Collectors.toMap(
+                        img -> extractKeyFromUrl(img.getImageUrl()),
+                        img -> img
+                ));
 
-        s3InputPort.deleteS3Objects(IMAGE_PREFIX, goods.getId());
+        List<GoodsPreSignedUrlImage> goodsPreSignedUrlImages = new ArrayList<>();
+        List<GoodsImage> newGoodsImageList = new ArrayList<>();
 
-        List<ImageRegister> list = goodsImagesRegisters.stream()
-                .map(goodsImagesRegister -> new ImageRegister(goodsImagesRegister.id(), goodsImagesRegister.key()))
-                .toList();
-        List<TransformedImageDTO> transformedImageDTOS = s3InputPort.saveImages(IMAGE_PREFIX, list, goods.getId());
-        List<GoodsPreSignedUrlImage> goodsPreSignedUrlImages = addImagesAndGetPreSignedUrlImage(transformedImageDTOS);
-
-        goodsImageRepository.deleteGoodsImageByGoodsId(goods.getId());
-        List<GoodsImage> goodsImageList = new ArrayList<>();
         for (int i = 0; i < goodsImagesRegisters.size(); i++) {
-            goodsImageList.add(
-                    GoodsImage.builder()
+            GoodsImagesRegister register = goodsImagesRegisters.get(i);
+            
+            // 기존 이미지인지 확인
+            if (existingImageMap.containsKey(register.key())) {
+                // 기존 이미지 - presignedUrl 재생성하지 않고 기존 것 유지
+                GoodsImage existingImage = existingImageMap.get(register.key());
+                
+                // name이 변경되었는지 확인
+                if (!existingImage.getGoodsName().equals(register.goodsName())) {
+                    existingImage.setGoodsName(register.goodsName());
+                }
+                
+                newGoodsImageList.add(existingImage);
+                // 기존 이미지는 presignedUrl 생성하지 않음 (null 또는 빈 값)
+                goodsPreSignedUrlImages.add(new GoodsPreSignedUrlImage(register.id(), null));
+                
+                // 유지되는 이미지는 맵에서 제거
+                existingImageMap.remove(register.key());
+            } else {
+                // 새 이미지 - S3에 업로드하고 presignedUrl 생성
+                List<ImageRegister> imageToUpload = List.of(new ImageRegister(register.id(), register.key()));
+                List<TransformedImageDTO> transformedImageDTOS = s3InputPort.saveImages(IMAGE_PREFIX, imageToUpload, goods.getId());
+                
+                if (!transformedImageDTOS.isEmpty()) {
+                    TransformedImageDTO transformedImage = transformedImageDTOS.get(0);
+                    
+                    GoodsImage newImage = GoodsImage.builder()
                             .goods(goods)
-                            .goodsName(goodsImagesRegisters.get(i).goodsName())
-                            .imageUrl(transformedImageDTOS.get(i).getUrl())
-                            .build()
-            );
+                            .goodsName(register.goodsName())
+                            .imageUrl(transformedImage.getUrl())
+                            .build();
+                    newGoodsImageList.add(newImage);
+                    
+                    goodsPreSignedUrlImages.add(new GoodsPreSignedUrlImage(transformedImage.id(), transformedImage.putUrl()));
+                }
+            }
         }
 
-        goodsImageRepository.saveAll(goodsImageList);
+        // DB 업데이트 (삭제된 이미지는 DB에서만 제거, S3는 유지)
+        goodsImageRepository.deleteGoodsImageByGoodsId(goods.getId());
+        goodsImageRepository.saveAll(newGoodsImageList);
 
         return new EditGoodsImageResponseDTO(goods.getId(), goodsPreSignedUrlImages);
+    }
+
+    private String extractKeyFromUrl(String imageUrl) {
+        // URL에서 key 추출 (예: https://d1xe26zpyg8fzv.cloudfront.net/GOODS/123/1_image.jpg -> 1_image.jpg)
+        if (imageUrl == null || imageUrl.isEmpty()) {
+            return "";
+        }
+        int lastSlashIndex = imageUrl.lastIndexOf('/');
+        if (lastSlashIndex >= 0 && lastSlashIndex < imageUrl.length() - 1) {
+            return imageUrl.substring(lastSlashIndex + 1);
+        }
+        return imageUrl;
     }
 
 
