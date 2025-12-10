@@ -21,7 +21,8 @@ public record OrderListDTO(
         Double longitude,
         LocalDateTime pickupTime,
         String address,
-        Integer discount
+        Integer discount,
+        Boolean isReviewWritten
 ) {
     public record OrderGoodsInfo(
             Long orderGoodsId,

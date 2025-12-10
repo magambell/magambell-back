@@ -103,7 +103,8 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
                                                 store.longitude,
                                                 order.pickupTime,
                                                 store.address,
-                                                goods.discount
+                                                goods.discount,
+                                                review.id.isNotNull()
                                         )
                                 )
                 );
