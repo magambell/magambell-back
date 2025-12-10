@@ -206,13 +206,13 @@ class ReviewServiceTest {
     @Test
     void getReviewRatingAll() {
         // given
-        List<Review> reviewList = IntStream.range(2, 6)
+        List<Review> reviewList = IntStream.range(1, 4)
                 .mapToObj(this::createReview)
                 .toList();
 
         reviewRepository.saveAll(reviewList);
 
-        List<Review> reviewList2 = IntStream.range(2, 4)
+        List<Review> reviewList2 = IntStream.range(1, 3)
                 .mapToObj(this::createReview)
                 .toList();
 
@@ -224,8 +224,8 @@ class ReviewServiceTest {
 
         // then
         assertThat(reviewRatingAll).isNotNull();
-        assertThat(reviewRatingAll.averageRating()).isEqualTo(3.2);
-        assertThat(reviewRatingAll.totalCount()).isEqualTo(6);
+        assertThat(reviewRatingAll.averageRating()).isEqualTo(1.8);
+        assertThat(reviewRatingAll.totalCount()).isEqualTo(5);
         assertThat(reviewRatingAll.rating2Count()).isEqualTo(2);
     }
 

@@ -53,7 +53,7 @@ public class Review extends BaseTimeEntity {
     }
 
     public static Review create(final RegisterReviewDTO dto) {
-        if (dto.rating() < 2 || dto.rating() > 5) {
+        if (dto.rating() < 1 || dto.rating() > 3) {
             throw new InvalidRequestException(ErrorCode.INVALID_REVIEW_RATING);
         }
 
