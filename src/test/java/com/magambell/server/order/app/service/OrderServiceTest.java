@@ -160,7 +160,7 @@ class OrderServiceTest {
         userRepository.deleteAllInBatch();
     }
 
-    @DisplayName("정상적으로 주문이 생성되고, 재고가 차감된다.")
+    @DisplayName("정상적으로 주문이 생성되고, 재고는 차감되지 않는다(PENDING 상태).")
     @Test
     void createOrderSuccess() {
         // given
@@ -178,7 +178,7 @@ class OrderServiceTest {
         // then
         Goods updatedGoods = goodsRepository.findById(goods.getId()).orElse(null);
         assertThat(updatedGoods).isNotNull();
-        assertThat(updatedGoods.getStock().getQuantity()).isEqualTo(118);
+        assertThat(updatedGoods.getStock().getQuantity()).isEqualTo(120); // 재고 차감되지 않음
 
         Order order = orderRepository.findAll().get(0);
         Payment payment = paymentRepository.findAll().get(0);
@@ -351,6 +351,11 @@ class OrderServiceTest {
 
         Order order = orderRepository.findAll().get(0);
         order.paid();
+        
+        // 결제 완료 시 재고 차감 (실제 PaymentCompleteService에서 수행되는 로직)
+        Stock stock = stockRepository.findAll().get(0);
+        stock.recordDecrease(goods, 2);
+        
         Payment payment = order.getPayment();
         // Set transactionId for test (실제 PortOne ID 형식 사용)
         try {
@@ -397,6 +402,11 @@ class OrderServiceTest {
 
         Order order = orderRepository.findAll().get(0);
         order.paid();
+        
+        // 결제 완료 시 재고 차감 (실제 PaymentCompleteService에서 수행되는 로직)
+        Stock stock = stockRepository.findAll().get(0);
+        stock.recordDecrease(goods, 2);
+        
         Payment payment = order.getPayment();
         // Set transactionId for test (실제 PortOne ID 형식 사용)
         try {

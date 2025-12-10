@@ -74,9 +74,6 @@ public class OrderService implements OrderUseCase {
                                               final LocalDateTime now) {
         User user = userQueryPort.findById(userId);
         Goods goods = goodsQueryPort.findById(request.goodsId());
-        Stock stock = stockQueryPort.findByGoodsIdWithLock(goods.getId());
-        StockHistory stockHistory = stock.recordDecrease(goods, request.quantity());
-        stockCommandPort.saveStockHistory(stockHistory);
 
         validateOrderRequest(request, goods, now);
 

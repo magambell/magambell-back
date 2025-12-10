@@ -1,9 +1,13 @@
 package com.magambell.server.payment.app.service;
 
+import com.magambell.server.goods.domain.entity.Goods;
 import com.magambell.server.notification.app.port.in.NotificationUseCase;
+import com.magambell.server.order.domain.entity.OrderGoods;
 import com.magambell.server.payment.app.port.in.PaymentCompleteUseCase;
 import com.magambell.server.payment.app.port.out.PaymentQueryPort;
 import com.magambell.server.payment.domain.entity.Payment;
+import com.magambell.server.stock.domain.entity.Stock;
+import com.magambell.server.stock.domain.entity.StockHistory;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -33,7 +37,16 @@ public class PaymentCompleteService implements PaymentCompleteUseCase {
             return;
         }
 
-        // 3. Order 상태를 PAID로 변경 및 테스트용 transactionId 설정
+        // 3. 재고 차감 처리
+        for (OrderGoods orderGoods : payment.getOrder().getOrderGoodsList()) {
+            Goods goods = orderGoods.getGoods();
+            Stock stock = goods.getStock();
+            StockHistory stockHistory = stock.recordDecrease(goods, orderGoods.getQuantity());
+            log.info("Stock decreased for goods {}: {} -> {}", goods.getId(), 
+                    stockHistory.getBeforeQuantity(), stockHistory.getResultQuantity());
+        }
+
+        // 4. Order 상태를 PAID로 변경 및 테스트용 transactionId 설정
         payment.getOrder().paid();
         
         // 테스트 환경용 transactionId 설정 (실제 PortOne API 호출 없이)
@@ -47,7 +60,7 @@ public class PaymentCompleteService implements PaymentCompleteUseCase {
             log.warn("Failed to set test transactionId", e);
         }
         
-        // 4. 사장님에게 알림 발송
+        // 5. 사장님에게 알림 발송
         notificationUseCase.notifyPaidOrder(payment.getOrderStoreOwner());
 
         log.info("Payment completed successfully. merchantUid: {}, orderId: {}", 

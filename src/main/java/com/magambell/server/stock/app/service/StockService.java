@@ -25,6 +25,11 @@ public class StockService implements StockUseCase {
     @Transactional
     @Override
     public void restoreStockIfNecessary(final Payment payment) {
+        // 결제가 완료되지 않은 경우 재고 복구 불필요 (재고 차감이 없었음)
+        if (!payment.isPaid()) {
+            return;
+        }
+        
         OrderGoods orderGoods = payment.getOrder().getOrderGoodsList()
                 .stream()
                 .findFirst()
