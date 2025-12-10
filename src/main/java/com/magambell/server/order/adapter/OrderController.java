@@ -22,6 +22,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -52,7 +53,7 @@ public class OrderController {
             @RequestBody @Validated final CreateOrderRequest request,
             @AuthenticationPrincipal final CustomUserDetails customUserDetails
     ) {
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now(ZoneOffset.UTC);
         CreateOrderResponseDTO dto = orderUseCase.createOrder(request.toServiceRequest(), customUserDetails.userId(),
                 now);
         return new Response<>(new CreateOrderResponse(dto.merchantUid(), dto.totalAmount()));
@@ -120,7 +121,7 @@ public class OrderController {
             @PathVariable final Long orderId,
             @AuthenticationPrincipal final CustomUserDetails customUserDetails
     ) {
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now(ZoneOffset.UTC);
         orderUseCase.approveOrder(orderId, customUserDetails.userId(), now);
         return new Response<>();
     }

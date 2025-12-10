@@ -18,7 +18,7 @@ public class OrderCancelScheduler {
 
     @Scheduled(cron = "0 * * * * *")
     public void batchRejectOrdersBeforePickup() {
-        LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
+        LocalDateTime now = LocalDateTime.now(java.time.ZoneOffset.UTC).truncatedTo(ChronoUnit.MINUTES);
         LocalDateTime pickupTime = now.plusMinutes(PICKUP_AUTO_REJECT_MINUTES);
         LocalDateTime createdAtCutOff = pickupTime.minusMinutes(
                 PICKUP_AUTO_REJECT_MINUTES + AUTO_REJECT_AFTER_ORDER_MINUTES);
@@ -27,7 +27,7 @@ public class OrderCancelScheduler {
 
     @Scheduled(cron = "0 * * * * *")
     public void autoRejectOrdersAfter() {
-        LocalDateTime now = LocalDateTime.now().truncatedTo(ChronoUnit.MINUTES);
+        LocalDateTime now = LocalDateTime.now(java.time.ZoneOffset.UTC).truncatedTo(ChronoUnit.MINUTES);
         LocalDateTime pickupTime = now.plusMinutes(PICKUP_AUTO_REJECT_MINUTES);
         LocalDateTime minusMinutes = now.minusMinutes(AUTO_REJECT_AFTER_ORDER_MINUTES);
 

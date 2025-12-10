@@ -41,7 +41,7 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
 
     @Override
     public List<OrderListDTO> getOrderList(final Pageable pageable, final Long userId) {
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = LocalDateTime.now(java.time.ZoneOffset.UTC);
 
         // 상태 기반 우선순위
         NumberExpression<Integer> statusOrder = new CaseBuilder()
