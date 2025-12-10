@@ -51,6 +51,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class OrderService implements OrderUseCase {
 
     private static final List<OrderStatus> OWNER_LIST_VALID_STATUSES = List.of(
+            OrderStatus.PENDING,
             OrderStatus.PAID,
             OrderStatus.ACCEPTED,
             OrderStatus.COMPLETED

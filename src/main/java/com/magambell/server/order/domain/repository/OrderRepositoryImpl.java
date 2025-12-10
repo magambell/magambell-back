@@ -71,9 +71,6 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
                                 .and(
                                         user.id.eq(userId)
                                 )
-                                .and(
-                                        order.orderStatus.ne(OrderStatus.PENDING)
-                                )
                 )
                 .orderBy(
                         statusOrder.asc(),                 // 상태 우선순위
