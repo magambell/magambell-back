@@ -2,6 +2,7 @@ package com.magambell.server.order.adapter.in.web;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.magambell.server.order.app.port.in.request.CreateOrderServiceRequest;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -20,6 +21,8 @@ public record CreateOrderRequest(
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd'T'HH:mm:ss[.SSS][XXX][X]")
         @NotNull(message = "픽업시간을 설정해 주세요.")
         LocalDateTime pickupTime,
+
+        @Schema(description = "주문 메모 (선택사항)", nullable = true, example = "빨리 주세요")
         String memo
 ) {
 

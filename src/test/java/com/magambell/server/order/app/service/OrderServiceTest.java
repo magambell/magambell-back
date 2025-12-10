@@ -189,6 +189,28 @@ class OrderServiceTest {
         assertThat(payment.getMerchantUid()).isEqualTo(MERCHANT_UID_PREFIX + order.getId().toString());
     }
 
+    @DisplayName("memo 없이 주문이 정상적으로 생성된다.")
+    @Test
+    void createOrderWithoutMemoSuccess() {
+        // given
+        CreateOrderServiceRequest request = new CreateOrderServiceRequest(
+                goods.getId(),
+                1,
+                9000,
+                LocalDateTime.now().plusMinutes(30),
+                null
+        );
+
+        // when
+        orderService.createOrder(request, user.getId(), LocalDateTime.now().plusMinutes(10));
+
+        // then
+        Order order = orderRepository.findAll().get(0);
+        assertThat(order).isNotNull();
+        assertThat(order.getMemo()).isNull();
+        assertThat(order.getOrderStatus()).isEqualTo(OrderStatus.PENDING);
+    }
+
     @DisplayName("고객 주문 목록")
     @Test
     void getOrderList() {
