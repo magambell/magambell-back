@@ -120,6 +120,7 @@ class PaymentRepositoryImplTest {
 
         // 상품 생성
         RegisterGoodsDTO registerGoodsDTO = new RegisterGoodsDTO(
+                "상품명",
                 LocalDateTime.now().minusHours(1),
                 LocalDateTime.now().plusHours(2),
                 120, 10000, 10, 9000,

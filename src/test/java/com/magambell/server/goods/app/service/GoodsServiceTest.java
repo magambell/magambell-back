@@ -132,6 +132,7 @@ class GoodsServiceTest {
     void registerGoods() {
         // given
         RegisterGoodsServiceRequest req = new RegisterGoodsServiceRequest(
+                "상품명",
                 LocalDateTime.of(2025, 1, 1, 9, 0), LocalDateTime.of(2025, 1, 1, 18, 0),
                 3, 10000, 10, 9000,
                 List.of()
@@ -154,6 +155,7 @@ class GoodsServiceTest {
     void editGoods() {
         // given
         RegisterGoodsDTO dto = new RegisterGoodsDTO(
+                "상품명",
                 LocalDateTime.of(2025, 1, 1, 9, 0),
                 LocalDateTime.of(2025, 1, 1, 18, 0),
                 3, 10000, 10, 9000,
@@ -202,6 +204,7 @@ class GoodsServiceTest {
     void changeGoodsStatus() throws FirebaseMessagingException {
         // given
         RegisterGoodsDTO dto = new RegisterGoodsDTO(
+                "상품명",
                 LocalDateTime.of(2025, 1, 1, 9, 0),
                 LocalDateTime.of(2025, 1, 1, 18, 0),
                 3, 10000, 10, 9000,
@@ -235,6 +238,7 @@ class GoodsServiceTest {
     void changeSaleStatusToOff() {
         // given
         RegisterGoodsDTO dto = new RegisterGoodsDTO(
+                "상품명",
                 LocalDateTime.of(2025, 1, 1, 9, 0),
                 LocalDateTime.of(2025, 1, 1, 18, 0),
                 3, 10000, 10, 9000,

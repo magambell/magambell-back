@@ -11,6 +11,9 @@ import java.util.List;
 
 public record RegisterGoodsRequest(
 
+        @NotBlank(message = "상품 이름을 입력해 주세요.")
+        String name,
+
         @NotNull(message = "판매 시작 시간은 선택해 주세요.")
         LocalDateTime startTime,
 
@@ -34,7 +37,7 @@ public record RegisterGoodsRequest(
 ) {
     public RegisterGoodsServiceRequest toService() {
         return new RegisterGoodsServiceRequest(
-                startTime, endTime, quantity, originalPrice, discount, salePrice, goodsImagesRegisters
+                name, startTime, endTime, quantity, originalPrice, discount, salePrice, goodsImagesRegisters
         );
     }
 }

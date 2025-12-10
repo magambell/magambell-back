@@ -11,6 +11,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 public record RegisterGoodsDTO(
+        String name,
         LocalDateTime startTime,
         LocalDateTime endTime,
         Integer quantity,

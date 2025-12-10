@@ -83,6 +83,7 @@ public class Goods extends BaseTimeEntity {
 
     public static Goods create(RegisterGoodsDTO dto) {
         Goods goods = Goods.builder()
+                .name(dto.name())
                 .startTime(dto.startTime())
                 .endTime(dto.endTime())
                 .originalPrice(dto.originalPrice())
