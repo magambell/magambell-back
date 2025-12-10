@@ -183,7 +183,9 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
                                                 orderGoods.quantity,
                                                 order.totalPrice,
                                                 customer.phoneNumber,
-                                                goods.name
+                                                goods.name,
+                                                store.address,
+                                                goods.discount
                                         )
                                 )
                 );
