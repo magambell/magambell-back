@@ -175,6 +175,7 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                     .select(Projections.constructor(GoodsImagesRegister.class,
                             goodsImage.id.intValue(),
                             goodsImage.imageUrl,
+                            goodsImage.imageUrl,
                             goodsImage.goodsName
                     ))
                     .from(goodsImage)
@@ -184,6 +185,7 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                     .map(img -> new GoodsImagesRegister(
                             img.id(),
                             extractKeyFromUrl(img.key()),
+                            img.imageUrl(),
                             img.goodsName()
                     ))
                     .toList();
@@ -267,6 +269,7 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                                         list(Projections.constructor(OwnerStoreDetailDTO.GoodsImageInfo.class,
                                                 goodsImage.id,
                                                 goodsImage.goodsName,
+                                                goodsImage.imageUrl,
                                                 goodsImage.imageUrl
                                         )),
                                         store.parkingDescription
@@ -274,7 +277,7 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                         )
                 );
 
-        // imageUrl을 key로 변환
+        // imageUrl에서 key 추출
         return result.values().stream()
                 .map(dto -> new OwnerStoreDetailDTO(
                         dto.storeId(),
@@ -286,7 +289,8 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                                 .map(img -> new OwnerStoreDetailDTO.GoodsImageInfo(
                                         img.goodsImageId(),
                                         img.goodsName(),
-                                        extractKeyFromUrl(img.imageUrl())
+                                        extractKeyFromUrl(img.key()),
+                                        img.imageUrl()
                                 ))
                                 .toList(),
                         dto.parkingDescription()

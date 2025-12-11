@@ -129,7 +129,7 @@ class ReviewServiceTest {
                 LocalDateTime.now().plusHours(2),
                 10, 10000, 10, 9000,
                 store,
-                List.of(new GoodsImagesRegister(0, "test", "상품명"))
+                List.of(new GoodsImagesRegister(0, "test", "https://test.com/test.jpg", "상품명"))
         );
         goods = Goods.create(registerGoodsDTO);
         store.addGoods(goods);

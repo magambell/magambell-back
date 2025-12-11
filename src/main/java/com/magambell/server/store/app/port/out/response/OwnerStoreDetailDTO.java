@@ -34,6 +34,7 @@ public record OwnerStoreDetailDTO(
     public record GoodsImageInfo(
             Long goodsImageId,
             String goodsName,
+            String key,
             String imageUrl
     ) {
     }
