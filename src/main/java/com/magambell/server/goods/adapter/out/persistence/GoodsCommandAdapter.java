@@ -73,14 +73,14 @@ public class GoodsCommandAdapter implements GoodsCommandPort {
                 ));
 
         List<GoodsPreSignedUrlImage> goodsPreSignedUrlImages = new ArrayList<>();
-        List<GoodsImage> newGoodsImageList = new ArrayList<>();
+        List<GoodsImage> imagesToSave = new ArrayList<>();
 
         for (int i = 0; i < goodsImagesRegisters.size(); i++) {
             GoodsImagesRegister register = goodsImagesRegisters.get(i);
             
             // 기존 이미지인지 확인
             if (existingImageMap.containsKey(register.key())) {
-                // 기존 이미지 - presignedUrl 재생성하지 않고 기존 것 유지
+                // 기존 이미지 - ID 유지, goodsName만 업데이트
                 GoodsImage existingImage = existingImageMap.get(register.key());
                 
                 // name이 변경되었는지 확인
@@ -88,8 +88,8 @@ public class GoodsCommandAdapter implements GoodsCommandPort {
                     existingImage.setGoodsName(register.goodsName());
                 }
                 
-                newGoodsImageList.add(existingImage);
-                // 기존 이미지는 presignedUrl 생성하지 않음 (null 또는 빈 값)
+                imagesToSave.add(existingImage);
+                // 기존 이미지는 presignedUrl 생성하지 않음
                 goodsPreSignedUrlImages.add(new GoodsPreSignedUrlImage(register.id(), null));
                 
                 // 유지되는 이미지는 맵에서 제거
@@ -107,16 +107,21 @@ public class GoodsCommandAdapter implements GoodsCommandPort {
                             .goodsName(register.goodsName())
                             .imageUrl(transformedImage.getUrl())
                             .build();
-                    newGoodsImageList.add(newImage);
+                    imagesToSave.add(newImage);
                     
                     goodsPreSignedUrlImages.add(new GoodsPreSignedUrlImage(transformedImage.id(), transformedImage.putUrl()));
                 }
             }
         }
 
-        // DB 업데이트 (삭제된 이미지는 DB에서만 제거, S3는 유지)
-        goodsImageRepository.deleteGoodsImageByGoodsId(goods.getId());
-        goodsImageRepository.saveAll(newGoodsImageList);
+        // 삭제된 이미지만 제거 (맵에 남아있는 것들)
+        List<GoodsImage> imagesToDelete = new ArrayList<>(existingImageMap.values());
+        if (!imagesToDelete.isEmpty()) {
+            goodsImageRepository.deleteAll(imagesToDelete);
+        }
+        
+        // 기존 이미지는 업데이트, 새 이미지는 추가
+        goodsImageRepository.saveAll(imagesToSave);
 
         return new EditGoodsImageResponseDTO(goods.getId(), goodsPreSignedUrlImages);
     }
