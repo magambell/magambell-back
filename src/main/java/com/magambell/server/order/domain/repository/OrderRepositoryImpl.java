@@ -220,7 +220,7 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
                         .innerJoin(orderGoods).on(orderGoods.order.id.eq(order.id)).fetchJoin()
                         .innerJoin(goods).on(goods.id.eq(orderGoods.goods.id)).fetchJoin()
                         .innerJoin(store).on(store.id.eq(goods.store.id)).fetchJoin()
-                        .innerJoin(payment).on(payment.order.id.eq(order.id)).fetchJoin()
+                        .leftJoin(payment).on(payment.order.id.eq(order.id)).fetchJoin()
                         .innerJoin(user).on(user.id.eq(order.user.id)).fetchJoin()
                         .where(
                                 order.id.eq(orderId)

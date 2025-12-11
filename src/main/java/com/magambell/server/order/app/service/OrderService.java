@@ -154,6 +154,11 @@ public class OrderService implements OrderUseCase {
         order.cancelled(PaymentCompletionType.REDIRECT);
 
         Payment payment = order.getPayment();
+        if (payment == null) {
+            log.warn("Payment not found for order: {}", orderId);
+            return;
+        }
+        
         stockUseCase.restoreStockIfNecessary(payment);
         
         // 실제 결제가 있는 경우에만 PortOne 환불 처리
