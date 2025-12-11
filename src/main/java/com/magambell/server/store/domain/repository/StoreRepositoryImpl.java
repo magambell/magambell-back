@@ -266,11 +266,11 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                                                 goods.saleStatus,
                                                 stock.quantity
                                         )),
-                                        list(Projections.constructor(OwnerStoreDetailDTO.GoodsImageInfo.class,
-                                                goodsImage.id,
-                                                goodsImage.goodsName,
+                                        list(Projections.constructor(GoodsImagesRegister.class,
+                                                goodsImage.id.intValue(),
                                                 goodsImage.imageUrl,
-                                                goodsImage.imageUrl
+                                                goodsImage.imageUrl,
+                                                goodsImage.goodsName
                                         )),
                                         store.parkingDescription
                                 )
@@ -286,11 +286,11 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                         dto.storeImageUrls(),
                         dto.goodsList(),
                         dto.goodsImageList().stream()
-                                .map(img -> new OwnerStoreDetailDTO.GoodsImageInfo(
-                                        img.goodsImageId(),
-                                        img.goodsName(),
+                                .map(img -> new GoodsImagesRegister(
+                                        img.id(),
                                         extractKeyFromUrl(img.key()),
-                                        img.imageUrl()
+                                        img.imageUrl(),
+                                        img.goodsName()
                                 ))
                                 .toList(),
                         dto.parkingDescription()
