@@ -160,7 +160,7 @@ class GoodsServiceTest {
                 LocalDateTime.of(2025, 1, 1, 18, 0),
                 3, 10000, 10, 9000,
                 store,
-                List.of(new GoodsImagesRegister(0, "test", "상품명"))
+                List.of(new GoodsImagesRegister(0, "test", "https://test.com/test.jpg", "상품명"))
                 );
         Store store = dto.store();
         Goods dtoGoods = dto.toGoods();
@@ -209,7 +209,7 @@ class GoodsServiceTest {
                 LocalDateTime.of(2025, 1, 1, 18, 0),
                 3, 10000, 10, 9000,
                 store,
-                List.of(new GoodsImagesRegister(0, "test", "상품명"))
+                List.of(new GoodsImagesRegister(0, "test", "https://test.com/test.jpg", "상품명"))
                 );
         Store store = dto.store();
         Goods dtoGoods = dto.toGoods();
@@ -243,7 +243,7 @@ class GoodsServiceTest {
                 LocalDateTime.of(2025, 1, 1, 18, 0),
                 3, 10000, 10, 9000,
                 store,
-                List.of(new GoodsImagesRegister(0, "test", "상품명"))
+                List.of(new GoodsImagesRegister(0, "test", "https://test.com/test.jpg", "상품명"))
         );
         Store store = dto.store();
         Goods dtoGoods = dto.toGoods();
