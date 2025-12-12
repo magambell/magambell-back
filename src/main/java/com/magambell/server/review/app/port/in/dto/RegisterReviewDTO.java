@@ -16,6 +16,9 @@ public record RegisterReviewDTO(
         OrderGoods orderGoods
 ) {
     public List<ImageRegister> toImage() {
+        if (reviewImageRegisters == null || reviewImageRegisters.isEmpty()) {
+            return List.of();
+        }
         return reviewImageRegisters.stream()
                 .map(image -> new ImageRegister(image.id(), image.key()))
                 .toList();
