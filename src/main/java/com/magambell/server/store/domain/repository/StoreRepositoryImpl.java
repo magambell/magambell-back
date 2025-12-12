@@ -410,7 +410,12 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                                         stock.quantity,
                                         Expressions.nullExpression(Double.class),
                                         goods.saleStatus,
-                                        user.nickName
+                                        user.nickName,
+                                        store.ownerName,
+                                        store.ownerPhone,
+                                        store.businessNumber,
+                                        store.bankName,
+                                        store.bankAccount
                                 ))
                 );
     }
