@@ -179,6 +179,29 @@ class ReviewServiceTest {
         assertThat(review.getDescription()).isEqualTo("test");
     }
 
+    @DisplayName("이미지 없이 리뷰를 등록한다.")
+    @Test
+    void registerReviewWithoutImages() {
+        // given
+        RegisterReviewServiceRequest request = new RegisterReviewServiceRequest(
+                orderGoods.getId(),
+                3,
+                "이미지 없이 작성된 리뷰입니다.",
+                null
+        );
+
+        // when
+        reviewService.registerReview(request, user.getId());
+
+        // then
+        Review review = reviewRepository.findAll().get(0);
+        assertThat(review).isNotNull();
+        assertThat(review.getDescription()).isEqualTo("이미지 없이 작성된 리뷰입니다.");
+        assertThat(review.getRating()).isEqualTo(3);
+        // 이미지가 저장되지 않았는지 확인
+        assertThat(reviewImageRepository.findAll()).isEmpty();
+    }
+
     @DisplayName("리뷰 리스트를 출력한다.")
     @Test
     void getReviewList() {
