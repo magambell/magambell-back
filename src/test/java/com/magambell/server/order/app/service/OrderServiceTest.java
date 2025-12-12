@@ -132,10 +132,13 @@ class OrderServiceTest {
         Store store = registerStoreDTO.toEntity();
 
         // 상품 생성
+        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime startTime = now.withHour(10).withMinute(0).withSecond(0).withNano(0);
+        LocalDateTime endTime = now.withHour(18).withMinute(0).withSecond(0).withNano(0);
         RegisterGoodsDTO registerGoodsDTO = new RegisterGoodsDTO(
                 "상품명",
-                LocalDateTime.now().minusHours(1),
-                LocalDateTime.now().plusHours(2),
+                startTime,
+                endTime,
                 120, 10000, 10, 9000,
                 store,
                 List.of(new GoodsImagesRegister(0, "test", "https://test.com/test.jpg", "상품명"))
@@ -165,16 +168,20 @@ class OrderServiceTest {
     @Test
     void createOrderSuccess() {
         // given
+        LocalDateTime pickupTime = LocalDateTime.of(
+                LocalDateTime.now().toLocalDate(),
+                goods.getStartTime().plusMinutes(30).toLocalTime()
+        );
         CreateOrderServiceRequest request = new CreateOrderServiceRequest(
                 goods.getId(),
                 2,
                 18000,
-                LocalDateTime.now().plusMinutes(30),
+                pickupTime,
                 "빨리 주세요"
         );
 
         // when
-        orderService.createOrder(request, user.getId(), LocalDateTime.now().plusMinutes(10));
+        orderService.createOrder(request, user.getId(), goods.getStartTime().minusMinutes(10));
 
         // then
         Goods updatedGoods = goodsRepository.findById(goods.getId()).orElse(null);
@@ -194,16 +201,20 @@ class OrderServiceTest {
     @Test
     void createOrderWithoutMemoSuccess() {
         // given
+        LocalDateTime pickupTime = LocalDateTime.of(
+                LocalDateTime.now().toLocalDate(),
+                goods.getStartTime().plusMinutes(30).toLocalTime()
+        );
         CreateOrderServiceRequest request = new CreateOrderServiceRequest(
                 goods.getId(),
                 1,
                 9000,
-                LocalDateTime.now().plusMinutes(30),
+                pickupTime,
                 null
         );
 
         // when
-        orderService.createOrder(request, user.getId(), LocalDateTime.now().plusMinutes(10));
+        orderService.createOrder(request, user.getId(), goods.getStartTime().minusMinutes(10));
 
         // then
         Order order = orderRepository.findAll().get(0);
@@ -341,14 +352,18 @@ class OrderServiceTest {
     @Test
     void rejectOrder() throws FirebaseMessagingException {
         // given
+        LocalDateTime pickupTime = LocalDateTime.of(
+                LocalDateTime.now().toLocalDate(),
+                goods.getStartTime().plusMinutes(30).toLocalTime()
+        );
         CreateOrderServiceRequest createRequest = new CreateOrderServiceRequest(
                 goods.getId(),
                 2,
                 18000,
-                LocalDateTime.now().plusMinutes(30),
+                pickupTime,
                 "빨리 주세요"
         );
-        orderService.createOrder(createRequest, user.getId(), LocalDateTime.now().plusMinutes(10));
+        orderService.createOrder(createRequest, user.getId(), goods.getStartTime().minusMinutes(10));
 
         Order order = orderRepository.findAll().get(0);
         order.paid();
@@ -392,14 +407,18 @@ class OrderServiceTest {
     @Test
     void cancelOrder() {
         // given
+        LocalDateTime pickupTime = LocalDateTime.of(
+                LocalDateTime.now().toLocalDate(),
+                goods.getStartTime().plusMinutes(30).toLocalTime()
+        );
         CreateOrderServiceRequest request = new CreateOrderServiceRequest(
                 goods.getId(),
                 2,
                 18000,
-                LocalDateTime.now().plusMinutes(30),
+                pickupTime,
                 "빨리 주세요"
         );
-        orderService.createOrder(request, user.getId(), LocalDateTime.now().plusMinutes(10));
+        orderService.createOrder(request, user.getId(), goods.getStartTime().minusMinutes(10));
 
         Order order = orderRepository.findAll().get(0);
         order.paid();
