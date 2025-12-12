@@ -51,7 +51,7 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
                         goods.id
                 ))
                 .from(user)
-                .leftJoin(userSocialAccount).on(userSocialAccount.user.id.eq(user.id))
+                .innerJoin(userSocialAccount).on(userSocialAccount.user.id.eq(user.id))
                 .leftJoin(store).on(store.user.id.eq(user.id))
                 .leftJoin(goods).on(goods.store.id.eq(store.id))
                 .where(
