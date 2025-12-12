@@ -190,8 +190,9 @@ class UserServiceTest {
                 "testId",
                 UserRole.CUSTOMER
         );
-        User saveUser = userRepository.save(userSocialAccountDTO.toUser());
-        userSocialAccountRepository.save(userSocialAccountDTO.toUserSocialAccount());
+        User user = userSocialAccountDTO.toUser();
+        user.addUserSocialAccount(userSocialAccountDTO.toUserSocialAccount());
+        User saveUser = userRepository.save(user);
         CustomUserDetails customUserDetails = new CustomUserDetails(saveUser.getId(), saveUser.getUserRole());
 
         // when
@@ -215,8 +216,9 @@ class UserServiceTest {
                 "testId",
                 UserRole.OWNER
         );
-        User saveUser = userRepository.save(userSocialAccountDTO.toUser());
-        userSocialAccountRepository.save(userSocialAccountDTO.toUserSocialAccount());
+        User user = userSocialAccountDTO.toUser();
+        user.addUserSocialAccount(userSocialAccountDTO.toUserSocialAccount());
+        User saveUser = userRepository.save(user);
 
         CustomUserDetails customUserDetails = new CustomUserDetails(saveUser.getId(), saveUser.getUserRole());
 
@@ -280,8 +282,9 @@ class UserServiceTest {
                 "testId",
                 UserRole.OWNER
         );
-        User saveUser = userRepository.save(userSocialAccountDTO.toUser());
-        userSocialAccountRepository.save(userSocialAccountDTO.toUserSocialAccount());
+        User user = userSocialAccountDTO.toUser();
+        user.addUserSocialAccount(userSocialAccountDTO.toUserSocialAccount());
+        User saveUser = userRepository.save(user);
         Order order = createOrder(saveUser, goods, 1);
         orderRepository.save(order);
 
