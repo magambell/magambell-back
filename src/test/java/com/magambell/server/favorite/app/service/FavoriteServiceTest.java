@@ -86,6 +86,7 @@ class FavoriteServiceTest {
                 List.of(),
                 Approved.APPROVED,
                 owner,
+                null,
                 "주차장"
         );
         store = registerStoreDTO.toEntity();
@@ -208,6 +209,7 @@ class FavoriteServiceTest {
                 List.of(),
                 Approved.APPROVED,
                 owner,
+                null,
                 "주차장"
         );
 

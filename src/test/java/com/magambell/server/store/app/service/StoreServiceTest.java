@@ -112,6 +112,7 @@ class StoreServiceTest {
                 Bank.KB국민,
                 "102391485",
                 List.of(new StoreImagesRegister(0, "test")),
+                null,
                 "주차장"
         );
 
@@ -281,6 +282,7 @@ class StoreServiceTest {
                 List.of(),
                 Approved.APPROVED,
                 user,
+                null,
                 "주차장"
         );
 

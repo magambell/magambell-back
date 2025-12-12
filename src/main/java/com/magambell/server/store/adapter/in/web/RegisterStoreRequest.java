@@ -39,6 +39,8 @@ public record RegisterStoreRequest(
         @NotEmpty(message = "대표 이미지는 필수입니다.")
         List<StoreImagesRegister> storeImagesRegisters,
 
+        String description,
+
         String parkingDescription
 
 ) {
@@ -54,6 +56,7 @@ public record RegisterStoreRequest(
                 bankName,
                 bankAccount,
                 storeImagesRegisters,
+                description,
                 parkingDescription);
     }
 }

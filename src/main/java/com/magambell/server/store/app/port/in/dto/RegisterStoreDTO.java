@@ -22,6 +22,7 @@ public record RegisterStoreDTO(
         List<StoreImagesRegister> storeImagesRegisters,
         Approved approved,
         User user,
+        String description,
         String parkingDescription
 ) {
     public Store toEntity() {

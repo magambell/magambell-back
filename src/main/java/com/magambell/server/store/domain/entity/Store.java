@@ -41,6 +41,8 @@ public class Store extends BaseTimeEntity {
 
     private String bankAccount;
 
+    private String description;
+
     private String parkingDescription;
 
     @Enumerated(EnumType.STRING)
@@ -66,7 +68,7 @@ public class Store extends BaseTimeEntity {
     private Store(final String name, final String address, final Double latitude, final Double longitude,
                   final String ownerName, final String ownerPhone,
                   final String businessNumber, final Bank bankName, final String bankAccount, final Approved approved,
-                  final String parkingDescription) {
+                  final String description, final String parkingDescription) {
         this.name = name;
         this.address = address;
         this.latitude = latitude;
@@ -77,6 +79,7 @@ public class Store extends BaseTimeEntity {
         this.bankName = bankName;
         this.bankAccount = bankAccount;
         this.approved = approved;
+        this.description = description;
         this.parkingDescription = parkingDescription;
     }
 
@@ -92,6 +95,7 @@ public class Store extends BaseTimeEntity {
                 .bankName(dto.bankName())
                 .bankAccount(dto.bankAccount())
                 .approved(dto.approved())
+                .description(dto.description())
                 .parkingDescription(dto.parkingDescription())
                 .build();
     }

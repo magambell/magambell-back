@@ -21,6 +21,7 @@ public record RegisterStoreServiceRequest(
         Bank bankName,
         String bankAccount,
         List<StoreImagesRegister> storeImagesRegisters,
+        String description,
         String parkingDescription
 ) {
     public RegisterStoreServiceRequest(final String name, final String address, final Double latitude,
@@ -28,6 +29,7 @@ public record RegisterStoreServiceRequest(
                                        final String ownerPhone, final String businessNumber, final Bank bankName,
                                        final String bankAccount,
                                        final List<StoreImagesRegister> storeImagesRegisters,
+                                       final String description,
                                        final String parkingDescription) {
         this.name = name;
         this.address = address;
@@ -39,6 +41,7 @@ public record RegisterStoreServiceRequest(
         this.bankName = bankName;
         this.bankAccount = bankAccount;
         this.storeImagesRegisters = validateImages(storeImagesRegisters);
+        this.description = description;
         this.parkingDescription = parkingDescription;
     }
 
@@ -65,6 +68,6 @@ public record RegisterStoreServiceRequest(
 
     public RegisterStoreDTO toStoreDTO(final Approved approved, final User user) {
         return new RegisterStoreDTO(name, address, latitude, longitude, ownerName, ownerPhone, businessNumber, bankName,
-                bankAccount, storeImagesRegisters, approved, user, parkingDescription);
+                bankAccount, storeImagesRegisters, approved, user, description, parkingDescription);
     }
 }

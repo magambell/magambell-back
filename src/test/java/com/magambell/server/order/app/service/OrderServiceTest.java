@@ -127,6 +127,7 @@ class OrderServiceTest {
                 List.of(),
                 Approved.APPROVED,
                 owner,
+                null,
                 "주차장");
         Store store = registerStoreDTO.toEntity();
 

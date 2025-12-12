@@ -14,6 +14,7 @@ public record OwnerStoreDetailDTO(
         Set<String> storeImageUrls,
         List<GoodsInfo> goodsList,
         List<GoodsImagesRegister> goodsImageList,
+        String description,
         String parkingDescription
 ) {
     public record GoodsInfo(

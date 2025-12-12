@@ -272,6 +272,7 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                                                 goodsImage.imageUrl,
                                                 goodsImage.goodsName
                                         )),
+                                        store.description,
                                         store.parkingDescription
                                 )
                         )
@@ -293,6 +294,7 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                                         img.goodsName()
                                 ))
                                 .toList(),
+                        dto.description(),
                         dto.parkingDescription()
                 ))
                 .findFirst();
