@@ -480,14 +480,13 @@ class OrderServiceTest {
     @Test
     void createOrderWithValidPickupTimeOnDifferentDate() {
         // given
-        // 상품 시간대: 오늘 13:00 ~ 16:00 (현재-1시간 ~ 현재+2시간)
-        // 픽업 시간: 내일 14:30 (시간대는 맞지만 날짜는 다름)
-        LocalDateTime now = LocalDateTime.now();
-        LocalDateTime tomorrow = now.plusDays(1);
-        // 정확한 시간 설정 (나노초 차이 방지)
+        // 상품 시간대: 오늘 10:00 ~ 18:00
+        // 픽업 시간: 내일 12:00 (시간대는 맞지만 날짜는 다름)
+        LocalDateTime tomorrow = LocalDateTime.now().plusDays(1);
+        // 판매 시간대 내의 픽업 시간 설정 (판매 시작 2시간 후)
         LocalDateTime pickupTime = LocalDateTime.of(
                 tomorrow.toLocalDate(),
-                now.plusMinutes(90).toLocalTime()
+                goods.getStartTime().plusHours(2).toLocalTime()
         );
         
         CreateOrderServiceRequest request = new CreateOrderServiceRequest(
@@ -499,7 +498,7 @@ class OrderServiceTest {
         );
 
         // when
-        orderService.createOrder(request, user.getId(), now);
+        orderService.createOrder(request, user.getId(), goods.getStartTime().minusMinutes(10));
 
         // then
         Order order = orderRepository.findAll().get(0);
