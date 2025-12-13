@@ -5,6 +5,7 @@ import com.magambell.server.appversion.adapter.in.web.UpdateAppVersionPolicyRequ
 import com.magambell.server.appversion.app.port.in.AppVersionPolicyUseCase;
 import com.magambell.server.appversion.app.port.in.dto.AppVersionPolicyResponse;
 import com.magambell.server.appversion.app.port.out.AppVersionPolicyCommandPort;
+import com.magambell.server.appversion.app.port.out.AppVersionPolicyQueryPort;
 import com.magambell.server.appversion.domain.entity.AppVersionPolicy;
 import com.magambell.server.appversion.domain.enums.Platform;
 import com.magambell.server.common.enums.ErrorCode;
@@ -24,6 +25,7 @@ import org.springframework.transaction.annotation.Transactional;
 public class AppVersionPolicyService implements AppVersionPolicyUseCase {
 
     private final AppVersionPolicyCommandPort appVersionPolicyCommandPort;
+    private final AppVersionPolicyQueryPort appVersionPolicyQueryPort;
 
     @Override
     public List<AppVersionPolicyResponse> getAllPolicies() {
@@ -34,7 +36,7 @@ public class AppVersionPolicyService implements AppVersionPolicyUseCase {
 
     @Override
     public AppVersionPolicyResponse getPolicyByPlatform(Platform platform) {
-        AppVersionPolicy policy = appVersionPolicyCommandPort.findByPlatform(platform)
+        AppVersionPolicy policy = appVersionPolicyQueryPort.findByPlatform(platform)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.PAYMENT_NOT_FOUND)); // TODO: 적절한 에러코드
         return AppVersionPolicyResponse.from(policy);
     }

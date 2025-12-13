@@ -114,10 +114,7 @@ public class AppVersionCheckFilter extends OncePerRequestFilter {
                 policy.getReleaseNotes()
         );
 
-        Response<AppUpdateInfo> errorResponse = new Response<>(
-                ErrorCode.APP_UPDATE_REQUIRED.getMessage(),
-                updateInfo
-        );
+        Response<AppUpdateInfo> errorResponse = new Response<>(updateInfo);
 
         response.getWriter().write(objectMapper.writeValueAsString(errorResponse));
     }

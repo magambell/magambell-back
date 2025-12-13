@@ -1,4 +1,4 @@
-package com.magambell.server.appversion.app.port.in.dto;
+package com.magambell.server.appversion.adapter.in.web;
 
 import com.magambell.server.appversion.domain.enums.Platform;
 import io.swagger.v3.oas.annotations.media.Schema;
