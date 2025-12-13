@@ -4,6 +4,7 @@ import static com.magambell.server.payment.domain.enums.PaymentStatus.READY;
 
 import com.magambell.server.common.enums.ErrorCode;
 import com.magambell.server.common.exception.InvalidRequestException;
+import com.magambell.server.common.exception.NotFoundException;
 import com.magambell.server.common.exception.UnauthorizedException;
 import com.magambell.server.goods.app.port.out.GoodsQueryPort;
 import com.magambell.server.goods.domain.entity.Goods;
@@ -135,7 +136,21 @@ public class OrderService implements OrderUseCase {
         
         // 실제 결제가 있는 경우에만 PortOne 환불 처리
         if (payment.getTransactionId() != null && !payment.getTransactionId().startsWith("test_")) {
-            portOnePort.cancelPayment(payment.getTransactionId(), order.getTotalPrice(), "사장님 주문 취소");
+            try {
+                portOnePort.cancelPayment(payment.getTransactionId(), order.getTotalPrice(), "사장님 주문 취소");
+                log.info("PortOne 결제 취소 성공: transactionId={}, orderId={}", 
+                        payment.getTransactionId(), request.orderId());
+            } catch (NotFoundException e) {
+                // PortOne에 결제 정보가 없는 경우 (이미 취소됨 또는 결제 미완료)
+                // 주문 취소는 정상적으로 진행
+                log.warn("PortOne에서 결제를 찾을 수 없음 - 주문 취소는 정상 처리: transactionId={}, orderId={}", 
+                        payment.getTransactionId(), request.orderId());
+            } catch (Exception e) {
+                // 실제 네트워크 에러, 인증 에러 등 - 재시도 필요
+                log.error("PortOne 결제 취소 중 예상치 못한 에러 발생 - 수동 환불 필요: transactionId={}, orderId={}", 
+                        payment.getTransactionId(), request.orderId(), e);
+                throw e; // 예외를 다시 던져서 트랜잭션 롤백
+            }
         } else {
             log.info("Test payment detected - skipping PortOne cancellation for transactionId: {}", 
                     payment.getTransactionId());
@@ -163,7 +178,21 @@ public class OrderService implements OrderUseCase {
         
         // 실제 결제가 있는 경우에만 PortOne 환불 처리
         if (payment.getTransactionId() != null && !payment.getTransactionId().startsWith("test_")) {
-            portOnePort.cancelPayment(payment.getTransactionId(), order.getTotalPrice(), "고객님 주문 취소");
+            try {
+                portOnePort.cancelPayment(payment.getTransactionId(), order.getTotalPrice(), "고객님 주문 취소");
+                log.info("PortOne 결제 취소 성공: transactionId={}, orderId={}", 
+                        payment.getTransactionId(), orderId);
+            } catch (NotFoundException e) {
+                // PortOne에 결제 정보가 없는 경우 (이미 취소됨 또는 결제 미완료)
+                // 주문 취소는 정상적으로 진행
+                log.warn("PortOne에서 결제를 찾을 수 없음 - 주문 취소는 정상 처리: transactionId={}, orderId={}", 
+                        payment.getTransactionId(), orderId);
+            } catch (Exception e) {
+                // 실제 네트워크 에러, 인증 에러 등 - 재시도 필요
+                log.error("PortOne 결제 취소 중 예상치 못한 에러 발생 - 수동 환불 필요: transactionId={}, orderId={}", 
+                        payment.getTransactionId(), orderId, e);
+                throw e; // 예외를 다시 던져서 트랜잭션 롤백
+            }
         } else {
             log.info("Test payment detected - skipping PortOne cancellation for transactionId: {}", 
                     payment.getTransactionId());

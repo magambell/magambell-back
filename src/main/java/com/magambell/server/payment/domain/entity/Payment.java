@@ -121,6 +121,14 @@ public class Payment extends BaseTimeEntity {
         this.order.failed();
     }
 
+    /**
+     * 테스트용 결제의 transactionId 설정
+     * @param testTransactionId 테스트용 transactionId (예: "test_ORDER_xxx")
+     */
+    public void setTestTransactionId(final String testTransactionId) {
+        this.transactionId = testTransactionId;
+    }
+
     public Set<User> getOrderStoreOwner() {
         return this.order.getOrderStoreOwner();
     }

@@ -50,15 +50,10 @@ public class PaymentCompleteService implements PaymentCompleteUseCase {
         payment.getOrder().paid();
         
         // 테스트 환경용 transactionId 설정 (실제 PortOne API 호출 없이)
-        try {
-            java.lang.reflect.Field transactionIdField = Payment.class.getDeclaredField("transactionId");
-            transactionIdField.setAccessible(true);
-            // test_ prefix를 사용하여 테스트 결제임을 명시
-            transactionIdField.set(payment, "test_" + merchantUid);
-            log.info("Test transactionId set: test_{}", merchantUid);
-        } catch (Exception e) {
-            log.warn("Failed to set test transactionId", e);
-        }
+        // test_ prefix를 사용하여 테스트 결제임을 명시
+        String testTransactionId = "test_" + merchantUid;
+        payment.setTestTransactionId(testTransactionId);
+        log.info("Test transactionId set: {}", testTransactionId);
         
         // 5. 사장님에게 알림 발송
         notificationUseCase.notifyPaidOrder(payment.getOrderStoreOwner());
