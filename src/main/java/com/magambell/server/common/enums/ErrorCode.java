@@ -47,6 +47,9 @@ public enum ErrorCode {
     INVALID_ORDER_STATUS_COMPLETED("주문이 완료되지 않았습니다."),
     INVALID_ORDER_STATUS("요청할 수 없는 주문 상태입니다."),
 
+    APP_UPDATE_REQUIRED("앱 업데이트가 필요합니다."),
+    APP_UPDATE_RECOMMENDED("앱 업데이트를 권장합니다."),
+
     ORDER_ALREADY_ACCEPTED("주문이 이미 승인됐습니다."),
     ORDER_ALREADY_REJECTED("주문이 이미 거절됐습니다."),
     ORDER_NOT_APPROVED("주문이 승인되지 않았습니다."),
