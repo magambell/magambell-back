@@ -16,6 +16,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Component;
 import org.springframework.util.StringUtils;
@@ -29,6 +30,7 @@ import org.springframework.web.filter.OncePerRequestFilter;
  */
 @Slf4j
 @RequiredArgsConstructor
+@ConditionalOnProperty(name = "app.version-check.enabled", havingValue = "true", matchIfMissing = true)
 @Component
 public class AppVersionCheckFilter extends OncePerRequestFilter {
 

@@ -1,6 +1,7 @@
 package com.magambell.server.common.security;
 
 import com.magambell.server.user.domain.enums.UserRole;
+import java.util.Optional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,7 +22,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 public class SecurityConfig {
 
     private final JwtAuthenticationFilter jwtAuthenticationFilter;
-    private final AppVersionCheckFilter appVersionCheckFilter;
+    private final Optional<AppVersionCheckFilter> appVersionCheckFilter;
 
     @Bean
     public BCryptPasswordEncoder bCryptPasswordEncoder() {
@@ -68,9 +69,14 @@ public class SecurityConfig {
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
-                .headers(headers -> headers.frameOptions(FrameOptionsConfig::sameOrigin))
-                .addFilterBefore(appVersionCheckFilter, UsernamePasswordAuthenticationFilter.class)
-                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+                .headers(headers -> headers.frameOptions(FrameOptionsConfig::sameOrigin));
+        
+        // AppVersionCheckFilter가 있을 때만 추가
+        appVersionCheckFilter.ifPresent(filter -> 
+                http.addFilterBefore(filter, UsernamePasswordAuthenticationFilter.class)
+        );
+        
+        http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();
     }
