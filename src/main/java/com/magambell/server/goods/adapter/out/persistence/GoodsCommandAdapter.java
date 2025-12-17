@@ -18,7 +18,10 @@ import com.magambell.server.store.domain.entity.Store;
 import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 @RequiredArgsConstructor
 @Adapter
@@ -62,40 +65,87 @@ public class GoodsCommandAdapter implements GoodsCommandPort {
 
     @Override
     public EditGoodsImageResponseDTO editGoodsImage(Goods goods, List<GoodsImagesRegister> goodsImagesRegisters) {
-        // 기존 이미지 전체 삭제
+        // 기존 이미지 조회 및 Map 생성 (key 기준)
         List<GoodsImage> existingImages = goodsImageRepository.findByGoodsId(goods.getId());
-        if (!existingImages.isEmpty()) {
-            goodsImageRepository.deleteAll(existingImages);
-        }
-
-        // 새 이미지 등록
-        List<ImageRegister> imagesToUpload = goodsImagesRegisters.stream()
-                .map(register -> new ImageRegister(register.id(), register.key()))
-                .toList();
-        
-        List<TransformedImageDTO> transformedImageDTOS = s3InputPort.saveImages(IMAGE_PREFIX, imagesToUpload, goods.getId());
+        Map<String, GoodsImage> existingImageMap = existingImages.stream()
+                .collect(Collectors.toMap(
+                        img -> extractKeyFromUrl(img.getImageUrl()),
+                        img -> img
+                ));
 
         List<GoodsPreSignedUrlImage> goodsPreSignedUrlImages = new ArrayList<>();
-        List<GoodsImage> goodsImageList = new ArrayList<>();
+        List<GoodsImage> imagesToSave = new ArrayList<>();
+        List<ImageRegister> newImagesToUpload = new ArrayList<>();
+        Map<Integer, GoodsImagesRegister> newImageIndexMap = new HashMap<>();
 
+        // 요청 이미지 처리
         for (int i = 0; i < goodsImagesRegisters.size(); i++) {
             GoodsImagesRegister register = goodsImagesRegisters.get(i);
-            TransformedImageDTO transformedImage = transformedImageDTOS.get(i);
-            
-            goodsImageList.add(
-                    GoodsImage.builder()
-                            .goods(goods)
-                            .goodsName(register.goodsName())
-                            .imageUrl(transformedImage.getUrl())
-                            .build()
-            );
-            
-            goodsPreSignedUrlImages.add(new GoodsPreSignedUrlImage(transformedImage.id(), transformedImage.putUrl()));
+            String requestKey = register.key();
+
+            // 기존 이미지인지 확인
+            if (existingImageMap.containsKey(requestKey)) {
+                // 기존 이미지 - ID 유지, goodsName만 업데이트
+                GoodsImage existingImage = existingImageMap.get(requestKey);
+                
+                if (!existingImage.getGoodsName().equals(register.goodsName())) {
+                    existingImage.setGoodsName(register.goodsName());
+                }
+                
+                imagesToSave.add(existingImage);
+                // 기존 이미지는 presignedUrl null
+                goodsPreSignedUrlImages.add(new GoodsPreSignedUrlImage(register.id(), null));
+                
+                // 유지되는 이미지는 맵에서 제거
+                existingImageMap.remove(requestKey);
+            } else {
+                // 새 이미지 - S3 업로드 필요
+                newImagesToUpload.add(new ImageRegister(register.id(), register.key()));
+                newImageIndexMap.put(newImagesToUpload.size() - 1, register);
+            }
         }
 
-        goodsImageRepository.saveAll(goodsImageList);
+        // 새 이미지 S3 업로드
+        if (!newImagesToUpload.isEmpty()) {
+            List<TransformedImageDTO> transformedImageDTOS = s3InputPort.saveImages(IMAGE_PREFIX, newImagesToUpload, goods.getId());
+            
+            for (int i = 0; i < transformedImageDTOS.size(); i++) {
+                TransformedImageDTO transformedImage = transformedImageDTOS.get(i);
+                GoodsImagesRegister register = newImageIndexMap.get(i);
+                
+                GoodsImage newImage = GoodsImage.builder()
+                        .goods(goods)
+                        .goodsName(register.goodsName())
+                        .imageUrl(transformedImage.getUrl())
+                        .build();
+                imagesToSave.add(newImage);
+                
+                goodsPreSignedUrlImages.add(new GoodsPreSignedUrlImage(transformedImage.id(), transformedImage.putUrl()));
+            }
+        }
+
+        // 삭제된 이미지 제거 (맵에 남아있는 것들)
+        List<GoodsImage> imagesToDelete = new ArrayList<>(existingImageMap.values());
+        if (!imagesToDelete.isEmpty()) {
+            goodsImageRepository.deleteAll(imagesToDelete);
+        }
+        
+        // 이미지 저장 (기존 업데이트 + 새 이미지 추가)
+        goodsImageRepository.saveAll(imagesToSave);
 
         return new EditGoodsImageResponseDTO(goods.getId(), goodsPreSignedUrlImages);
+    }
+
+    private String extractKeyFromUrl(String imageUrl) {
+        // URL에서 key 추출 (예: https://d8l60k7no0sr8.cloudfront.net/GOODS/123/1_image.jpg -> 1_image.jpg)
+        if (imageUrl == null || imageUrl.isEmpty()) {
+            return "";
+        }
+        int lastSlashIndex = imageUrl.lastIndexOf('/');
+        if (lastSlashIndex >= 0 && lastSlashIndex < imageUrl.length() - 1) {
+            return imageUrl.substring(lastSlashIndex + 1);
+        }
+        return imageUrl;
     }
 
 
