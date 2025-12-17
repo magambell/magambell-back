@@ -278,14 +278,14 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                         )
                 );
 
-        // imageUrl에서 key 추출
+        // 중복 제거 및 imageUrl에서 key 추출
         return result.values().stream()
                 .map(dto -> new OwnerStoreDetailDTO(
                         dto.storeId(),
                         dto.storeName(),
                         dto.address(),
                         dto.storeImageUrls(),
-                        dto.goodsList(),
+                        dto.goodsList().stream().distinct().toList(),
                         dto.goodsImageList().stream()
                                 .map(img -> new GoodsImagesRegister(
                                         img.id(),
@@ -293,6 +293,7 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                                         img.imageUrl(),
                                         img.goodsName()
                                 ))
+                                .distinct()
                                 .toList(),
                         dto.description(),
                         dto.parkingDescription()
