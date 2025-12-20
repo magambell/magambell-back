@@ -85,6 +85,12 @@ public class AuthService implements AuthUseCase {
         return jwtService.createJwtToken(user.getId(), user.getUserRole());
     }
 
+    @Override
+    public JwtToken adminTest() {
+        User user = userQueryPort.findById(784983938630783485L); // admin@bitepick.co.kr
+        return jwtService.createJwtToken(user.getId(), user.getUserRole());
+    }
+
     private User oAuthSignUp(final OAuthUserInfo userInfo, final SocialLoginServiceRequest request) {
         validateSignUpFields(request.nickName(), request.userRole(), request.phoneNumber());
         validateUserRole(request.userRole());

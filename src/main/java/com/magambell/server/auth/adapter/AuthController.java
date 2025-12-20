@@ -88,4 +88,16 @@ public class AuthController {
         response.setHeader("RefreshToken", jwtToken.refreshToken());
         return new Response<>();
     }
+
+    @Operation(summary = "oAuth 테스트 관리자 계정 로그인")
+    @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(implementation = BaseResponse.class))})
+    @PostMapping("/admin/test")
+    public Response<BaseResponse> adminTest(HttpServletResponse response) {
+        //todo 애플, 구글 테스트 후 삭제
+        JwtToken jwtToken = authUseCase.adminTest();
+
+        response.setHeader("Authorization", jwtToken.accessToken());
+        response.setHeader("RefreshToken", jwtToken.refreshToken());
+        return new Response<>();
+    }
 }

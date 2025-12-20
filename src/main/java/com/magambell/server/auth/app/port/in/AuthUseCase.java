@@ -15,4 +15,6 @@ public interface AuthUseCase {
     JwtToken userTest();
 
     JwtToken ownerTest();
+
+    JwtToken adminTest();
 }
