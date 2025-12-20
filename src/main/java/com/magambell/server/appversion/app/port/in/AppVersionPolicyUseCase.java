@@ -3,6 +3,7 @@ package com.magambell.server.appversion.app.port.in;
 import com.magambell.server.appversion.adapter.in.web.CreateAppVersionPolicyRequest;
 import com.magambell.server.appversion.adapter.in.web.UpdateAppVersionPolicyRequest;
 import com.magambell.server.appversion.app.port.in.dto.AppVersionPolicyResponse;
+import com.magambell.server.appversion.app.port.in.dto.AppVersionPublicResponse;
 import com.magambell.server.appversion.domain.enums.Platform;
 import java.util.List;
 
@@ -47,4 +48,9 @@ public interface AppVersionPolicyUseCase {
      * 버전 정책 삭제
      */
     void deletePolicy(Long policyId);
+    
+    /**
+     * 플랫폼별 최신 버전 정보 조회 (Public API용 - 최소 정보만 응답)
+     */
+    AppVersionPublicResponse getLatestVersionPublic(Platform platform);
 }

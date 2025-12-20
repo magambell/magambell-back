@@ -4,6 +4,7 @@ import com.magambell.server.appversion.adapter.in.web.CreateAppVersionPolicyRequ
 import com.magambell.server.appversion.adapter.in.web.UpdateAppVersionPolicyRequest;
 import com.magambell.server.appversion.app.port.in.AppVersionPolicyUseCase;
 import com.magambell.server.appversion.app.port.in.dto.AppVersionPolicyResponse;
+import com.magambell.server.appversion.app.port.in.dto.AppVersionPublicResponse;
 import com.magambell.server.appversion.app.port.out.AppVersionPolicyCommandPort;
 import com.magambell.server.appversion.app.port.out.AppVersionPolicyQueryPort;
 import com.magambell.server.appversion.domain.entity.AppVersionPolicy;
@@ -131,5 +132,12 @@ public class AppVersionPolicyService implements AppVersionPolicyUseCase {
 
         appVersionPolicyCommandPort.delete(policy);
         log.info("버전 정책 삭제: policyId={}, platform={}", policyId, policy.getPlatform());
+    }
+
+    @Override
+    public AppVersionPublicResponse getLatestVersionPublic(Platform platform) {
+        AppVersionPolicy policy = appVersionPolicyQueryPort.findByPlatform(platform)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.PAYMENT_NOT_FOUND)); // TODO: 적절한 에러코드
+        return AppVersionPublicResponse.from(policy);
     }
 }

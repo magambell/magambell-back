@@ -44,6 +44,7 @@ public class SecurityConfig {
                 "/actuator/**",
                 "/magambell/**",
                 "/api/v1/payment/**",
+                "/api/v1/app-version/**",
                 "/favicon.ico",
                 "/error"
         };
