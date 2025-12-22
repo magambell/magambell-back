@@ -25,7 +25,7 @@ public class RegionDataController {
     public Response<String> loadRegionData() {
         log.info("🚀 Starting region data loading...");
         
-        // 프로젝트 루트의 data 폴더에 있는 CSV 파일 경로
+        // resources/data 폴더의 CSV 파일 경로
         String csvFilePath = "data/국토교통부_전국 법정동_20250807.csv";
         
         regionDataLoader.loadRegionDataFromCsv(csvFilePath);

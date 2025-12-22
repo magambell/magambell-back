@@ -2,12 +2,14 @@ package com.magambell.server.region.app.service;
 
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.BufferedReader;
-import java.io.FileReader;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -31,7 +33,11 @@ public class RegionDataLoader {
         int totalCount = 0;
         int batchSize = 1000;
 
-        try (BufferedReader br = new BufferedReader(new FileReader(csvFilePath))) {
+        try {
+            ClassPathResource resource = new ClassPathResource(csvFilePath);
+            BufferedReader br = new BufferedReader(
+                new InputStreamReader(resource.getInputStream(), StandardCharsets.UTF_8)
+            );
             String line;
             br.readLine(); // 헤더 스킵 (법정동코드,시도명,시군구명,읍면동명,리명,순위,생성일자,삭제일자,과거법정동코드)
 
@@ -70,11 +76,12 @@ public class RegionDataLoader {
                 log.info("Inserted {} rows (total: {})", batchArgs.size(), totalCount);
             }
 
+            br.close();
             log.info("✅ Region data loading completed! Total {} rows inserted.", totalCount);
 
         } catch (Exception e) {
             log.error("❌ Failed to load region data from CSV: {}", e.getMessage(), e);
-            throw new RuntimeException("Region data loading failed", e);
+            throw new RuntimeException("Region data loading failed: " + e.getMessage(), e);
         }
     }
 
