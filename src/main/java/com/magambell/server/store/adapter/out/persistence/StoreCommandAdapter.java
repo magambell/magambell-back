@@ -75,7 +75,7 @@ public class StoreCommandAdapter implements StoreCommandPort {
 
     @Override
     public void registerOpenRegion(final OpenRegionDTO dto) {
-        openRegionRepository.findByRegion(dto.region())
+        openRegionRepository.findByUserAndRegionEntity(dto.user(), dto.region())
                 .ifPresent(region -> {
                     throw new DuplicateException(ErrorCode.DUPLICATE_OPEN_REGION_REQUEST);
                 });
