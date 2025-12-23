@@ -3,6 +3,8 @@ package com.magambell.server.store.app.service;
 import com.magambell.server.common.enums.ErrorCode;
 import com.magambell.server.common.exception.DuplicateException;
 import com.magambell.server.common.exception.InvalidRequestException;
+import com.magambell.server.region.app.port.out.RegionQueryPort;
+import com.magambell.server.region.domain.entity.Region;
 import com.magambell.server.review.adapter.out.persistence.ReviewListResponse;
 import com.magambell.server.store.adapter.in.web.StoreImagesRegister;
 import com.magambell.server.store.adapter.out.persistence.*;
@@ -32,6 +34,7 @@ public class StoreService implements StoreUseCase {
     private final StoreCommandPort storeCommandPort;
     private final StoreQueryPort storeQueryPort;
     private final UserQueryPort userQueryPort;
+    private final RegionQueryPort regionQueryPort;
 
     @Transactional
     @Override
@@ -111,7 +114,8 @@ public class StoreService implements StoreUseCase {
     @Transactional
     public void registerOpenRegion(final RegisterOpenRegionServiceRequest request, final Long userId) {
         User user = userQueryPort.findById(userId);
-        storeCommandPort.registerOpenRegion(request.toOpenRegionDTO(request.region(), user));
+        Region region = regionQueryPort.findById(request.regionId());
+        storeCommandPort.registerOpenRegion(request.toOpenRegionDTO(region, user));
     }
 
     @Override

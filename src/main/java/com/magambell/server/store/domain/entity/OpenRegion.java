@@ -4,6 +4,7 @@ import com.magambell.server.common.BaseTimeEntity;
 import com.magambell.server.favorite.domain.entity.Favorite;
 import com.magambell.server.goods.domain.entity.Goods;
 import com.magambell.server.notification.domain.entity.FcmToken;
+import com.magambell.server.region.domain.entity.Region;
 import com.magambell.server.review.app.port.in.dto.ReportReviewDTO;
 import com.magambell.server.review.domain.entity.Review;
 import com.magambell.server.review.domain.entity.ReviewReport;
@@ -33,21 +34,27 @@ public class OpenRegion extends BaseTimeEntity {
     @Id
     private Long id;
 
+    @Deprecated // 기존 데이터 호환성을 위해 유지
     private String region;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "region_id")
+    private Region regionEntity;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
     @Builder(access = AccessLevel.PRIVATE)
-    public OpenRegion(String region, User user) {
-        this.region = region;
+    public OpenRegion(String region, Region regionEntity, User user) {
+        this.region = region; // 기존 데이터 호환성
+        this.regionEntity = regionEntity;
         this.user = user;
     }
 
     public static OpenRegion create(final OpenRegionDTO dto) {
         return OpenRegion.builder()
-                .region(dto.region())
+                .regionEntity(dto.region())
                 .user(dto.user())
                 .build();
     }

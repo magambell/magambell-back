@@ -2,6 +2,7 @@ package com.magambell.server.region.app.service;
 
 import com.magambell.server.region.app.port.in.RegionUseCase;
 import com.magambell.server.region.app.port.out.response.EupmyeondongListResponse;
+import com.magambell.server.region.app.port.out.response.EupmyeondongListResponse.TownDTO;
 import com.magambell.server.region.app.port.out.response.SidoListResponse;
 import com.magambell.server.region.app.port.out.response.SigunguListResponse;
 import com.magambell.server.region.domain.repository.RegionRepository;
@@ -32,7 +33,7 @@ public class RegionService implements RegionUseCase {
 
     @Override
     public EupmyeondongListResponse getEupmyeondongList(String sido, String sigungu) {
-        List<String> townList = regionRepository.findDistinctTownByCityAndDistrict(sido, sigungu);
+        List<TownDTO> townList = regionRepository.findDistinctTownByCityAndDistrict(sido, sigungu);
         return EupmyeondongListResponse.of(townList);
     }
 }
