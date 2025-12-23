@@ -62,6 +62,8 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.POST, "/api/v1/store").hasRole("OWNER")
                         .requestMatchers(HttpMethod.GET, "/api/v1/review").permitAll()
                         .requestMatchers(HttpMethod.GET, "/api/v1/review/rating").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/service-areas").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/api/v1/banner/images").permitAll()
                         .requestMatchers("/admin")
                         .hasRole(UserRole.ADMIN.name())
                         .anyRequest()
