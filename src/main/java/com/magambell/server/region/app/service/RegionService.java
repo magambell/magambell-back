@@ -20,19 +20,19 @@ public class RegionService implements RegionUseCase {
 
     @Override
     public SidoListResponse getSidoList() {
-        List<String> sidoList = regionRepository.findDistinctSido();
-        return SidoListResponse.of(sidoList);
+        List<String> cityList = regionRepository.findDistinctCity();
+        return SidoListResponse.of(cityList);
     }
 
     @Override
     public SigunguListResponse getSigunguList(String sido) {
-        List<String> sigunguList = regionRepository.findDistinctSigunguBySido(sido);
-        return SigunguListResponse.of(sigunguList);
+        List<String> districtList = regionRepository.findDistinctDistrictByCity(sido);
+        return SigunguListResponse.of(districtList);
     }
 
     @Override
     public EupmyeondongListResponse getEupmyeondongList(String sido, String sigungu) {
-        List<String> eupmyeondongList = regionRepository.findDistinctEupmyeondongBySidoAndSigungu(sido, sigungu);
-        return EupmyeondongListResponse.of(eupmyeondongList);
+        List<String> townList = regionRepository.findDistinctTownByCityAndDistrict(sido, sigungu);
+        return EupmyeondongListResponse.of(townList);
     }
 }

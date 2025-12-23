@@ -7,9 +7,9 @@ import java.util.List;
 @Schema(description = "읍·면·동 목록 응답")
 public record EupmyeondongListResponse(
         @Schema(description = "읍·면·동 목록", example = "[\"개포동\", \"논현동\", \"대치동\"]")
-        List<String> eupmyeondongList
+        List<String> townList
 ) {
-    public static EupmyeondongListResponse of(List<String> eupmyeondongList) {
-        return new EupmyeondongListResponse(eupmyeondongList);
+    public static EupmyeondongListResponse of(List<String> townList) {
+        return new EupmyeondongListResponse(townList);
     }
 }

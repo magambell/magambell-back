@@ -7,9 +7,9 @@ import java.util.List;
 @Schema(description = "시·도 목록 응답")
 public record SidoListResponse(
         @Schema(description = "시·도 목록", example = "[\"서울특별시\", \"경기도\", \"부산광역시\"]")
-        List<String> sidoList
+        List<String> cityList
 ) {
-    public static SidoListResponse of(List<String> sidoList) {
-        return new SidoListResponse(sidoList);
+    public static SidoListResponse of(List<String> cityList) {
+        return new SidoListResponse(cityList);
     }
 }

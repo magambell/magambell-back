@@ -10,9 +10,9 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor(access = AccessLevel.PROTECTED)
 @Table(name = "region", indexes = {
-        @Index(name = "idx_sido", columnList = "sido"),
-        @Index(name = "idx_sido_sigungu", columnList = "sido, sigungu"),
-        @Index(name = "idx_sido_sigungu_eupmyeondong", columnList = "sido, sigungu, eupmyeondong")
+        @Index(name = "idx_city", columnList = "city"),
+        @Index(name = "idx_city_district", columnList = "city, district"),
+        @Index(name = "idx_city_district_town", columnList = "city, district, town")
 })
 @Entity
 public class Region extends BaseTimeEntity {
@@ -25,14 +25,14 @@ public class Region extends BaseTimeEntity {
     @Column(name = "legal_code", nullable = false, unique = true, length = 10)
     private String legalCode;
 
-    @Column(name = "sido", nullable = false, length = 50)
-    private String sido;
+    @Column(name = "city", nullable = false, length = 50)
+    private String city;
 
-    @Column(name = "sigungu", length = 50)
-    private String sigungu;
+    @Column(name = "district", length = 50)
+    private String district;
 
-    @Column(name = "eupmyeondong", length = 50)
-    private String eupmyeondong;
+    @Column(name = "town", length = 50)
+    private String town;
 
     @Column(name = "ri", length = 50)
     private String ri;
@@ -41,21 +41,21 @@ public class Region extends BaseTimeEntity {
     private Boolean isDeleted;
 
     @Builder(access = AccessLevel.PRIVATE)
-    public Region(String legalCode, String sido, String sigungu, String eupmyeondong, String ri, Boolean isDeleted) {
+    public Region(String legalCode, String city, String district, String town, String ri, Boolean isDeleted) {
         this.legalCode = legalCode;
-        this.sido = sido;
-        this.sigungu = sigungu;
-        this.eupmyeondong = eupmyeondong;
+        this.city = city;
+        this.district = district;
+        this.town = town;
         this.ri = ri;
         this.isDeleted = isDeleted != null ? isDeleted : false;
     }
 
-    public static Region create(String legalCode, String sido, String sigungu, String eupmyeondong, String ri, Boolean isDeleted) {
+    public static Region create(String legalCode, String city, String district, String town, String ri, Boolean isDeleted) {
         return Region.builder()
                 .legalCode(legalCode)
-                .sido(sido)
-                .sigungu(sigungu)
-                .eupmyeondong(eupmyeondong)
+                .city(city)
+                .district(district)
+                .town(town)
                 .ri(ri)
                 .isDeleted(isDeleted)
                 .build();

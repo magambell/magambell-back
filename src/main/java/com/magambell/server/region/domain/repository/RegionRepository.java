@@ -11,18 +11,18 @@ public interface RegionRepository extends JpaRepository<Region, Long> {
     /**
      * 시·도 목록 조회 (중복 제거)
      */
-    @Query("SELECT DISTINCT r.sido FROM Region r WHERE r.isDeleted = false ORDER BY r.sido")
-    List<String> findDistinctSido();
+    @Query("SELECT DISTINCT r.city FROM Region r WHERE r.isDeleted = false ORDER BY r.city")
+    List<String> findDistinctCity();
 
     /**
      * 특정 시·도의 시·군·구 목록 조회 (중복 제거, NULL 제외)
      */
-    @Query("SELECT DISTINCT r.sigungu FROM Region r WHERE r.sido = :sido AND r.sigungu IS NOT NULL AND r.sigungu != '' AND r.isDeleted = false ORDER BY r.sigungu")
-    List<String> findDistinctSigunguBySido(String sido);
+    @Query("SELECT DISTINCT r.district FROM Region r WHERE r.city = :city AND r.district IS NOT NULL AND r.district != '' AND r.isDeleted = false ORDER BY r.district")
+    List<String> findDistinctDistrictByCity(String city);
 
     /**
      * 특정 시·군·구의 읍·면·동 목록 조회 (중복 제거, NULL 제외)
      */
-    @Query("SELECT DISTINCT r.eupmyeondong FROM Region r WHERE r.sido = :sido AND r.sigungu = :sigungu AND r.eupmyeondong IS NOT NULL AND r.eupmyeondong != '' AND r.isDeleted = false ORDER BY r.eupmyeondong")
-    List<String> findDistinctEupmyeondongBySidoAndSigungu(String sido, String sigungu);
+    @Query("SELECT DISTINCT r.town FROM Region r WHERE r.city = :city AND r.district = :district AND r.town IS NOT NULL AND r.town != '' AND r.isDeleted = false ORDER BY r.town")
+    List<String> findDistinctTownByCityAndDistrict(String city, String district);
 }
