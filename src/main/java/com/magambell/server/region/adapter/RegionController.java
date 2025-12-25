@@ -35,10 +35,10 @@ public class RegionController {
             @Content(schema = @Schema(implementation = SigunguListResponse.class))})
     @GetMapping("/district")
     public Response<SigunguListResponse> getSigunguList(
-            @Parameter(description = "시·도명", example = "서울특별시", required = true)
-            @RequestParam String sido
+            @Parameter(description = "시·도명", example = "서울", required = true)
+            @RequestParam String city
     ) {
-        return new Response<>(regionUseCase.getSigunguList(sido));
+        return new Response<>(regionUseCase.getSigunguList(city));
     }
 
     @Operation(summary = "읍·면·동 목록 조회", description = "특정 시·군·구에 속한 읍·면·동 목록을 조회합니다.")
@@ -46,11 +46,11 @@ public class RegionController {
             @Content(schema = @Schema(implementation = EupmyeondongListResponse.class))})
     @GetMapping("/town")
     public Response<EupmyeondongListResponse> getEupmyeondongList(
-            @Parameter(description = "시·도명", example = "서울특별시", required = true)
-            @RequestParam String sido,
+            @Parameter(description = "시·도명", example = "서울", required = true)
+            @RequestParam String city,
             @Parameter(description = "시·군·구명", example = "강남구", required = true)
-            @RequestParam String sigungu
+            @RequestParam String district
     ) {
-        return new Response<>(regionUseCase.getEupmyeondongList(sido, sigungu));
+        return new Response<>(regionUseCase.getEupmyeondongList(city, district));
     }
 }

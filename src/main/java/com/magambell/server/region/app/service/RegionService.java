@@ -4,7 +4,9 @@ import com.magambell.server.region.app.port.in.RegionUseCase;
 import com.magambell.server.region.app.port.out.response.EupmyeondongListResponse;
 import com.magambell.server.region.app.port.out.response.EupmyeondongListResponse.TownDTO;
 import com.magambell.server.region.app.port.out.response.SidoListResponse;
+import com.magambell.server.region.app.port.out.response.SidoListResponse.CityDTO;
 import com.magambell.server.region.app.port.out.response.SigunguListResponse;
+import com.magambell.server.region.app.port.out.response.SigunguListResponse.DistrictDTO;
 import com.magambell.server.region.domain.repository.RegionRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -21,13 +23,13 @@ public class RegionService implements RegionUseCase {
 
     @Override
     public SidoListResponse getSidoList() {
-        List<String> cityList = regionRepository.findDistinctCity();
+        List<CityDTO> cityList = regionRepository.findDistinctCity();
         return SidoListResponse.of(cityList);
     }
 
     @Override
     public SigunguListResponse getSigunguList(String sido) {
-        List<String> districtList = regionRepository.findDistinctDistrictByCity(sido);
+        List<DistrictDTO> districtList = regionRepository.findDistinctDistrictByCity(sido);
         return SigunguListResponse.of(districtList);
     }
 
