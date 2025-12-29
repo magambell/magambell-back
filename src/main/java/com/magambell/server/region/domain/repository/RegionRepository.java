@@ -14,6 +14,7 @@ public interface RegionRepository extends JpaRepository<Region, Long> {
     /**
      * 시·도 목록 조회 (중복 제거)
      * district가 NULL인 레코드 = 해당 시도 전체를 나타냄
+     * 정렬: 서울, 경기 우선, 나머지는 가나다순
      */
     @Query("""
         SELECT new com.magambell.server.region.app.port.out.response.SidoListResponse$CityDTO(
@@ -24,7 +25,13 @@ public interface RegionRepository extends JpaRepository<Region, Long> {
         WHERE r.district IS NULL 
           AND r.town IS NULL 
           AND r.isDeleted = false 
-        ORDER BY r.city
+        ORDER BY 
+            CASE 
+                WHEN r.city = '서울' THEN 0
+                WHEN r.city = '경기' THEN 1
+                ELSE 2
+            END,
+            r.city
     """)
     List<CityDTO> findDistinctCity();
 

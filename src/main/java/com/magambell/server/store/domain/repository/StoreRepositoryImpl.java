@@ -47,7 +47,7 @@ import static com.querydsl.core.types.ExpressionUtils.count;
 @RequiredArgsConstructor
 public class StoreRepositoryImpl implements StoreRepositoryCustom {
 
-    private static final Integer LIMIT_KM = 5;
+    private static final Integer LIMIT_KM = 6;
     private final JPAQueryFactory queryFactory;
 
     @Override

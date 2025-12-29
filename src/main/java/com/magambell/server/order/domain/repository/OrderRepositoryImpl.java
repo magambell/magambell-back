@@ -308,7 +308,6 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
 
         return builder.and(order.orderStatus.notIn(
                 OrderStatus.PENDING,
-                OrderStatus.CANCELED,
                 OrderStatus.FAILED
         ));
     }

@@ -18,7 +18,7 @@ public record SidoListResponse(
             @Schema(description = "지역 ID (시도 전체)", example = "1100000000")
             Long regionId,
             @Schema(description = "시·도명", example = "서울")
-            String cityName
+            String name
     ) {
     }
 }

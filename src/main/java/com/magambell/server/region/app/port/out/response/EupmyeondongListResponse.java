@@ -18,7 +18,7 @@ public record EupmyeondongListResponse(
             @Schema(description = "지역 ID", example = "12345")
             Long regionId,
             @Schema(description = "읍·면·동명", example = "개포동")
-            String townName
+            String name
     ) {
     }
 }

@@ -55,7 +55,8 @@ public class OrderService implements OrderUseCase {
             OrderStatus.PENDING,
             OrderStatus.PAID,
             OrderStatus.ACCEPTED,
-            OrderStatus.COMPLETED
+            OrderStatus.COMPLETED,
+            OrderStatus.CANCELED
     );
 
     private final OrderCommandPort orderCommandPort;

@@ -18,7 +18,7 @@ public record SigunguListResponse(
             @Schema(description = "지역 ID (시군구 전체)", example = "1111000000")
             Long regionId,
             @Schema(description = "시·군·구명", example = "강남구")
-            String districtName
+            String name
     ) {
     }
 }
