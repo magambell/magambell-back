@@ -154,6 +154,26 @@ public class Goods extends BaseTimeEntity {
         this.saleStatus = OFF;
     }
 
+    public void editByAdmin(final String name, final LocalDateTime startTime, final LocalDateTime endTime,
+                           final Integer originalPrice, final Integer discount, final Integer salePrice,
+                           final Integer quantity, final SaleStatus saleStatus) {
+        validateTime(startTime, endTime);
+
+        this.name = name;
+        this.startTime = startTime;
+        this.endTime = endTime;
+        this.originalPrice = originalPrice;
+        this.discount = discount;
+        this.salePrice = salePrice;
+        this.saleStatus = saleStatus;
+
+        if (quantity != null && !quantity.equals(this.stock.getQuantity())) {
+            StockHistory stockHistory = StockHistory.create(StockType.MANUAL, this.stock.getQuantity(), quantity, quantity);
+            this.stock.editQuantity(quantity);
+            this.addStockHistory(stockHistory);
+        }
+    }
+
     private void validateTime(final LocalDateTime start, final LocalDateTime end) {
         if (!start.isBefore(end)) {
             throw new InvalidRequestException(ErrorCode.TIME_VALID);

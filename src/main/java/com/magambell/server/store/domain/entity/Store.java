@@ -129,4 +129,21 @@ public class Store extends BaseTimeEntity {
     public void addFcmToken(final FcmToken fcmToken) {
         this.fcmTokens.add(fcmToken);
     }
+
+    public void editStoreInfo(final String name, final String address, final Double latitude, final Double longitude,
+                              final String ownerName, final String ownerPhone, final String businessNumber,
+                              final Bank bankName, final String bankAccount, final String description,
+                              final String parkingDescription) {
+        this.name = name;
+        this.address = address;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.ownerName = ownerName;
+        this.ownerPhone = ownerPhone;
+        this.businessNumber = businessNumber;
+        this.bankName = bankName;
+        this.bankAccount = bankAccount;
+        this.description = description;
+        this.parkingDescription = parkingDescription;
+    }
 }
