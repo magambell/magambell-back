@@ -39,6 +39,7 @@ public class SecurityConfig {
                 "/v3/api-docs/**",
                 "/api/v1/user/register",
                 "/api/v1/verify/email/register/**",
+                "/api/v1/verify/nickname/register",
                 "/api/v1/verify/social",
                 "/api/v1/auth/**",
                 "/actuator/**",

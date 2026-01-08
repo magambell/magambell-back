@@ -4,6 +4,7 @@ import com.magambell.server.user.app.port.in.request.UserSocialVerifyServiceRequ
 import com.magambell.server.user.app.port.in.request.VerifyEmailAuthCodeServiceRequest;
 import com.magambell.server.user.app.port.in.request.VerifyEmailDuplicateServiceRequest;
 import com.magambell.server.user.app.port.in.request.VerifyEmailSendServiceRequest;
+import com.magambell.server.user.app.port.in.request.VerifyNicknameDuplicateServiceRequest;
 
 public interface UserVerifyUseCase {
     void emailRegisterDuplicate(VerifyEmailDuplicateServiceRequest serviceRequest);
@@ -13,4 +14,6 @@ public interface UserVerifyUseCase {
     void emailRegisterSend(VerifyEmailSendServiceRequest serviceRequest);
 
     boolean verifySocialUser(UserSocialVerifyServiceRequest serviceRequest);
+
+    void nicknameRegisterDuplicate(VerifyNicknameDuplicateServiceRequest serviceRequest);
 }

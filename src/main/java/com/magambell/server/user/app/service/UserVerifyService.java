@@ -16,6 +16,7 @@ import com.magambell.server.user.app.port.in.request.UserSocialVerifyServiceRequ
 import com.magambell.server.user.app.port.in.request.VerifyEmailAuthCodeServiceRequest;
 import com.magambell.server.user.app.port.in.request.VerifyEmailDuplicateServiceRequest;
 import com.magambell.server.user.app.port.in.request.VerifyEmailSendServiceRequest;
+import com.magambell.server.user.app.port.in.request.VerifyNicknameDuplicateServiceRequest;
 import com.magambell.server.user.app.port.out.OAuthClient;
 import com.magambell.server.user.app.port.out.UserEmailQueryPort;
 import com.magambell.server.user.app.port.out.UserQueryPort;
@@ -77,6 +78,13 @@ public class UserVerifyService implements UserVerifyUseCase {
             return false;
         }
         return userQueryPort.existsUserBySocial(userInfo.providerType(), userInfo.id());
+    }
+
+    @Override
+    public void nicknameRegisterDuplicate(final VerifyNicknameDuplicateServiceRequest request) {
+        if (userQueryPort.existsByNickName(request.nickName())) {
+            throw new DuplicateException(ErrorCode.DUPLICATE_NICKNAME);
+        }
     }
 
     private void validateEmailAndAuthCode(final String email, final String authCode,

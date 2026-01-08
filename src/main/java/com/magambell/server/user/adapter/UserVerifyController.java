@@ -6,6 +6,7 @@ import com.magambell.server.user.adapter.in.web.UserSocialVerifyRequest;
 import com.magambell.server.user.adapter.in.web.VerifyEmailAuthCodeRegisterRequest;
 import com.magambell.server.user.adapter.in.web.VerifyEmailDuplicateRegisterRequest;
 import com.magambell.server.user.adapter.in.web.VerifyEmailSendRegisterRequest;
+import com.magambell.server.user.adapter.in.web.VerifyNicknameDuplicateRegisterRequest;
 import com.magambell.server.user.app.port.in.UserVerifyUseCase;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
@@ -61,5 +62,14 @@ public class UserVerifyController {
     @GetMapping("/social")
     public Response<Boolean> verifySocialUser(@ModelAttribute @Validated final UserSocialVerifyRequest request) {
         return new Response<>(userVerifyUseCase.verifySocialUser(request.toServiceRequest()));
+    }
+
+    @Operation(summary = "회원가입시 닉네임 중복 검사")
+    @ApiResponse(responseCode = "200", content = {@Content(schema = @Schema(implementation = BaseResponse.class))})
+    @PostMapping("/nickname/register")
+    public Response<BaseResponse> nicknameRegisterDuplicate(
+            @RequestBody @Validated final VerifyNicknameDuplicateRegisterRequest request) {
+        userVerifyUseCase.nicknameRegisterDuplicate(request.toServiceRequest());
+        return new Response<>();
     }
 }
