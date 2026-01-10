@@ -568,28 +568,26 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
             return List.of();
         }
         
-        // 실제 데이터 조회
+        // transform을 사용하여 이미지를 Set으로 그룹화
         return queryFactory
-            .select(
-                Projections.constructor(StoreSearchItemDTO.class,
-                    store.id,
-                    store.name,
-                    Expressions.asSet(storeImage.name),
-                    store.address,
-                    store.latitude,
-                    store.longitude,
-                    store.description,
-                    store.createdAt
-                )
-            )
             .from(store)
             .leftJoin(storeImage).on(storeImage.store.id.eq(store.id))
             .where(store.id.in(storeIds))
-            .groupBy(store.id, store.name, store.address, store.latitude, 
-                     store.longitude, store.description, store.createdAt)
             .orderBy(orderSpecifier, store.id.desc())
-            .limit(fetchLimit)
-            .fetch();
+            .transform(
+                groupBy(store.id).list(
+                    Projections.constructor(StoreSearchItemDTO.class,
+                        store.id,
+                        store.name,
+                        set(storeImage.name),
+                        store.address,
+                        store.latitude,
+                        store.longitude,
+                        store.description,
+                        store.createdAt
+                    )
+                )
+            );
     }
     
     private CursorData decodeCursor(String cursor) {
