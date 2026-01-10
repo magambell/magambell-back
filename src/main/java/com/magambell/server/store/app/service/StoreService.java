@@ -18,6 +18,8 @@ import com.magambell.server.store.domain.entity.Store;
 import com.magambell.server.user.app.port.out.UserQueryPort;
 import com.magambell.server.user.domain.enums.UserRole;
 import com.magambell.server.user.domain.entity.User;
+import java.time.LocalDateTime;
+import java.util.Base64;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -123,6 +125,28 @@ public class StoreService implements StoreUseCase {
         return storeQueryPort.getOpenRegionList(request, PageRequest.of(request.page() - 1, request.size()));
     }
 
+    @Override
+    public StoreSearchResponse searchStores(final StoreSearchServiceRequest request) {
+        List<StoreSearchItemDTO> stores = storeQueryPort.searchStores(request);
+        
+        // limit + 1 개 조회했으므로, limit 개수 초과 여부로 다음 페이지 존재 확인
+        boolean hasNext = stores.size() > request.limit();
+        
+        // 실제 반환할 데이터는 limit 개수만큼
+        List<StoreSearchItemDTO> resultStores = hasNext 
+            ? stores.subList(0, request.limit()) 
+            : stores;
+        
+        // 다음 커서 생성
+        String nextCursor = null;
+        if (hasNext && !resultStores.isEmpty()) {
+            StoreSearchItemDTO lastStore = resultStores.get(resultStores.size() - 1);
+            nextCursor = encodeCursor(lastStore.createdAt(), lastStore.storeId());
+        }
+        
+        return new StoreSearchResponse(resultStores, nextCursor, hasNext);
+    }
+
     private void checkDuplicateStore(final User user) {
         if (storeQueryPort.existsByUser(user)) {
             throw new DuplicateException(ErrorCode.DUPLICATE_STORE);
@@ -144,5 +168,10 @@ public class StoreService implements StoreUseCase {
     private EditStoreImageResponseDTO changeStoreImage(final Store store,
                                                        final List<StoreImagesRegister> storeImagesRegisters) {
         return storeCommandPort.editStoreImage(store, storeImagesRegisters);
+    }
+
+    private String encodeCursor(LocalDateTime createdAt, Long storeId) {
+        String cursorString = createdAt.toString() + "_" + storeId;
+        return Base64.getEncoder().encodeToString(cursorString.getBytes());
     }
 }

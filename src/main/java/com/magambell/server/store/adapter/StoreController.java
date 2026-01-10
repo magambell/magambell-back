@@ -154,4 +154,14 @@ public class StoreController {
         return new Response<>(new OpenRegionListResponse(openRegionList));
     }
 
+    @Operation(summary = "가게 검색 (커서 기반 페이지네이션)")
+    @ApiResponse(responseCode = "200", content = {
+            @Content(schema = @Schema(implementation = com.magambell.server.store.app.port.out.response.StoreSearchResponse.class))})
+    @GetMapping("/search")
+    public Response<com.magambell.server.store.app.port.out.response.StoreSearchResponse> searchStores(
+            @ModelAttribute @Validated final StoreSearchRequest request
+    ) {
+        return new Response<>(storeUseCase.searchStores(request.toService()));
+    }
+
 }

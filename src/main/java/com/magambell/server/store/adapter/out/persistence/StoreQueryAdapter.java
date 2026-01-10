@@ -6,11 +6,13 @@ import com.magambell.server.common.exception.NotFoundException;
 import com.magambell.server.store.app.port.in.request.CloseStoreListServiceRequest;
 import com.magambell.server.store.app.port.in.request.OpenRegionListServiceRequest;
 import com.magambell.server.store.app.port.in.request.SearchStoreListServiceRequest;
+import com.magambell.server.store.app.port.in.request.StoreSearchServiceRequest;
 import com.magambell.server.store.app.port.out.StoreQueryPort;
 import com.magambell.server.store.app.port.out.response.OpenRegionListDTO;
 import com.magambell.server.store.app.port.out.response.OwnerStoreDetailDTO;
 import com.magambell.server.store.app.port.out.response.StoreAdminListDTO;
 import com.magambell.server.store.app.port.out.response.StoreListDTOResponse;
+import com.magambell.server.store.app.port.out.response.StoreSearchItemDTO;
 import com.magambell.server.store.domain.entity.Store;
 import com.magambell.server.store.domain.entity.StoreImage;
 import com.magambell.server.store.domain.repository.OpenRegionRepository;
@@ -91,5 +93,10 @@ public class StoreQueryAdapter implements StoreQueryPort {
     @Override
     public List<OpenRegionListDTO> getOpenRegionList(OpenRegionListServiceRequest request, Pageable pageable) {
         return openRegionRepository.getOpenRegionList(request, pageable);
+    }
+
+    @Override
+    public List<StoreSearchItemDTO> searchStores(StoreSearchServiceRequest request) {
+        return storeRepository.searchStores(request);
     }
 }

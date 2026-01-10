@@ -5,10 +5,12 @@ import com.magambell.server.review.domain.enums.ReviewStatus;
 import com.magambell.server.store.adapter.out.persistence.StoreDetailResponse;
 import com.magambell.server.store.app.port.in.request.CloseStoreListServiceRequest;
 import com.magambell.server.store.app.port.in.request.SearchStoreListServiceRequest;
+import com.magambell.server.store.app.port.in.request.StoreSearchServiceRequest;
 import com.magambell.server.store.app.port.out.dto.StoreDetailDTO;
 import com.magambell.server.store.app.port.out.response.OwnerStoreDetailDTO;
 import com.magambell.server.store.app.port.out.response.StoreAdminListDTO;
 import com.magambell.server.store.app.port.out.response.StoreListDTOResponse;
+import com.magambell.server.store.app.port.out.response.StoreSearchItemDTO;
 import com.magambell.server.store.domain.entity.Store;
 import com.magambell.server.store.domain.entity.StoreImage;
 import com.magambell.server.store.domain.enums.Approved;
@@ -25,6 +27,8 @@ import com.querydsl.jpa.impl.JPAQueryFactory;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 
+import java.time.LocalDateTime;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -503,4 +507,105 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
         int lastSlashIndex = imageUrl.lastIndexOf('/');
         return lastSlashIndex >= 0 ? imageUrl.substring(lastSlashIndex + 1) : imageUrl;
     }
+
+    @Override
+    public List<StoreSearchItemDTO> searchStores(final StoreSearchServiceRequest request) {
+        BooleanBuilder conditions = new BooleanBuilder();
+        conditions.and(store.approved.eq(APPROVED));
+        conditions.and(user.userStatus.eq(UserStatus.ACTIVE));
+        
+        // 검색어 조건
+        if (request.query() != null && !request.query().isBlank()) {
+            conditions.and(store.name.containsIgnoreCase(request.query()));
+        }
+        
+        // 커서 조건
+        if (request.cursor() != null && !request.cursor().isBlank()) {
+            try {
+                CursorData cursorData = decodeCursor(request.cursor());
+                if (request.sort().startsWith("-")) {
+                    // 내림차순: createdAt < cursor의 createdAt OR (createdAt = cursor의 createdAt AND id < cursor의 id)
+                    conditions.and(
+                        store.createdAt.lt(cursorData.createdAt())
+                            .or(store.createdAt.eq(cursorData.createdAt()).and(store.id.lt(cursorData.id())))
+                    );
+                } else {
+                    // 오름차순: createdAt > cursor의 createdAt OR (createdAt = cursor의 createdAt AND id > cursor의 id)
+                    conditions.and(
+                        store.createdAt.gt(cursorData.createdAt())
+                            .or(store.createdAt.eq(cursorData.createdAt()).and(store.id.gt(cursorData.id())))
+                    );
+                }
+            } catch (Exception e) {
+                // 잘못된 커서는 무시
+            }
+        }
+        
+        // 정렬 조건 결정
+        OrderSpecifier<?> orderSpecifier = store.createdAt.desc();
+        if (request.sort() != null) {
+            if (request.sort().equals("-createdAt")) {
+                orderSpecifier = store.createdAt.desc();
+            } else if (request.sort().equals("+createdAt") || request.sort().equals("createdAt")) {
+                orderSpecifier = store.createdAt.asc();
+            }
+        }
+        
+        // limit + 1 개 조회 (다음 페이지 존재 여부 확인용)
+        int fetchLimit = request.limit() + 1;
+        
+        // Store ID 먼저 조회
+        List<Long> storeIds = queryFactory
+            .select(store.id)
+            .from(store)
+            .innerJoin(user).on(user.id.eq(store.user.id))
+            .where(conditions)
+            .orderBy(orderSpecifier, store.id.desc())
+            .limit(fetchLimit)
+            .fetch();
+        
+        if (storeIds.isEmpty()) {
+            return List.of();
+        }
+        
+        // 실제 데이터 조회
+        return queryFactory
+            .select(
+                Projections.constructor(StoreSearchItemDTO.class,
+                    store.id,
+                    store.name,
+                    Expressions.asSet(storeImage.name),
+                    store.address,
+                    store.latitude,
+                    store.longitude,
+                    store.description,
+                    store.createdAt
+                )
+            )
+            .from(store)
+            .leftJoin(storeImage).on(storeImage.store.id.eq(store.id))
+            .where(store.id.in(storeIds))
+            .groupBy(store.id, store.name, store.address, store.latitude, 
+                     store.longitude, store.description, store.createdAt)
+            .orderBy(orderSpecifier, store.id.desc())
+            .limit(fetchLimit)
+            .fetch();
+    }
+    
+    private CursorData decodeCursor(String cursor) {
+        try {
+            String decoded = new String(Base64.getDecoder().decode(cursor));
+            String[] parts = decoded.split("_");
+            if (parts.length == 2) {
+                LocalDateTime createdAt = LocalDateTime.parse(parts[0]);
+                Long id = Long.parseLong(parts[1]);
+                return new CursorData(createdAt, id);
+            }
+        } catch (Exception e) {
+            // 파싱 실패
+        }
+        throw new IllegalArgumentException("Invalid cursor format");
+    }
+    
+    private record CursorData(LocalDateTime createdAt, Long id) {}
 }

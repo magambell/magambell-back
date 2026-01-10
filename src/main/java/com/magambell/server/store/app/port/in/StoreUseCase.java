@@ -5,6 +5,7 @@ import com.magambell.server.store.adapter.out.persistence.*;
 import com.magambell.server.store.app.port.in.request.*;
 import com.magambell.server.store.app.port.out.response.OpenRegionListDTO;
 import com.magambell.server.store.app.port.out.response.OwnerStoreDetailDTO;
+import com.magambell.server.store.app.port.out.response.StoreSearchResponse;
 
 import java.util.List;
 
@@ -30,5 +31,7 @@ public interface StoreUseCase {
     void registerOpenRegion(RegisterOpenRegionServiceRequest request, Long userId);
 
     List<OpenRegionListDTO> getOpenRegionList(OpenRegionListServiceRequest request);
+
+    StoreSearchResponse searchStores(StoreSearchServiceRequest request);
 
 }
