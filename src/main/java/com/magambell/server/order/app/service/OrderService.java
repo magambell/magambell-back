@@ -316,15 +316,20 @@ public class OrderService implements OrderUseCase {
     }
 
     private void validateOrderForDecision(final Order order) {
+        log.info("주문 상태 검증 - orderId: {}, currentStatus: {}", order.getId(), order.getOrderStatus());
+        
         if (order.getOrderStatus() == OrderStatus.ACCEPTED) {
+            log.warn("이미 승인된 주문 - orderId: {}", order.getId());
             throw new InvalidRequestException(ErrorCode.ORDER_ALREADY_ACCEPTED);
         }
 
         if (order.getOrderStatus() == OrderStatus.REJECTED) {
+            log.warn("이미 거절된 주문 - orderId: {}", order.getId());
             throw new InvalidRequestException(ErrorCode.ORDER_ALREADY_REJECTED);
         }
 
         if (order.getOrderStatus() != OrderStatus.PAID) {
+            log.error("결제 완료되지 않은 주문 - orderId: {}, status: {}", order.getId(), order.getOrderStatus());
             throw new InvalidRequestException(ErrorCode.INVALID_PAYMENT_STATUS_PAID);
         }
     }

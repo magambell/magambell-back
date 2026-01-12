@@ -105,9 +105,15 @@ public class NotificationService implements NotificationUseCase {
     public void notifyPaidOrder(final Set<User> orderStoreOwnerList) {
         List<Long> ownerList = orderStoreOwnerList.stream()
                 .map(User::getId).toList();
+        log.info("주문 완료 알림 전송 시작 - 사장님 수: {}, ownerIds: {}", ownerList.size(), ownerList);
 
         List<FcmTokenDTO> tokens = notificationQueryPort.findWithAllByOwnerIdsAndStoreIsNull(ownerList);
-        tokens.forEach(token -> send("새 주문이 들어왔어요!", token));
+        log.info("주문 완료 알림 FCM 토큰 조회 완료 - 토큰 수: {}", tokens.size());
+        tokens.forEach(token -> {
+            log.info("주문 완료 알림 전송 - ownerId: {}, message: 새 주문이 들어왔어요!", token.userId());
+            send("새 주문이 들어왔어요!", token);
+        });
+        log.info("주문 완료 알림 전송 완료 - 총 {}명", tokens.size());
     }
 
     @Override
@@ -121,14 +127,17 @@ public class NotificationService implements NotificationUseCase {
     @Override
     public void notifyStoreOpen(final NotifyStoreOpenRequest request) {
         List<FcmTokenDTO> tokens = notificationQueryPort.findWithAllByStoreId(request.store());
+        log.info("오픈 알림 대상 사용자 수: {} - storeId: {}", tokens.size(), request.store().getId());
 
         tokens.forEach(token -> {
             String nickname = token.nickName();
             String storeName = token.storeName();
             String message = "[" + nickname + "]님이 기다리던 [" + storeName + "]의 마감백 판매가 시작됐어요!";
+            log.info("오픈 알림 전송 - userId: {}, message: {}", token.userId(), message);
 
             send(message, token);
         });
+        log.info("오픈 알림 전송 완료 - 총 {}명", tokens.size());
     }
 
     @Transactional
@@ -198,6 +207,11 @@ public class NotificationService implements NotificationUseCase {
 
     private void fcmFail(final FirebaseMessagingException e, final FcmTokenDTO token) {
         log.warn("FCM 알림 전송 실패. tokenId={}, reason={}", token.fcmTokenId(), e.getMessage());
-        notificationCommandPort.removeToken(token.fcmTokenId());
+        try {
+            notificationCommandPort.removeToken(token.fcmTokenId());
+        } catch (Exception ex) {
+            // 토큰 삭제 실패 시 로그만 남기고 계속 진행 (동시성 충돌 등)
+            log.warn("FCM 토큰 삭제 실패 (무시). tokenId={}, error={}", token.fcmTokenId(), ex.getMessage());
+        }
     }
 }

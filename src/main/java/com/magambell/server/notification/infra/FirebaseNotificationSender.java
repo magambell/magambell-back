@@ -12,7 +12,7 @@ import org.springframework.stereotype.Component;
 public class FirebaseNotificationSender {
 
     public void send(String fcmToken, String title, String body) throws FirebaseMessagingException {
-        log.info("Sending notification to FCM token: {}", fcmToken);
+        log.info("FCM 알림 전송 시작 - token: {}, title: {}, body: {}", fcmToken, title, body);
         Message message = Message.builder()
                 .setToken(fcmToken)
                 .setNotification(Notification.builder()
@@ -21,6 +21,7 @@ public class FirebaseNotificationSender {
                         .build())
                 .build();
 
-        FirebaseMessaging.getInstance().send(message);
+        String messageId = FirebaseMessaging.getInstance().send(message);
+        log.info("FCM 알림 전송 성공 - token: {}, messageId: {}", fcmToken, messageId);
     }
 }
