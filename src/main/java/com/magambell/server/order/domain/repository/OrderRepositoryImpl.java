@@ -68,9 +68,9 @@ public class OrderRepositoryImpl implements OrderRepositoryCustom {
                 .innerJoin(user).on(user.id.eq(order.user.id))
                 .where(
                         user.userStatus.eq(UserStatus.ACTIVE)
-                                .and(
-                                        user.id.eq(userId)
-                                )
+                                .and(user.id.eq(userId))
+                                .and(order.orderStatus.ne(OrderStatus.PENDING))
+                                .and(order.orderStatus.ne(OrderStatus.FAILED))
                 )
                 .orderBy(
                         statusOrder.asc(),                 // 상태 우선순위

@@ -167,14 +167,22 @@ public class OrderService implements OrderUseCase {
         Order order = orderQueryPort.findWithAllById(orderId);
 
         validateCancelOrder(user, order);
-        order.cancelled(PaymentCompletionType.REDIRECT);
-
+        
         Payment payment = order.getPayment();
         if (payment == null) {
             log.warn("Payment not found for order: {}", orderId);
             return;
         }
         
+        // PENDING 상태 (결제 미완료) 주문은 결제 처리 없이 취소만 진행
+        if (order.getOrderStatus() == OrderStatus.PENDING) {
+            log.info("결제 미완료 주문 취소 - orderId: {}, status: PENDING", orderId);
+            order.cancelled(PaymentCompletionType.REDIRECT);
+            return;
+        }
+        
+        // PAID 이상의 상태: 재고 복원 및 결제 취소 처리
+        order.cancelled(PaymentCompletionType.REDIRECT);
         stockUseCase.restoreStockIfNecessary(payment);
         
         // 실제 결제가 있는 경우에만 PortOne 환불 처리
@@ -219,7 +227,27 @@ public class OrderService implements OrderUseCase {
             order.rejected(RejectReason.SYSTEM);
             Payment payment = order.getPayment();
             stockUseCase.restoreStockIfNecessary(payment);
-            portOnePort.cancelPayment(payment.getMerchantUid(), order.getTotalPrice(), "시스템 주문 취소");
+            
+            // 실제 결제가 있는 경우에만 PortOne 환불 처리
+            if (payment.getTransactionId() != null && !payment.getTransactionId().startsWith("test_")) {
+                try {
+                    portOnePort.cancelPayment(payment.getTransactionId(), order.getTotalPrice(), "시스템 주문 취소");
+                    log.info("[스케줄러] PortOne 결제 취소 성공: transactionId={}, orderId={}", 
+                            payment.getTransactionId(), order.getId());
+                } catch (NotFoundException e) {
+                    // PortOne에 결제 정보가 없는 경우 - 주문 거절은 정상 진행
+                    log.warn("[스케줄러] PortOne에서 결제를 찾을 수 없음 - 주문 거절은 정상 처리: transactionId={}, orderId={}", 
+                            payment.getTransactionId(), order.getId());
+                } catch (Exception e) {
+                    // 기타 에러는 로그만 남기고 다음 주문 처리 계속 (트랜잭션 롤백 방지)
+                    log.error("[스케줄러] PortOne 결제 취소 실패 - 주문 거절은 완료, 수동 환불 필요: transactionId={}, orderId={}", 
+                            payment.getTransactionId(), order.getId(), e);
+                }
+            } else {
+                log.info("[스케줄러] Test payment detected - skipping PortOne cancellation for transactionId: {}", 
+                        payment.getTransactionId());
+            }
+            
             notificationUseCase.notifyRejectOrder(order.getUser());
         });
     }
@@ -237,9 +265,21 @@ public class OrderService implements OrderUseCase {
             
             // 실제 결제가 있는 경우에만 PortOne 환불 처리
             if (payment.getTransactionId() != null && !payment.getTransactionId().startsWith("test_")) {
-                portOnePort.cancelPayment(payment.getTransactionId(), order.getTotalPrice(), "시스템 주문 취소");
+                try {
+                    portOnePort.cancelPayment(payment.getTransactionId(), order.getTotalPrice(), "시스템 주문 취소");
+                    log.info("[스케줄러] PortOne 결제 취소 성공: transactionId={}, orderId={}", 
+                            payment.getTransactionId(), order.getId());
+                } catch (NotFoundException e) {
+                    // PortOne에 결제 정보가 없는 경우 - 주문 거절은 정상 진행
+                    log.warn("[스케줄러] PortOne에서 결제를 찾을 수 없음 - 주문 거절은 정상 처리: transactionId={}, orderId={}", 
+                            payment.getTransactionId(), order.getId());
+                } catch (Exception e) {
+                    // 기타 에러는 로그만 남기고 다음 주문 처리 계속 (트랜잭션 롤백 방지)
+                    log.error("[스케줄러] PortOne 결제 취소 실패 - 주문 거절은 완료, 수동 환불 필요: transactionId={}, orderId={}", 
+                            payment.getTransactionId(), order.getId(), e);
+                }
             } else {
-                log.info("Test payment detected - skipping PortOne cancellation for transactionId: {}", 
+                log.info("[스케줄러] Test payment detected - skipping PortOne cancellation for transactionId: {}", 
                         payment.getTransactionId());
             }
             
@@ -302,6 +342,14 @@ public class OrderService implements OrderUseCase {
             throw new UnauthorizedException(ErrorCode.ORDER_NO_ACCESS);
         }
 
+        log.info("주문 취소 검증 - orderId: {}, currentStatus: {}", order.getId(), order.getOrderStatus());
+        
+        // PENDING 상태는 결제 전이므로 즉시 취소 가능
+        if (order.getOrderStatus() == OrderStatus.PENDING) {
+            return;
+        }
+        
+        // PENDING이 아닌 경우 기존 검증 로직 적용 (PAID만 취소 가능)
         validateOrderForDecision(order);
     }
 

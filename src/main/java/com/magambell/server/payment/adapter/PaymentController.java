@@ -30,6 +30,10 @@ public class PaymentController {
     @PostMapping("/complete")
     public Response<BaseResponse> redirectComplete(
             @RequestBody @Validated final PaymentRedirectPaidRequest request) {
+        log.info("========================================");
+        log.info("PortOne Redirect 결제 완료 수신 - paymentId: {}", request.paymentId());
+        log.info("========================================");
+        
         paymentUseCase.redirectPaid(request.toServiceRequest());
         return new Response<>();
     }
@@ -39,6 +43,11 @@ public class PaymentController {
     @PostMapping("/webhook")
     public Response<BaseResponse> webhook(
             @RequestBody @Validated final PortOneWebhookRequest request) {
+        log.info("========================================");
+        log.info("PortOne Webhook 수신 - type: {}, timestamp: {}", request.type(), request.timestamp());
+        log.info("Request Body: {}", request);
+        log.info("========================================");
+        
         if (request.type().startsWith("Transaction.")) {
             paymentUseCase.webhook(request.toServiceRequest());
         }
