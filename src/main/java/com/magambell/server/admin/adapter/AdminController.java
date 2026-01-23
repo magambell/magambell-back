@@ -43,4 +43,13 @@ public class AdminController {
     ) {
         return new Response<>(adminUseCase.editStore(storeId, request.toServiceRequest()));
     }
+
+    @PreAuthorize("hasRole('ADMIN')")
+    @Operation(summary = "승인 완료된 매장 전체 조회")
+    @ApiResponse(responseCode = "200", content = {
+            @Content(schema = @Schema(implementation = com.magambell.server.store.adapter.out.persistence.StoreAdminListResponse.class))})
+    @GetMapping("/stores")
+    public Response<com.magambell.server.store.adapter.out.persistence.StoreAdminListResponse> getAllApprovedStores() {
+        return new Response<>(adminUseCase.getAllApprovedStores());
+    }
 }

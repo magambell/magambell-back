@@ -10,6 +10,7 @@ import com.magambell.server.common.enums.ErrorCode;
 import com.magambell.server.common.exception.NotFoundException;
 import com.magambell.server.common.swagger.BaseResponse;
 import com.magambell.server.goods.domain.entity.Goods;
+import com.magambell.server.store.adapter.out.persistence.StoreAdminListResponse;
 import com.magambell.server.store.domain.entity.Store;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -80,5 +81,10 @@ public class AdminService implements AdminUseCase {
         }
         
         return new BaseResponse();
+    }
+
+    @Override
+    public StoreAdminListResponse getAllApprovedStores() {
+        return adminQueryPort.findAllApprovedStores();
     }
 }

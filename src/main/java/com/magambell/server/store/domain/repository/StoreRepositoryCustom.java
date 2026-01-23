@@ -28,6 +28,8 @@ public interface StoreRepositoryCustom {
 
     List<StoreAdminListDTO> getWaitingStoreList(Pageable pageable);
 
+    List<StoreAdminListDTO> getAllApprovedStores();
+
     Optional<Long> findOwnerIdByStoreId(Long storeId);
 
     List<StoreImage> getStoreImageList(Long storeId);

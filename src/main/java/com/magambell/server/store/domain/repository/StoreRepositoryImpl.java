@@ -426,6 +426,65 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
     }
 
     @Override
+    public List<StoreAdminListDTO> getAllApprovedStores() {
+        BooleanBuilder conditions = new BooleanBuilder();
+        conditions.and(store.approved.eq(APPROVED));
+        conditions.and(user.userStatus.eq(UserStatus.ACTIVE));
+
+        List<Long> storeIds = queryFactory
+                .select(store.id)
+                .from(store)
+                .leftJoin(goods).on(goods.store.id.eq(store.id))
+                .leftJoin(stock).on(stock.goods.id.eq(goods.id))
+                .innerJoin(user).on(user.id.eq(store.user.id))
+                .where(conditions)
+                .groupBy(store.id)
+                .orderBy(store.createdAt.desc())
+                .fetch();
+
+        if (storeIds.isEmpty()) {
+            return List.of();
+        }
+
+        return queryFactory.select(store, storeImage, goods, stock)
+                .from(store)
+                .leftJoin(storeImage).on(storeImage.store.id.eq(store.id))
+                .leftJoin(goods).on(goods.store.id.eq(store.id))
+                .leftJoin(stock).on(stock.goods.id.eq(goods.id))
+                .leftJoin(orderGoods).on(orderGoods.goods.id.eq(goods.id))
+                .leftJoin(review).on(review.orderGoods.id.eq(orderGoods.id))
+                .innerJoin(user).on(user.id.eq(store.user.id))
+                .where(store.id.in(storeIds))
+                .orderBy(store.createdAt.desc())
+                .transform(
+                        groupBy(store.id)
+                                .list(Projections.constructor(StoreAdminListDTO.class,
+                                        store.id,
+                                        store.name,
+                                        set(storeImage.name),
+                                        store.latitude,
+                                        store.longitude,
+                                        store.address,
+                                        goods.name,
+                                        goods.startTime,
+                                        goods.endTime,
+                                        goods.originalPrice,
+                                        goods.discount,
+                                        goods.salePrice,
+                                        stock.quantity,
+                                        Expressions.nullExpression(Double.class),
+                                        goods.saleStatus,
+                                        user.nickName,
+                                        store.ownerName,
+                                        store.ownerPhone,
+                                        store.businessNumber,
+                                        store.bankName,
+                                        store.bankAccount
+                                ))
+                );
+    }
+
+    @Override
     public Optional<Long> findOwnerIdByStoreId(final Long storeId) {
         return Optional.ofNullable(
                 queryFactory.select(user.id)

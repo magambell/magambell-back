@@ -6,6 +6,7 @@ import com.magambell.server.common.annotation.Adapter;
 import com.magambell.server.common.enums.ErrorCode;
 import com.magambell.server.common.exception.NotFoundException;
 import com.magambell.server.goods.domain.entity.Goods;
+import com.magambell.server.store.adapter.out.persistence.StoreAdminListResponse;
 import com.magambell.server.store.domain.entity.Store;
 import com.magambell.server.store.domain.repository.StoreRepository;
 import lombok.RequiredArgsConstructor;
@@ -31,5 +32,10 @@ public class AdminQueryAdapter implements AdminQueryPort {
     public Store findStoreByIdWithGoods(Long storeId) {
         return storeRepository.findById(storeId)
                 .orElseThrow(() -> new NotFoundException(ErrorCode.STORE_NOT_FOUND));
+    }
+
+    @Override
+    public StoreAdminListResponse findAllApprovedStores() {
+        return new StoreAdminListResponse(storeRepository.getAllApprovedStores());
     }
 }
