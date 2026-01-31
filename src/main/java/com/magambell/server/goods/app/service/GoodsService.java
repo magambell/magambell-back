@@ -56,12 +56,19 @@ public class GoodsService implements GoodsUseCase {
     public void changeGoodsStatus(final ChangeGoodsStatusServiceRequest request, final LocalDateTime today) {
         User user = userQueryPort.findById(request.userId());
         Goods goods = goodsQueryPort.findWithStoreAndUserById(request.goodsId());
+        
+        // 이미 ON 상태인지 확인 (중복 알림 방지)
+        boolean wasOff = goods.getSaleStatus() == SaleStatus.OFF;
+        
         goods.changeStatus(user, request.saleStatus(), today);
 
-        if (request.saleStatus() == SaleStatus.ON) {
+        // OFF -> ON 상태 변경일 때만 알림 전송
+        if (wasOff && request.saleStatus() == SaleStatus.ON) {
             log.info("매장 오픈 알림 전송 시작 - storeId: {}, storeName: {}", goods.getStore().getId(), goods.getStore().getName());
             notificationUseCase.notifyStoreOpen(new NotifyStoreOpenRequest(goods.getStore()));
             log.info("매장 오픈 알림 전송 완료 - storeId: {}", goods.getStore().getId());
+        } else if (!wasOff && request.saleStatus() == SaleStatus.ON) {
+            log.info("매장이 이미 오픈 상태이므로 알림 전송 생략 - storeId: {}, storeName: {}", goods.getStore().getId(), goods.getStore().getName());
         }
     }
 

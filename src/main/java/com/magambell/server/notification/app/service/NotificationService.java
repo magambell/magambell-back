@@ -209,8 +209,11 @@ public class NotificationService implements NotificationUseCase {
         log.warn("FCM 알림 전송 실패. tokenId={}, reason={}", token.fcmTokenId(), e.getMessage());
         try {
             notificationCommandPort.removeToken(token.fcmTokenId());
+        } catch (org.springframework.orm.ObjectOptimisticLockingFailureException | org.hibernate.StaleObjectStateException ex) {
+            // 다른 스레드가 이미 삭제한 경우 - 정상 동작으로 간주
+            log.debug("FCM 토큰이 다른 트랜잭션에서 이미 삭제됨. tokenId={}", token.fcmTokenId());
         } catch (Exception ex) {
-            // 토큰 삭제 실패 시 로그만 남기고 계속 진행 (동시성 충돌 등)
+            // 기타 예외는 로그만 남기고 계속 진행
             log.warn("FCM 토큰 삭제 실패 (무시). tokenId={}, error={}", token.fcmTokenId(), ex.getMessage());
         }
     }
