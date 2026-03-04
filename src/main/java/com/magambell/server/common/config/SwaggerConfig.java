@@ -35,7 +35,7 @@ public class SwaggerConfig {
     private Info apiInfo() {
         return new Info()
                 .title("Magambell API")
-                .description("마감벨 API 명세서")
+                .description("바이트픽 API 명세서")
                 .version("1.0.0");
     }
 }

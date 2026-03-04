@@ -19,6 +19,6 @@ public class AwsEmailServiceAdapter implements AwsEmailServiceInputPort {
     }
 
     private String getSubject() {
-        return "마감벨 입니다. 이메일 인증번호를 확인해 주세요.";
+        return "바이트픽 입니다. 이메일 인증번호를 확인해 주세요.";
     }
 }

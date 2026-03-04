@@ -31,7 +31,7 @@ public class GoodsController {
     private final GoodsUseCase goodsUseCase;
 
     @PreAuthorize("hasRole('OWNER')")
-    @Operation(summary = "마감백 등록")
+    @Operation(summary = "바이트백 등록")
     @ApiResponse(responseCode = "200", content = {
             @Content(schema = @Schema(implementation = GoodsImagesResponse.class))})
     @PostMapping("")
@@ -43,7 +43,7 @@ public class GoodsController {
     }
 
     @PreAuthorize("hasRole('OWNER')")
-    @Operation(summary = "마감백 판매 여부 변경")
+    @Operation(summary = "바이트백 판매 여부 변경")
     @ApiResponse(responseCode = "200", content = {
             @Content(schema = @Schema(implementation = BaseResponse.class))})
     @PatchMapping("/status")
@@ -56,7 +56,7 @@ public class GoodsController {
     }
 
     @PreAuthorize("hasRole('OWNER')")
-    @Operation(summary = "마감백 변경")
+    @Operation(summary = "바이트백 변경")
     @ApiResponse(responseCode = "200", content = {
             @Content(schema = @Schema(implementation = GoodsImagesResponse.class))})
     @PatchMapping("")
@@ -70,7 +70,7 @@ public class GoodsController {
     }
 
     @PreAuthorize("hasRole('OWNER')")
-    @Operation(summary = "마감백 이미지만 변경")
+    @Operation(summary = "바이트백 이미지만 변경")
     @ApiResponse(responseCode = "200", content = {
             @Content(schema = @Schema(implementation = GoodsImagesResponse.class))})
     @PatchMapping("/images")
