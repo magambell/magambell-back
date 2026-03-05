@@ -65,8 +65,13 @@ public class GoodsService implements GoodsUseCase {
         // OFF -> ON 상태 변경일 때만 알림 전송
         if (wasOff && request.saleStatus() == SaleStatus.ON) {
             log.info("매장 오픈 알림 전송 시작 - storeId: {}, storeName: {}", goods.getStore().getId(), goods.getStore().getName());
-            notificationUseCase.notifyStoreOpen(new NotifyStoreOpenRequest(goods.getStore()));
-            log.info("매장 오픈 알림 전송 완료 - storeId: {}", goods.getStore().getId());
+            try {
+                notificationUseCase.notifyStoreOpen(new NotifyStoreOpenRequest(goods.getStore()));
+                log.info("매장 오픈 알림 전송 완료 - storeId: {}", goods.getStore().getId());
+            } catch (org.springframework.orm.ObjectOptimisticLockingFailureException e) {
+                // FCM 토큰 삭제 동시성 에러는 무시 (이미 다른 스레드에서 삭제됨)
+                log.warn("알림 전송 중 동시성 에러 발생 (무시) - storeId: {}", goods.getStore().getId());
+            }
         } else if (!wasOff && request.saleStatus() == SaleStatus.ON) {
             log.info("매장이 이미 오픈 상태이므로 알림 전송 생략 - storeId: {}, storeName: {}", goods.getStore().getId(), goods.getStore().getName());
         }
