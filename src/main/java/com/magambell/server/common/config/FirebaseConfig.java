@@ -1,5 +1,7 @@
 package com.magambell.server.common.config;
 
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.auth.oauth2.GoogleCredentials;
 import com.google.firebase.FirebaseApp;
 import com.google.firebase.FirebaseOptions;
@@ -33,9 +35,19 @@ public class FirebaseConfig {
             }
             byte[] decoded = Base64.getDecoder().decode(firebaseConfigJson);
             InputStream serviceAccount = new ByteArrayInputStream(decoded);
+            
+            // Parse project_id from JSON
+            String jsonString = new String(decoded);
+            ObjectMapper objectMapper = new ObjectMapper();
+            JsonNode jsonNode = objectMapper.readTree(jsonString);
+            String projectId = jsonNode.get("project_id").asText();
+            
+            // Reset stream for credentials
+            serviceAccount = new ByteArrayInputStream(decoded);
 
             FirebaseOptions options = FirebaseOptions.builder()
                     .setCredentials(GoogleCredentials.fromStream(serviceAccount))
+                    .setProjectId(projectId)
                     .build();
 
             if (FirebaseApp.getApps().isEmpty()) {
