@@ -39,11 +39,14 @@ public class FirebaseConfig {
                     .build();
 
             if (FirebaseApp.getApps().isEmpty()) {
-                FirebaseApp.initializeApp(options);
+                FirebaseApp firebaseApp = FirebaseApp.initializeApp(options);
+                log.info("Successfully initialized Firebase with project: {}", firebaseApp.getOptions().getProjectId());
+            } else {
+                log.info("Firebase already initialized with project: {}", FirebaseApp.getInstance().getOptions().getProjectId());
             }
 
         } catch (Exception e) {
-            log.error(e.getMessage(), e);
+            log.error("Firebase initialization failed: {}", e.getMessage(), e);
             throw new InternalServerException(ErrorCode.FIREBASE_INIT_FAILED);
         }
     }
