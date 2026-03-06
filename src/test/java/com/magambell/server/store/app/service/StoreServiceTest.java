@@ -265,7 +265,7 @@ class StoreServiceTest {
         UserSocialAccountDTO userSocialAccountDTO = new UserSocialAccountDTO("test" + i + "@test.com", "테스트이름", "닉네임",
                 "01012341234",
                 ProviderType.KAKAO,
-                "testId", UserRole.OWNER);
+                "testId" + i, UserRole.OWNER);
         user = userSocialAccountDTO.toUser();
         user.addUserSocialAccount(userSocialAccountDTO.toUserSocialAccount());
 

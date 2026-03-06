@@ -192,7 +192,7 @@ class FavoriteServiceTest {
         UserSocialAccountDTO userSocialAccountDTO = new UserSocialAccountDTO("test" + i + "@test.com", "테스트이름", "닉네임",
                 "01012341234",
                 ProviderType.KAKAO,
-                "testId", UserRole.OWNER);
+                "testId" + i, UserRole.OWNER);
         owner = userSocialAccountDTO.toUser();
         owner.addUserSocialAccount(userSocialAccountDTO.toUserSocialAccount());
 
