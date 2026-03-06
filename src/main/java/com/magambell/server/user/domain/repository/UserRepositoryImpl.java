@@ -7,6 +7,8 @@ import static com.magambell.server.store.domain.entity.QStore.store;
 import static com.magambell.server.user.domain.entity.QUser.user;
 import static com.magambell.server.user.domain.entity.QUserSocialAccount.userSocialAccount;
 
+import com.querydsl.jpa.JPAExpressions;
+
 import com.magambell.server.auth.domain.ProviderType;
 import com.magambell.server.order.domain.enums.OrderStatus;
 import com.magambell.server.user.app.port.out.dto.MyPageStatsDTO;
@@ -48,12 +50,14 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
                         user.userRole,
                         userSocialAccount.providerType,
                         store.approved,
-                        goods.id
+                        JPAExpressions.select(goods.id)
+                                .from(goods)
+                                .where(goods.store.id.eq(store.id))
+                                .limit(1)
                 ))
                 .from(user)
                 .innerJoin(userSocialAccount).on(userSocialAccount.user.id.eq(user.id))
                 .leftJoin(store).on(store.user.id.eq(user.id))
-                .leftJoin(goods).on(goods.store.id.eq(store.id))
                 .where(
                         user.id.eq(userId),
                         user.userStatus.eq(UserStatus.ACTIVE)
