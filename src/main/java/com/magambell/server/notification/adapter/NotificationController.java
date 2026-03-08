@@ -15,6 +15,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -25,6 +26,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @Tag(name = "Notification", description = "Notification API")
 @RequiredArgsConstructor
 @RequestMapping("/api/v1/notification")
@@ -41,7 +43,11 @@ public class NotificationController {
             @RequestBody @Validated SaveStoreOpenFcmTokenRequest request,
             @AuthenticationPrincipal final CustomUserDetails customUserDetails
     ) {
+        log.info("매장 오픈 알림 구독 요청 - storeId: {}, userId: {}, fcmToken: {}", 
+                request.storeId(), customUserDetails.userId(), 
+                request.fcmToken() != null ? request.fcmToken().substring(0, Math.min(50, request.fcmToken().length())) : "null");
         notificationUseCase.saveStoreOpenToken(request.toService(customUserDetails.userId()));
+        log.info("매장 오픈 알림 구독 완료 - storeId: {}, userId: {}", request.storeId(), customUserDetails.userId());
         return new Response<>();
     }
 
