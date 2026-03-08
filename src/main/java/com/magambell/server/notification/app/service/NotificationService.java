@@ -49,14 +49,19 @@ public class NotificationService implements NotificationUseCase {
     @Transactional
     @Override
     public void saveStoreOpenToken(final SaveStoreOpenFcmTokenServiceRequest request) {
+        log.info("매장 오픈 알림 토큰 저장 시작 - storeId: {}, userId: {}", request.storeId(), request.userId());
+        
         User user = userQueryPort.findById(request.userId());
         Store store = storeQueryPort.findById(request.storeId());
 
         if (notificationQueryPort.existsByUserAndStore(user, store)) {
+            log.warn("매장 오픈 알림 중복 구독 시도 - storeId: {}, userId: {}", request.storeId(), request.userId());
             throw new DuplicateException(ErrorCode.DUPLICATE_NOTIFICATION_STORE);
         }
 
-        notificationCommandPort.save(FcmToken.create(request.fcmToken(), user, store));
+        FcmToken fcmToken = FcmToken.create(request.fcmToken(), user, store);
+        notificationCommandPort.save(fcmToken);
+        log.info("매장 오픈 알림 토큰 저장 완료 - storeId: {}, userId: {}, tokenId: {}", request.storeId(), request.userId(), fcmToken.getId());
     }
 
     @Transactional
