@@ -25,9 +25,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+@Slf4j
 @Transactional(readOnly = true)
 @Service
 public class UserVerifyService implements UserVerifyUseCase {
@@ -71,13 +73,24 @@ public class UserVerifyService implements UserVerifyUseCase {
 
     @Override
     public boolean verifySocialUser(final UserSocialVerifyServiceRequest request) {
+        log.info("소셜 로그인 사용자 검증 시작 - providerType: {}", request.providerType());
+        
         OAuthClient oAuthClient = oAuthClientMap.get(request.providerType());
         OAuthUserInfo userInfo = oAuthClient.findUserBySocialId(request.authCode())
                 .orElse(null);
         if (userInfo == null) {
+            log.warn("소셜 로그인 사용자 정보 조회 실패 - providerType: {}", request.providerType());
             return false;
         }
-        return userQueryPort.existsUserBySocial(userInfo.providerType(), userInfo.id());
+        
+        log.info("소셜 로그인 사용자 정보 조회 성공 - providerType: {}, providerId: {}, email: {}", 
+                userInfo.providerType(), userInfo.id(), userInfo.email());
+        
+        boolean exists = userQueryPort.existsUserBySocial(userInfo.providerType(), userInfo.id());
+        log.info("DB 사용자 존재 여부 - providerType: {}, providerId: {}, exists: {}", 
+                userInfo.providerType(), userInfo.id(), exists);
+        
+        return exists;
     }
 
     @Override
