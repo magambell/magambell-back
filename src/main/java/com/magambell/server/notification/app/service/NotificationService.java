@@ -84,7 +84,11 @@ public class NotificationService implements NotificationUseCase {
     public void saveToken(final SaveFcmTokenServiceRequest request) {
         User user = userQueryPort.findById(request.userId());
 
-        notificationCommandPort.deleteUserAndStoreIsNull(user);
+        try {
+            notificationCommandPort.deleteUserAndStoreIsNull(user);
+        } catch (Exception e) {
+            log.warn("FCM 토큰 삭제 중 동시성 에러 (무시) - userId: {}", request.userId());
+        }
         notificationCommandPort.save(FcmToken.create(request.fcmToken(), user));
     }
 
