@@ -10,6 +10,7 @@ import com.magambell.server.goods.domain.enums.SaleStatus;
 import com.magambell.server.store.domain.enums.Approved;
 import com.magambell.server.user.domain.enums.UserStatus;
 import com.querydsl.jpa.impl.JPAQueryFactory;
+import jakarta.persistence.LockModeType;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -33,6 +34,7 @@ public class GoodsRepositoryImpl implements GoodsRepositoryCustom {
                                         .and(store.approved.eq(Approved.APPROVED))
                                         .and(user.userStatus.eq(UserStatus.ACTIVE))
                         )
+                        .setLockMode(LockModeType.PESSIMISTIC_WRITE)
                         .fetchOne()
         );
     }
