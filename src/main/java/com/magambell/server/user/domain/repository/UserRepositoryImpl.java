@@ -50,10 +50,9 @@ public class UserRepositoryImpl implements UserRepositoryCustom {
                         user.userRole,
                         userSocialAccount.providerType,
                         store.approved,
-                        JPAExpressions.select(goods.id)
+                        JPAExpressions.select(goods.id.min())
                                 .from(goods)
                                 .where(goods.store.id.eq(store.id))
-                                .limit(1)
                 ))
                 .from(user)
                 .innerJoin(userSocialAccount).on(userSocialAccount.user.id.eq(user.id))

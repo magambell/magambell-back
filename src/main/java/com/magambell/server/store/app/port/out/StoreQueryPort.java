@@ -22,6 +22,8 @@ public interface StoreQueryPort {
 
     Optional<Store> getStoreByUser(User user);
 
+    Optional<Store> getStoreByUserWithLock(User user);
+
     List<StoreListDTOResponse> getStoreList(SearchStoreListServiceRequest request, Pageable pageable);
 
     StoreDetailResponse getStoreDetail(Long storeId);

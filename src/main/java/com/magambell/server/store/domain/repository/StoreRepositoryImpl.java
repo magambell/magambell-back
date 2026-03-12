@@ -159,7 +159,7 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                                 .and(store.approved.eq(APPROVED))
                                 .and(user.userStatus.eq(UserStatus.ACTIVE))
                 )
-                .fetchOne();
+                .fetchFirst();
 
         if (storeDetail == null) {
             return Optional.empty();

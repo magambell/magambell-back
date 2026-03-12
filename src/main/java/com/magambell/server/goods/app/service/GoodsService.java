@@ -45,7 +45,8 @@ public class GoodsService implements GoodsUseCase {
     @Override
     public GoodsImagesResponse registerGoods(final RegisterGoodsServiceRequest request, final Long userId) {
         User user = userQueryPort.findById(userId);
-        Store store = getStore(user);
+        Store store = storeQueryPort.getStoreByUserWithLock(user)
+                .orElseThrow(() -> new NotFoundException(ErrorCode.STORE_NOT_FOUND));
         existGoods(store);
 
         return new GoodsImagesResponse(goodsCommandPort.registerGoods(request.toDTO(store)).goodsPreSignedUrlImages());

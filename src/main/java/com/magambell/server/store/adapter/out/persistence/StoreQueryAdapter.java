@@ -41,6 +41,11 @@ public class StoreQueryAdapter implements StoreQueryPort {
     }
 
     @Override
+    public Optional<Store> getStoreByUserWithLock(final User user) {
+        return storeRepository.findByUserWithLock(user);
+    }
+
+    @Override
     public List<StoreListDTOResponse> getStoreList(final SearchStoreListServiceRequest request,
                                                    final Pageable pageable) {
         return storeRepository.getStoreList(request, pageable);
