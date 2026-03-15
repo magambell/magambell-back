@@ -11,12 +11,14 @@ import org.springframework.stereotype.Component;
 @Component
 public class FirebaseNotificationSender {
 
+    private static final String UNIFIED_NOTIFICATION_TITLE = "바이트픽";
+
     public void send(String fcmToken, String title, String body) throws FirebaseMessagingException {
-        log.info("FCM 알림 전송 시작 - token: {}, title: {}, body: {}", fcmToken, title, body);
+        log.info("FCM 알림 전송 시작 - token: {}, title: {}, body: {}", fcmToken, UNIFIED_NOTIFICATION_TITLE, body);
         Message message = Message.builder()
                 .setToken(fcmToken)
                 .setNotification(Notification.builder()
-                        .setTitle(title)
+                        .setTitle(UNIFIED_NOTIFICATION_TITLE)
                         .setBody(body)
                         .build())
                 .build();

@@ -39,6 +39,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class NotificationService implements NotificationUseCase {
 
+    private static final String UNIFIED_NOTIFICATION_TITLE = "바이트픽";
+
     private final NotificationCommandPort notificationCommandPort;
     private final NotificationQueryPort notificationQueryPort;
     private final FirebaseNotificationSender firebaseNotificationSender;
@@ -208,7 +210,7 @@ public class NotificationService implements NotificationUseCase {
 
     private void send(final String message, final FcmTokenDTO token) {
         try {
-            firebaseNotificationSender.send(token.token(), message, message);
+            firebaseNotificationSender.send(token.token(), UNIFIED_NOTIFICATION_TITLE, message);
         } catch (FirebaseMessagingException e) {
             fcmFail(e, token);
         }

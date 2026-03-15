@@ -31,8 +31,10 @@ public class AdminRepositoryImpl implements AdminRepositoryCustom {
         return queryFactory
                 .select(store.count())
                 .from(store)
+                .join(store.user, user)
                 .where(
-                        store.approved.eq(Approved.APPROVED)
+                        store.approved.eq(Approved.APPROVED),
+                        user.userStatus.eq(UserStatus.ACTIVE)
                 )
                 .fetchOne();
     }
