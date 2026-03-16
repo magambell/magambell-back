@@ -12,6 +12,7 @@ public record StoreDetailResponse(
         String goodsId,
         String storeName,
         String address,
+        String description,
         Set<String> images,
         LocalDateTime startTime,
         LocalDateTime endTime,
