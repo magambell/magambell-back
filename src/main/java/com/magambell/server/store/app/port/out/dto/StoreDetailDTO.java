@@ -13,6 +13,7 @@ public record StoreDetailDTO(
         Long goodsId,
         String storeName,
         String address,
+        String description,
         Set<String> images,
         LocalDateTime startTime,
         LocalDateTime endTime,
@@ -28,7 +29,7 @@ public record StoreDetailDTO(
 ) {
     public StoreDetailDTO withGoodsImages(List<GoodsImagesRegister> newGoodsImages) {
         return new StoreDetailDTO(
-                storeId, goodsId, storeName, address, images,
+                storeId, goodsId, storeName, address, description, images,
                 startTime, endTime, originalPrice, salePrice, discount,
                 quantity, saleStatus, latitude, longitude,
                 parkingDescription, newGoodsImages
@@ -41,7 +42,8 @@ public record StoreDetailDTO(
                 ? Math.round(averageRating * 10.0) / 10.0
                 : 0.0;
 
-        return new StoreDetailResponse(String.valueOf(storeId), String.valueOf(goodsId), storeName, address, images,
+        return new StoreDetailResponse(String.valueOf(storeId), String.valueOf(goodsId), storeName, address,
+                description, images,
                 startTime, endTime, originalPrice,
                 salePrice, discount, quantity, saleStatus, latitude, longitude, parkingDescription, reviewCount, roundedRating, goodsImages);
     }

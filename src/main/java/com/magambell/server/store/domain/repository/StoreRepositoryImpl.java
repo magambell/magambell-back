@@ -137,6 +137,7 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                         goods.id,
                         store.name,
                         store.address,
+                    store.description,
                         Expressions.constant(Collections.emptySet()), // images - 나중에 set으로 변경
                         goods.startTime,
                         goods.endTime,
@@ -201,6 +202,7 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                 storeDetail.goodsId(),
                 storeDetail.storeName(),
                 storeDetail.address(),
+            storeDetail.description(),
                 storeImages.isEmpty() ? Collections.emptySet() : Set.copyOf(storeImages),
                 storeDetail.startTime(),
                 storeDetail.endTime(),
