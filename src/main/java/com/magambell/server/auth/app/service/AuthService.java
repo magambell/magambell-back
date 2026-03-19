@@ -8,8 +8,10 @@ import com.magambell.server.auth.domain.model.JwtToken;
 import com.magambell.server.common.enums.ErrorCode;
 import com.magambell.server.common.exception.DuplicateException;
 import com.magambell.server.common.exception.InvalidRequestException;
+import com.magambell.server.common.exception.NotFoundException;
 import com.magambell.server.common.security.CustomUserDetails;
 import com.magambell.server.user.app.dto.OAuthUserInfo;
+import com.magambell.server.user.app.port.in.dto.UserDTO;
 import com.magambell.server.user.app.port.in.dto.UserSocialAccountDTO;
 import com.magambell.server.user.app.port.out.OAuthClient;
 import com.magambell.server.user.app.port.out.UserCommandPort;
@@ -26,6 +28,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Transactional(readOnly = true)
 @Service
 public class AuthService implements AuthUseCase {
+
+    private static final String TEST_PASSWORD = "test1234";
 
     private final Map<ProviderType, OAuthClient> oAuthClientMap;
     private final UserQueryPort userQueryPort;
@@ -75,20 +79,44 @@ public class AuthService implements AuthUseCase {
 
     @Override
     public JwtToken userTest() {
-        User user = userQueryPort.findById(742149639478281692L);
+        User user = findOrCreateTestUser(
+                "test-user@bitepick.co.kr",
+                "테스트 고객",
+                "01011112222",
+                UserRole.CUSTOMER
+        );
         return jwtService.createJwtToken(user.getId(), user.getUserRole());
     }
 
     @Override
     public JwtToken ownerTest() {
-        User user = userQueryPort.findById(742149639478281693L);
+        User user = findOrCreateTestUser(
+                "test-owner@bitepick.co.kr",
+                "테스트 사장",
+                "01011113333",
+                UserRole.OWNER
+        );
         return jwtService.createJwtToken(user.getId(), user.getUserRole());
     }
 
     @Override
     public JwtToken adminTest() {
-        User user = userQueryPort.findById(784983938630783485L); // admin@bitepick.co.kr
+        User user = findOrCreateTestUser(
+                "test-admin@bitepick.co.kr",
+                "테스트 관리자",
+                "01011114444",
+                UserRole.ADMIN
+        );
         return jwtService.createJwtToken(user.getId(), user.getUserRole());
+    }
+
+    private User findOrCreateTestUser(final String email, final String name, final String phoneNumber,
+                                      final UserRole userRole) {
+        try {
+            return userQueryPort.getUser(email, TEST_PASSWORD);
+        } catch (NotFoundException e) {
+            return userCommandPort.register(new UserDTO(email, TEST_PASSWORD, name, phoneNumber, userRole));
+        }
     }
 
     private User oAuthSignUp(final OAuthUserInfo userInfo, final SocialLoginServiceRequest request) {
