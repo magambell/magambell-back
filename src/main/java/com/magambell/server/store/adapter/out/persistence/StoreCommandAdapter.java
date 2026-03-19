@@ -21,7 +21,10 @@ import com.magambell.server.store.domain.entity.StoreImage;
 import com.magambell.server.store.domain.repository.OpenRegionRepository;
 import com.magambell.server.store.domain.repository.StoreRepository;
 import com.magambell.server.user.domain.entity.User;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import lombok.RequiredArgsConstructor;
 
 @RequiredArgsConstructor
@@ -59,18 +62,56 @@ public class StoreCommandAdapter implements StoreCommandPort {
     @Override
     public EditStoreImageResponseDTO editStoreImage(final Store store,
                                                     final List<StoreImagesRegister> storeImagesRegisters) {
-        store.getStoreImages().clear();
-        User user = store.getUser();
-        s3InputPort.deleteS3Objects(IMAGE_PREFIX, user);
+        Map<String, String> existingImageUrlByKey = store.getStoreImages().stream()
+                .collect(java.util.stream.Collectors.toMap(
+                        image -> extractKeyFromUrl(image.getName()),
+                        StoreImage::getName,
+                        (left, right) -> left
+                ));
 
-        List<ImageRegister> list = storeImagesRegisters.stream()
-                .map(storeImagesRegister -> new ImageRegister(storeImagesRegister.id(), storeImagesRegister.key()))
-                .toList();
-        List<TransformedImageDTO> transformedImageDTOS = s3InputPort.saveImages(IMAGE_PREFIX, list, user);
-        List<StorePreSignedUrlImage> storePreSignedUrlImages = addImagesAndGetPreSignedUrlImage(transformedImageDTOS,
-                store);
+        store.getStoreImages().clear();
+
+        List<StorePreSignedUrlImage> storePreSignedUrlImages = new ArrayList<>();
+        List<ImageRegister> newImagesToUpload = new ArrayList<>();
+        Map<Integer, Integer> uploadIndexToOrder = new HashMap<>();
+
+        for (StoreImagesRegister register : storeImagesRegisters) {
+            String imageKey = register.key();
+            Integer imageOrder = register.id();
+
+            if (existingImageUrlByKey.containsKey(imageKey)) {
+                store.addStoreImage(StoreImage.create(existingImageUrlByKey.get(imageKey), imageOrder));
+                storePreSignedUrlImages.add(new StorePreSignedUrlImage(imageOrder, null));
+            } else {
+                uploadIndexToOrder.put(newImagesToUpload.size(), imageOrder);
+                newImagesToUpload.add(new ImageRegister(imageOrder, imageKey));
+            }
+        }
+
+        if (!newImagesToUpload.isEmpty()) {
+            User user = store.getUser();
+            List<TransformedImageDTO> transformedImageDTOS = s3InputPort.saveImages(IMAGE_PREFIX, newImagesToUpload, user);
+
+            for (int i = 0; i < transformedImageDTOS.size(); i++) {
+                TransformedImageDTO transformedImageDTO = transformedImageDTOS.get(i);
+                Integer imageOrder = uploadIndexToOrder.get(i);
+                store.addStoreImage(StoreImage.create(transformedImageDTO.getUrl(), imageOrder));
+                storePreSignedUrlImages.add(new StorePreSignedUrlImage(imageOrder, transformedImageDTO.putUrl()));
+            }
+        }
 
         return new EditStoreImageResponseDTO(store.getId(), storePreSignedUrlImages);
+    }
+
+    private String extractKeyFromUrl(final String imageUrl) {
+        if (imageUrl == null || imageUrl.isBlank()) {
+            return "";
+        }
+        int lastSlashIndex = imageUrl.lastIndexOf('/');
+        if (lastSlashIndex >= 0 && lastSlashIndex < imageUrl.length() - 1) {
+            return imageUrl.substring(lastSlashIndex + 1);
+        }
+        return imageUrl;
     }
 
     @Override

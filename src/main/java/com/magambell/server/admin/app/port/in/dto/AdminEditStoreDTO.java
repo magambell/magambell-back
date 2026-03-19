@@ -21,7 +21,6 @@ public record AdminEditStoreDTO(
         String description,
         String parkingDescription,
         List<StoreImagesRegister> storeImages,
-        String goodsName,
         LocalDateTime startTime,
         LocalDateTime endTime,
         Integer originalPrice,

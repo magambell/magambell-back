@@ -15,6 +15,7 @@ import com.magambell.server.store.domain.entity.Store;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.util.StringUtils;
 
 @RequiredArgsConstructor
 @Transactional(readOnly = true)
@@ -56,15 +57,16 @@ public class AdminService implements AdminUseCase {
         );
         
         // Store 이미지 수정
-        if (dto.storeImages() != null && !dto.storeImages().isEmpty()) {
+        if (dto.storeImages() != null) {
             adminCommandPort.editStoreImages(store, dto.storeImages());
         }
         
         // Goods 수정
         if (!store.getGoods().isEmpty()) {
             Goods goods = store.getGoods().get(0);
+            String goodsName = resolveGoodsName(dto, goods);
             goods.editByAdmin(
-                    dto.goodsName(),
+                goodsName,
                     dto.startTime(),
                     dto.endTime(),
                     dto.originalPrice(),
@@ -81,6 +83,18 @@ public class AdminService implements AdminUseCase {
         }
         
         return new BaseResponse();
+    }
+
+    private String resolveGoodsName(final AdminEditStoreDTO dto, final Goods goods) {
+        if (dto.goodsImages() == null || dto.goodsImages().isEmpty()) {
+            return goods.getName();
+        }
+
+        return dto.goodsImages().stream()
+                .map(img -> img.goodsName())
+                .filter(StringUtils::hasText)
+                .findFirst()
+                .orElse(goods.getName());
     }
 
     @Override
