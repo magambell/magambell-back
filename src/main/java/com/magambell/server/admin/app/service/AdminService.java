@@ -1,17 +1,21 @@
 package com.magambell.server.admin.app.service;
 
+import com.magambell.server.admin.adapter.out.persistence.AdminEditStoreResponse;
 import com.magambell.server.admin.app.port.in.AdminUseCase;
 import com.magambell.server.admin.app.port.in.dto.AdminEditStoreDTO;
 import com.magambell.server.admin.app.port.in.request.AdminEditStoreServiceRequest;
 import com.magambell.server.admin.app.port.out.AdminCommandPort;
 import com.magambell.server.admin.app.port.out.AdminQueryPort;
 import com.magambell.server.admin.app.port.out.response.AdminStatsResponse;
-import com.magambell.server.common.enums.ErrorCode;
-import com.magambell.server.common.exception.NotFoundException;
-import com.magambell.server.common.swagger.BaseResponse;
+import com.magambell.server.goods.app.port.out.response.EditGoodsImageResponseDTO;
+import com.magambell.server.goods.app.port.out.response.GoodsPreSignedUrlImage;
 import com.magambell.server.goods.domain.entity.Goods;
+import com.magambell.server.store.app.port.out.response.EditStoreImageResponseDTO;
+import com.magambell.server.store.app.port.out.response.StorePreSignedUrlImage;
 import com.magambell.server.store.adapter.out.persistence.StoreAdminListResponse;
 import com.magambell.server.store.domain.entity.Store;
+import java.util.Collections;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,7 +39,7 @@ public class AdminService implements AdminUseCase {
 
     @Transactional
     @Override
-    public BaseResponse editStore(Long storeId, AdminEditStoreServiceRequest request) {
+    public AdminEditStoreResponse editStore(Long storeId, AdminEditStoreServiceRequest request) {
         AdminEditStoreDTO dto = request.toDTO();
         
         // Store 조회
@@ -56,9 +60,13 @@ public class AdminService implements AdminUseCase {
                 dto.parkingDescription()
         );
         
+        List<StorePreSignedUrlImage> storePreSignedUrlImages = Collections.emptyList();
+        List<GoodsPreSignedUrlImage> goodsPreSignedUrlImages = Collections.emptyList();
+
         // Store 이미지 수정
         if (dto.storeImages() != null) {
-            adminCommandPort.editStoreImages(store, dto.storeImages());
+            EditStoreImageResponseDTO storeImageResponse = adminCommandPort.editStoreImages(store, dto.storeImages());
+            storePreSignedUrlImages = storeImageResponse.storePreSignedUrlImages();
         }
         
         // Goods 수정
@@ -78,11 +86,12 @@ public class AdminService implements AdminUseCase {
             
             // Goods 이미지 수정
             if (dto.goodsImages() != null && !dto.goodsImages().isEmpty()) {
-                adminCommandPort.editGoodsImages(goods, dto.goodsImages());
+                EditGoodsImageResponseDTO goodsImageResponse = adminCommandPort.editGoodsImages(goods, dto.goodsImages());
+                goodsPreSignedUrlImages = goodsImageResponse.goodsPreSignedUrlImages();
             }
         }
         
-        return new BaseResponse();
+        return new AdminEditStoreResponse(storePreSignedUrlImages, goodsPreSignedUrlImages);
     }
 
     private String resolveGoodsName(final AdminEditStoreDTO dto, final Goods goods) {

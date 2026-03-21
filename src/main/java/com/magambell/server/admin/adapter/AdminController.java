@@ -1,6 +1,7 @@
 package com.magambell.server.admin.adapter;
 
 import com.magambell.server.admin.adapter.in.web.AdminEditStoreRequest;
+import com.magambell.server.admin.adapter.out.persistence.AdminEditStoreResponse;
 import com.magambell.server.admin.app.port.in.AdminUseCase;
 import com.magambell.server.admin.app.port.out.response.AdminStatsResponse;
 import com.magambell.server.common.Response;
@@ -35,9 +36,9 @@ public class AdminController {
     @PreAuthorize("hasRole('ADMIN')")
     @Operation(summary = "매장 정보 수정 - Store 정보, Goods 정보, 이미지 모두 수정 가능")
     @ApiResponse(responseCode = "200", content = {
-            @Content(schema = @Schema(implementation = BaseResponse.class))})
+            @Content(schema = @Schema(implementation = AdminEditStoreResponse.class))})
     @PutMapping("/stores/{storeId}")
-    public Response<BaseResponse> editStore(
+        public Response<AdminEditStoreResponse> editStore(
             @PathVariable Long storeId,
             @RequestBody @Validated AdminEditStoreRequest request
     ) {
