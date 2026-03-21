@@ -76,7 +76,7 @@ public class StoreCommandAdapter implements StoreCommandPort {
         Map<Integer, Integer> uploadIndexToOrder = new HashMap<>();
 
         for (StoreImagesRegister register : storeImagesRegisters) {
-            String imageKey = register.key();
+            String imageKey = resolveImageKey(register);
             Integer imageOrder = register.id();
 
             if (existingImageUrlByKey.containsKey(imageKey)) {
@@ -101,6 +101,13 @@ public class StoreCommandAdapter implements StoreCommandPort {
         }
 
         return new EditStoreImageResponseDTO(store.getId(), storePreSignedUrlImages);
+    }
+
+    private String resolveImageKey(final StoreImagesRegister register) {
+        if (register.key() != null && !register.key().isBlank()) {
+            return register.key();
+        }
+        return extractKeyFromUrl(register.imageUrl());
     }
 
     private String extractKeyFromUrl(final String imageUrl) {

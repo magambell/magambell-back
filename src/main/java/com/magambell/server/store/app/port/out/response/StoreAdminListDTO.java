@@ -4,7 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.magambell.server.goods.domain.enums.SaleStatus;
 import com.magambell.server.store.domain.enums.Bank;
 import java.time.LocalDateTime;
-import java.util.List;
 import java.util.Set;
 
 public record StoreAdminListDTO(
@@ -31,21 +30,31 @@ public record StoreAdminListDTO(
         String businessNumber,
         Bank bankName,
         String bankAccount,
-        List<GoodsInfo> goodsList
+        Set<GoodsImageInfo> goodsImageList
 ) {
-    public record GoodsInfo(
-            Long goodsId,
-            String goodsName,
-            LocalDateTime startTime,
-            LocalDateTime endTime,
-            Integer originPrice,
-            Integer discount,
-            Integer salePrice,
-            Integer quantity,
-            SaleStatus saleStatus
+    public record GoodsImageInfo(
+            Long goodsImageId,
+            String imageUrl,
+            String key,
+            String goodsName
     ) {
-        public String getGoodsId() {
-            return String.valueOf(goodsId);
+        public GoodsImageInfo(final Long goodsImageId, final String imageUrl, final String goodsName) {
+            this(goodsImageId, imageUrl, extractKey(imageUrl), goodsName);
+        }
+
+        private static String extractKey(final String imageUrl) {
+            if (imageUrl == null || imageUrl.isBlank()) {
+                return "";
+            }
+            int lastSlashIndex = imageUrl.lastIndexOf('/');
+            if (lastSlashIndex >= 0 && lastSlashIndex < imageUrl.length() - 1) {
+                return imageUrl.substring(lastSlashIndex + 1);
+            }
+            return imageUrl;
+        }
+
+        public String getGoodsImageId() {
+            return String.valueOf(goodsImageId);
         }
     }
 

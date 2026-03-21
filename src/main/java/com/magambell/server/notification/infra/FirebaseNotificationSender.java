@@ -1,5 +1,7 @@
 package com.magambell.server.notification.infra;
 
+import com.google.firebase.messaging.Aps;
+import com.google.firebase.messaging.ApnsConfig;
 import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.firebase.messaging.FirebaseMessagingException;
 import com.google.firebase.messaging.Message;
@@ -21,6 +23,11 @@ public class FirebaseNotificationSender {
                         .setTitle(UNIFIED_NOTIFICATION_TITLE)
                         .setBody(body)
                         .build())
+            .setApnsConfig(ApnsConfig.builder()
+                .setAps(Aps.builder()
+                    .setSound("default")
+                    .build())
+                .build())
                 .build();
 
         String messageId = FirebaseMessaging.getInstance().send(message);
