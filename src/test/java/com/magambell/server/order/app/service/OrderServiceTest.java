@@ -392,7 +392,7 @@ class OrderServiceTest {
         orderService.rejectOrder(request);
 
         verify(portOnePort, times(1))
-                .cancelPayment(eq("portone_transaction_id_123"), eq(18000), eq("사장님 주문 취소"));
+                .cancelPayment(eq(MERCHANT_UID_PREFIX + order.getId()), eq(18000), eq("사장님 주문 취소"));
 
         // then
         Order result = orderRepository.findById(order.getId()).orElseThrow();
@@ -449,7 +449,7 @@ class OrderServiceTest {
         assertThat(updatedStock.getQuantity()).isEqualTo(120);
 
         verify(portOnePort, times(1))
-                .cancelPayment(eq("portone_transaction_id_456"), eq(18000), eq("고객님 주문 취소"));
+                .cancelPayment(eq(MERCHANT_UID_PREFIX + order.getId()), eq(18000), eq("고객님 주문 취소"));
     }
 
     @DisplayName("주문을 승인하면 상태가 ACCEPTED로 변경된다.")

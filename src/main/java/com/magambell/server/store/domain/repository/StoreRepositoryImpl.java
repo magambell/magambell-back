@@ -394,8 +394,7 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                 .leftJoin(storeImage).on(storeImage.store.id.eq(store.id))
                 .leftJoin(goods).on(goods.store.id.eq(store.id))
                 .innerJoin(stock).on(stock.goods.id.eq(goods.id))
-                .leftJoin(orderGoods).on(orderGoods.goods.id.eq(goods.id))
-                .leftJoin(review).on(review.orderGoods.id.eq(orderGoods.id))
+            .leftJoin(goodsImage).on(goodsImage.goods.id.eq(goods.id))
                 .innerJoin(user).on(user.id.eq(store.user.id))
                 .where(store.id.in(storeIds))
                 .orderBy(store.createdAt.desc())
@@ -408,6 +407,8 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                                         store.latitude,
                                         store.longitude,
                                         store.address,
+                                        store.description,
+                                        store.parkingDescription,
                                         goods.name,
                                         goods.startTime,
                                         goods.endTime,
@@ -422,7 +423,12 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                                         store.ownerPhone,
                                         store.businessNumber,
                                         store.bankName,
-                                        store.bankAccount
+                                        store.bankAccount,
+                                        set(Projections.constructor(StoreAdminListDTO.GoodsImageInfo.class,
+                                            goodsImage.id,
+                                            goodsImage.imageUrl,
+                                            goodsImage.goodsName
+                                        ))
                                 ))
                 );
     }
@@ -453,8 +459,7 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                 .leftJoin(storeImage).on(storeImage.store.id.eq(store.id))
                 .leftJoin(goods).on(goods.store.id.eq(store.id))
                 .leftJoin(stock).on(stock.goods.id.eq(goods.id))
-                .leftJoin(orderGoods).on(orderGoods.goods.id.eq(goods.id))
-                .leftJoin(review).on(review.orderGoods.id.eq(orderGoods.id))
+            .leftJoin(goodsImage).on(goodsImage.goods.id.eq(goods.id))
                 .innerJoin(user).on(user.id.eq(store.user.id))
                 .where(store.id.in(storeIds))
                 .orderBy(store.createdAt.desc())
@@ -467,6 +472,8 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                                         store.latitude,
                                         store.longitude,
                                         store.address,
+                                        store.description,
+                                        store.parkingDescription,
                                         goods.name,
                                         goods.startTime,
                                         goods.endTime,
@@ -481,7 +488,12 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                                         store.ownerPhone,
                                         store.businessNumber,
                                         store.bankName,
-                                        store.bankAccount
+                                        store.bankAccount,
+                                        set(Projections.constructor(StoreAdminListDTO.GoodsImageInfo.class,
+                                            goodsImage.id,
+                                            goodsImage.imageUrl,
+                                            goodsImage.goodsName
+                                        ))
                                 ))
                 );
     }
