@@ -24,7 +24,6 @@ public record AdminEditStoreRequest(
         String description,
         String parkingDescription,
         List<StoreImagesRegister> storeImages,
-        @NotBlank String goodsName,
         @NotNull LocalDateTime startTime,
         @NotNull LocalDateTime endTime,
         @NotNull Integer originalPrice,
@@ -39,7 +38,7 @@ public record AdminEditStoreRequest(
                 storeName, address, latitude, longitude,
                 ownerName, ownerPhone, businessNumber, bankName, bankAccount,
                 description, parkingDescription, storeImages,
-                goodsName, startTime, endTime, originalPrice, salePrice, discount,
+            startTime, endTime, originalPrice, salePrice, discount,
                 quantity, saleStatus, goodsImages
         );
     }
