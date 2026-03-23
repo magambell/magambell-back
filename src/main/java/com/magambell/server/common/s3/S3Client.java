@@ -20,12 +20,24 @@ public class S3Client {
     @Value("${spring.aws.bucket}")
     private String S3_BUCKET_NAME;
 
+    @Value("${spring.aws.read-presigned-expire-minutes:43200}")
+    private Integer readPresignedExpireMinutes;
+
     public String getPreSignedUrl(String fileName) {
         return amazonS3Client.generatePresignedUrl(
                 S3_BUCKET_NAME,
                 fileName,
                 DateUtility.getPresignedExpireDate(),
                 HttpMethod.PUT
+        ).toString();
+    }
+
+    public String getPreSignedGetUrl(final String fileName) {
+        return amazonS3Client.generatePresignedUrl(
+                S3_BUCKET_NAME,
+                fileName,
+                DateUtility.getPresignedExpireDate(readPresignedExpireMinutes),
+                HttpMethod.GET
         ).toString();
     }
 
