@@ -101,8 +101,13 @@ public class S3Adapter implements S3InputPort {
             return imagePathOrKey;
         }
 
-        String objectKey = extractObjectKey(imagePathOrKey);
-        return s3Client.getPreSignedGetUrl(objectKey);
+        try {
+            String objectKey = extractObjectKey(imagePathOrKey);
+            return s3Client.getPreSignedGetUrl(objectKey);
+        } catch (RuntimeException ignored) {
+            // Do not fail the whole API when URL re-signing fails.
+            return imagePathOrKey;
+        }
     }
 
     private String getCloudFrontSignedUrl(final String imageKey) {
