@@ -85,7 +85,8 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                 .innerJoin(stock).on(stock.goods.id.eq(goods.id))
                 .innerJoin(user).on(user.id.eq(store.user.id))
                 .leftJoin(orderGoods).on(orderGoods.goods.id.eq(goods.id))
-                .leftJoin(review).on(review.orderGoods.id.eq(orderGoods.id))
+            .leftJoin(review).on(review.orderGoods.id.eq(orderGoods.id)
+                .and(review.reviewStatus.eq(ReviewStatus.ACTIVE)))
                 .where(conditions)
                 .groupBy(store.id)
                 .orderBy(sortCondition(request.sortType(), distance))
@@ -103,7 +104,8 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                 .leftJoin(goods).on(goods.store.id.eq(store.id))
                 .innerJoin(stock).on(stock.goods.id.eq(goods.id))
                 .leftJoin(orderGoods).on(orderGoods.goods.id.eq(goods.id))
-                .leftJoin(review).on(review.orderGoods.id.eq(orderGoods.id))
+            .leftJoin(review).on(review.orderGoods.id.eq(orderGoods.id)
+                .and(review.reviewStatus.eq(ReviewStatus.ACTIVE)))
                 .where(store.id.in(storeIds))
                 .orderBy(sortCondition(request.sortType(), distance))
                 .transform(
@@ -548,29 +550,29 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
         return null;
     }
 
-    private OrderSpecifier<?> sortCondition(SearchSortType sortType, NumberExpression<Double> distance) {
+    private OrderSpecifier<?>[] sortCondition(SearchSortType sortType, NumberExpression<Double> distance) {
         if (sortType == null) {
-            return store.createdAt.desc();
+            return new OrderSpecifier[]{store.createdAt.desc().nullsLast(), store.id.desc()};
         }
         if (sortType == SearchSortType.RECENT_DESC) {
-            return store.createdAt.desc();
+            return new OrderSpecifier[]{store.createdAt.desc().nullsLast(), store.id.desc()};
         }
         if (sortType == SearchSortType.DISTANCE_ASC) {
             if (distance == null) {
-                return store.createdAt.desc();
+                return new OrderSpecifier[]{store.createdAt.desc().nullsLast(), store.id.desc()};
             }
-            return distance.asc();
+            return new OrderSpecifier[]{distance.asc(), store.id.desc()};
         }
         if (sortType == SearchSortType.PRICE_ASC) {
-            return goods.salePrice.asc();
+            return new OrderSpecifier[]{goods.salePrice.asc().nullsLast(), store.id.desc()};
         }
         if (sortType == SearchSortType.RATING_DESC) {
-            return review.rating.avg().desc().nullsLast();
+            return new OrderSpecifier[]{review.rating.avg().desc().nullsLast(), store.id.desc()};
         }
         if (sortType == SearchSortType.POPULAR_DESC) {
-            return orderGoods.count().desc().nullsLast();
+            return new OrderSpecifier[]{review.id.countDistinct().desc().nullsLast(), store.id.desc()};
         }
-        return store.createdAt.desc();
+        return new OrderSpecifier[]{store.createdAt.desc().nullsLast(), store.id.desc()};
     }
 
     private String extractKeyFromUrl(String imageUrl) {
