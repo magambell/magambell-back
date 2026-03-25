@@ -15,6 +15,8 @@ import com.magambell.server.user.domain.enums.UserStatus;
 import com.querydsl.core.types.Projections;
 import com.querydsl.jpa.impl.JPAQueryFactory;
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Pageable;
 
@@ -25,12 +27,10 @@ public class FavoriteRepositoryImpl implements FavoriteRepositoryCustom {
 
     @Override
     public List<FavoriteStoreListDTOResponse> getFavoriteStoreList(final Pageable pageable, final Long userId) {
-        return queryFactory.select(store, storeImage, goods, stock, favorite, user)
-                .from(store)
-                .innerJoin(favorite).on(favorite.store.id.eq(store.id))
-                .leftJoin(storeImage).on(storeImage.store.id.eq(store.id))
-                .leftJoin(goods).on(goods.store.id.eq(store.id))
-                .innerJoin(stock).on(stock.goods.id.eq(goods.id))
+        List<Long> storeIds = queryFactory
+                .select(favorite.store.id)
+                .from(favorite)
+                .innerJoin(store).on(favorite.store.id.eq(store.id))
                 .innerJoin(user).on(store.user.id.eq(user.id))
                 .where(
                         favorite.user.id.eq(userId)
@@ -40,9 +40,22 @@ public class FavoriteRepositoryImpl implements FavoriteRepositoryCustom {
                 .orderBy(favorite.createdAt.desc())
                 .offset(pageable.getOffset())
                 .limit(pageable.getPageSize())
+                .fetch();
+
+        if (storeIds.isEmpty()) {
+            return List.of();
+        }
+
+        Map<Long, FavoriteStoreListDTOResponse> favoriteMap = queryFactory
+                .select(store, storeImage, goods, stock)
+                .from(store)
+                .leftJoin(storeImage).on(storeImage.store.id.eq(store.id))
+                .leftJoin(goods).on(goods.store.id.eq(store.id))
+                .innerJoin(stock).on(stock.goods.id.eq(goods.id))
+                .where(store.id.in(storeIds))
                 .transform(
                         groupBy(store.id)
-                                .list(Projections.constructor(FavoriteStoreListDTOResponse.class,
+                                .as(Projections.constructor(FavoriteStoreListDTOResponse.class,
                                                 store.id,
                                                 store.name,
                                                 store.address,
@@ -58,5 +71,10 @@ public class FavoriteRepositoryImpl implements FavoriteRepositoryCustom {
                                         )
                                 )
                 );
+
+        return storeIds.stream()
+                .map(favoriteMap::get)
+                .filter(Objects::nonNull)
+                .toList();
     }
 }
