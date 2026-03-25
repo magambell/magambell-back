@@ -18,6 +18,8 @@ public interface S3InputPort {
 
     String getImagePrefix(String imagePrefix, ImageRegister imageRegister, Long id);
 
+    String getReadUrl(String imagePathOrKey);
+
     void deleteS3Objects(String imagePrefix, User user);
 
     void deleteS3Objects(String imagePrefix, Long id);

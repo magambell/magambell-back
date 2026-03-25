@@ -7,6 +7,7 @@ import com.magambell.server.user.domain.entity.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 
+import java.net.URI;
 import java.util.List;
 
 @RequiredArgsConstructor
@@ -94,7 +95,37 @@ public class S3Adapter implements S3InputPort {
                 + imageRegisters.key();
     }
 
+    @Override
+    public String getReadUrl(final String imagePathOrKey) {
+        if (imagePathOrKey == null || imagePathOrKey.isBlank()) {
+            return imagePathOrKey;
+        }
+
+        try {
+            String objectKey = extractObjectKey(imagePathOrKey);
+            return s3Client.getPreSignedGetUrl(objectKey);
+        } catch (RuntimeException ignored) {
+            // Do not fail the whole API when URL re-signing fails.
+            return imagePathOrKey;
+        }
+    }
+
     private String getCloudFrontSignedUrl(final String imageKey) {
         return SSL + AWS_CF_DISTRIBUTION + "/" + imageKey;
+    }
+
+    private String extractObjectKey(final String imagePathOrKey) {
+        if (imagePathOrKey.startsWith("http://") || imagePathOrKey.startsWith("https://")) {
+            try {
+                URI uri = URI.create(imagePathOrKey);
+                String path = uri.getPath();
+                if (path != null && !path.isBlank()) {
+                    return path.startsWith("/") ? path.substring(1) : path;
+                }
+            } catch (IllegalArgumentException ignored) {
+                return imagePathOrKey;
+            }
+        }
+        return imagePathOrKey;
     }
 }

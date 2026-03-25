@@ -14,4 +14,10 @@ public class DateUtility {
         return Date.from(oneMinuteLater.toInstant());
 
     }
+
+    public static Date getPresignedExpireDate(final Integer expireMinutes) {
+        ZonedDateTime nowUTC = ZonedDateTime.now(ZoneOffset.UTC);
+        ZonedDateTime expireTime = nowUTC.plusMinutes(expireMinutes);
+        return Date.from(expireTime.toInstant());
+    }
 }

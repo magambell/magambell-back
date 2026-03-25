@@ -3,6 +3,7 @@ package com.magambell.server.store.app.service;
 import com.magambell.server.common.enums.ErrorCode;
 import com.magambell.server.common.exception.DuplicateException;
 import com.magambell.server.common.exception.InvalidRequestException;
+import com.magambell.server.common.s3.S3InputPort;
 import com.magambell.server.region.app.port.out.RegionQueryPort;
 import com.magambell.server.region.domain.entity.Region;
 import com.magambell.server.review.adapter.out.persistence.ReviewListResponse;
@@ -20,6 +21,7 @@ import com.magambell.server.user.domain.enums.UserRole;
 import com.magambell.server.user.domain.entity.User;
 import java.time.LocalDateTime;
 import java.util.Base64;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -37,6 +39,7 @@ public class StoreService implements StoreUseCase {
     private final StoreQueryPort storeQueryPort;
     private final UserQueryPort userQueryPort;
     private final RegionQueryPort regionQueryPort;
+    private final S3InputPort s3InputPort;
 
     @Transactional
     @Override
@@ -70,7 +73,7 @@ public class StoreService implements StoreUseCase {
     @Override
     public OwnerStoreDetailDTO getOwnerStoreInfo(final Long userId) {
         User user = userQueryPort.findById(userId);
-        return storeQueryPort.getOwnerStoreInfo(user);
+        return convertOwnerStoreImageUrls(storeQueryPort.getOwnerStoreInfo(user));
     }
 
     @Override
@@ -80,8 +83,11 @@ public class StoreService implements StoreUseCase {
 
     @Override
     public StoreAdminListResponse getWaitingStoreList(final WaitingStoreListServiceRequest request) {
+        List<StoreAdminListDTO> waitingStoreList = storeQueryPort.getWaitingStoreList(
+            PageRequest.of(request.page() - 1, request.size()));
+
         return new StoreAdminListResponse(
-                storeQueryPort.getWaitingStoreList(PageRequest.of(request.page() - 1, request.size())));
+            waitingStoreList.stream().map(this::convertAdminStoreImageUrls).toList());
     }
 
     @Override
@@ -93,7 +99,7 @@ public class StoreService implements StoreUseCase {
                 Optional.ofNullable(storeQueryPort.getStoreImageList(storeId))
                         .orElseGet(List::of).stream()
                         .filter(Objects::nonNull)
-                        .map(img -> new StorePreSignedUrlImage(img.getOrder(), img.getName()))
+                .map(img -> new StorePreSignedUrlImage(img.getOrder(), s3InputPort.getReadUrl(img.getName())))
                         .toList();
 
         return new StoreImagesResponse(String.valueOf(storeId), images);
@@ -174,4 +180,75 @@ public class StoreService implements StoreUseCase {
         String cursorString = createdAt.toString() + "_" + storeId;
         return Base64.getEncoder().encodeToString(cursorString.getBytes());
     }
+
+        private OwnerStoreDetailDTO convertOwnerStoreImageUrls(final OwnerStoreDetailDTO ownerStoreDetailDTO) {
+        LinkedHashSet<String> storeImageUrls = ownerStoreDetailDTO.storeImageUrls().stream()
+            .filter(Objects::nonNull)
+            .map(s3InputPort::getReadUrl)
+            .collect(java.util.stream.Collectors.toCollection(LinkedHashSet::new));
+
+        List<com.magambell.server.goods.adapter.in.web.GoodsImagesRegister> goodsImageList = ownerStoreDetailDTO.goodsImageList().stream()
+            .map(img -> new com.magambell.server.goods.adapter.in.web.GoodsImagesRegister(
+                img.id(),
+                img.key(),
+                s3InputPort.getReadUrl(img.imageUrl()),
+                img.goodsName()
+            ))
+            .toList();
+
+        return new OwnerStoreDetailDTO(
+            ownerStoreDetailDTO.storeId(),
+            ownerStoreDetailDTO.storeName(),
+            ownerStoreDetailDTO.address(),
+            storeImageUrls,
+            ownerStoreDetailDTO.goodsList(),
+            goodsImageList,
+            ownerStoreDetailDTO.description(),
+            ownerStoreDetailDTO.parkingDescription()
+        );
+        }
+
+        private StoreAdminListDTO convertAdminStoreImageUrls(final StoreAdminListDTO storeAdminListDTO) {
+        LinkedHashSet<String> storeImageUrls = storeAdminListDTO.ImageUrl().stream()
+            .filter(Objects::nonNull)
+            .map(s3InputPort::getReadUrl)
+            .collect(java.util.stream.Collectors.toCollection(LinkedHashSet::new));
+
+        LinkedHashSet<StoreAdminListDTO.GoodsImageInfo> goodsImageList = storeAdminListDTO.goodsImageList().stream()
+            .filter(Objects::nonNull)
+            .map(img -> new StoreAdminListDTO.GoodsImageInfo(
+                img.goodsImageId(),
+                s3InputPort.getReadUrl(img.imageUrl()),
+                img.key(),
+                img.goodsName()
+            ))
+            .collect(java.util.stream.Collectors.toCollection(LinkedHashSet::new));
+
+        return new StoreAdminListDTO(
+            storeAdminListDTO.storeId(),
+            storeAdminListDTO.storeName(),
+            storeImageUrls,
+            storeAdminListDTO.latitude(),
+            storeAdminListDTO.longitude(),
+            storeAdminListDTO.address(),
+            storeAdminListDTO.description(),
+            storeAdminListDTO.parkingDescription(),
+            storeAdminListDTO.goodsName(),
+            storeAdminListDTO.startTime(),
+            storeAdminListDTO.endTime(),
+            storeAdminListDTO.originPrice(),
+            storeAdminListDTO.discount(),
+            storeAdminListDTO.salePrice(),
+            storeAdminListDTO.quantity(),
+            storeAdminListDTO.distance(),
+            storeAdminListDTO.saleStatus(),
+            storeAdminListDTO.nickName(),
+            storeAdminListDTO.ownerName(),
+            storeAdminListDTO.ownerPhone(),
+            storeAdminListDTO.businessNumber(),
+            storeAdminListDTO.bankName(),
+            storeAdminListDTO.bankAccount(),
+            goodsImageList
+        );
+        }
 }
