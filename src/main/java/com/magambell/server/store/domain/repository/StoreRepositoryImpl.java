@@ -32,6 +32,7 @@ import java.util.Base64;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Set;
 
@@ -98,7 +99,7 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
             return List.of();
         }
 
-        return queryFactory.select(store, storeImage, goods, stock)
+        Map<Long, StoreListDTOResponse> storeMap = queryFactory.select(store, storeImage, goods, stock)
                 .from(store)
                 .leftJoin(storeImage).on(storeImage.store.id.eq(store.id))
                 .leftJoin(goods).on(goods.store.id.eq(store.id))
@@ -107,10 +108,9 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
             .leftJoin(review).on(review.orderGoods.id.eq(orderGoods.id)
                 .and(review.reviewStatus.eq(ReviewStatus.ACTIVE)))
                 .where(store.id.in(storeIds))
-                .orderBy(sortCondition(request.sortType(), distance))
                 .transform(
-                        groupBy(store.id)
-                                .list(Projections.constructor(StoreListDTOResponse.class,
+                groupBy(store.id)
+                    .as(Projections.constructor(StoreListDTOResponse.class,
                                         store.id,
                                         store.name,
                                         set(storeImage.name),
@@ -128,6 +128,11 @@ public class StoreRepositoryImpl implements StoreRepositoryCustom {
                                         goods.saleStatus
                                 ))
                 );
+
+                        return storeIds.stream()
+                            .map(storeMap::get)
+                            .filter(Objects::nonNull)
+                            .toList();
     }
 
     @Override
