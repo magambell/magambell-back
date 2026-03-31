@@ -21,6 +21,7 @@ import com.magambell.server.store.app.port.out.StoreQueryPort;
 import com.magambell.server.store.domain.entity.Store;
 import com.magambell.server.user.app.port.out.UserQueryPort;
 import com.magambell.server.user.domain.entity.User;
+import com.magambell.server.user.domain.enums.UserRole;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
@@ -40,6 +41,9 @@ import org.springframework.transaction.annotation.Transactional;
 public class NotificationService implements NotificationUseCase {
 
     private static final String UNIFIED_NOTIFICATION_TITLE = "바이트픽";
+    private static final String STORE_APPROVED_TITLE = "🎉 바이트픽 가입 심사 완료!";
+    private static final String STORE_APPROVED_BODY = "지금 바로 바이트백 판매를 시작해보세요 ✅";
+    private static final String NEW_SIGNUP_REVIEW_BODY = "새 가입 매장을 검토해주세요!";
 
     private final NotificationCommandPort notificationCommandPort;
     private final NotificationQueryPort notificationQueryPort;
@@ -208,9 +212,42 @@ public class NotificationService implements NotificationUseCase {
         });
     }
 
+    @Override
+    public void notifyNewSignupStoreReview(final UserRole userRole) {
+        if (userRole != UserRole.OWNER) {
+            return;
+        }
+
+        List<Long> adminUserIds = userQueryPort.findActiveUserIdsByRole(UserRole.ADMIN);
+        if (adminUserIds.isEmpty()) {
+            log.info("신규 매장 가입 검토 알림 대상 관리자 없음");
+            return;
+        }
+
+        List<FcmTokenDTO> tokens = notificationQueryPort.findWithAllByOwnerIdsAndStoreIsNull(adminUserIds);
+        log.info("신규 매장 가입 검토 알림 전송 시작 - 관리자 수: {}, 토큰 수: {}", adminUserIds.size(), tokens.size());
+
+        tokens.forEach(token -> send(UNIFIED_NOTIFICATION_TITLE, NEW_SIGNUP_REVIEW_BODY, token));
+    }
+
+    @Override
+    public void notifyStoreApproved(final User user) {
+        FcmTokenDTO token = notificationQueryPort.findWithAllByUserIdAndStoreIsNull(user);
+        if (token == null) {
+            log.info("매장 승인 완료 알림 대상 토큰 없음 - userId: {}", user.getId());
+            return;
+        }
+
+        send(STORE_APPROVED_TITLE, STORE_APPROVED_BODY, token);
+    }
+
     private void send(final String message, final FcmTokenDTO token) {
+        send(UNIFIED_NOTIFICATION_TITLE, message, token);
+    }
+
+    private void send(final String title, final String message, final FcmTokenDTO token) {
         try {
-            firebaseNotificationSender.send(token.token(), UNIFIED_NOTIFICATION_TITLE, message);
+            firebaseNotificationSender.send(token.token(), title, message);
         } catch (FirebaseMessagingException e) {
             fcmFail(e, token);
         }
