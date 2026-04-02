@@ -8,7 +8,6 @@ import static org.mockito.Mockito.when;
 import com.magambell.server.auth.app.port.in.request.SocialLoginServiceRequest;
 import com.magambell.server.auth.domain.ProviderType;
 import com.magambell.server.auth.domain.model.JwtToken;
-import com.magambell.server.notification.app.port.in.NotificationUseCase;
 import com.magambell.server.user.app.dto.OAuthUserInfo;
 import com.magambell.server.user.app.port.in.dto.UserSocialAccountDTO;
 import com.magambell.server.user.app.port.out.OAuthClient;
@@ -47,9 +46,6 @@ class AuthServiceTest {
     @Autowired
     private UserCommandPort userCommandPort;
 
-        @Autowired
-        private NotificationUseCase notificationUseCase;
-
     private AuthService testService;
 
     @BeforeEach
@@ -68,8 +64,7 @@ class AuthServiceTest {
                 kakaoOAuthClients,
                 userQueryPort,
                 userCommandPort,
-                jwtService,
-                notificationUseCase
+                jwtService
         );
     }
 

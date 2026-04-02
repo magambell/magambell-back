@@ -10,7 +10,6 @@ import com.magambell.server.common.exception.DuplicateException;
 import com.magambell.server.common.exception.InvalidRequestException;
 import com.magambell.server.common.exception.NotFoundException;
 import com.magambell.server.common.security.CustomUserDetails;
-import com.magambell.server.notification.app.port.in.NotificationUseCase;
 import com.magambell.server.user.app.dto.OAuthUserInfo;
 import com.magambell.server.user.app.port.in.dto.UserDTO;
 import com.magambell.server.user.app.port.in.dto.UserSocialAccountDTO;
@@ -36,18 +35,15 @@ public class AuthService implements AuthUseCase {
     private final UserQueryPort userQueryPort;
     private final UserCommandPort userCommandPort;
     private final JwtService jwtService;
-    private final NotificationUseCase notificationUseCase;
 
     public AuthService(final List<OAuthClient> oAuthClients, final UserQueryPort userQueryPort,
                        final UserCommandPort userCommandPort,
-                       final JwtService jwtService,
-                       final NotificationUseCase notificationUseCase) {
+                   final JwtService jwtService) {
         this.oAuthClientMap = oAuthClients.stream()
                 .collect(Collectors.toMap(OAuthClient::getProviderType, Function.identity()));
         this.userQueryPort = userQueryPort;
         this.userCommandPort = userCommandPort;
         this.jwtService = jwtService;
-        this.notificationUseCase = notificationUseCase;
     }
 
     @Transactional
@@ -135,9 +131,7 @@ public class AuthService implements AuthUseCase {
                 userInfo.id(),
                 request.userRole());
 
-        User user = userCommandPort.registerBySocial(userSocialAccountDTO);
-        notificationUseCase.notifyNewSignupStoreReview(request.userRole());
-        return user;
+        return userCommandPort.registerBySocial(userSocialAccountDTO);
     }
 
     private void validateSignUpFields(final String nickName, final UserRole userRole, final String phoneNumber) {
