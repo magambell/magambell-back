@@ -1,7 +1,6 @@
 package com.magambell.server.goods.adapter.in.web;
 
 import com.magambell.server.goods.app.port.in.request.RegisterGoodsServiceRequest;
-import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.PositiveOrZero;
@@ -11,7 +10,6 @@ import java.util.List;
 
 public record RegisterGoodsRequest(
 
-    @NotBlank(message = "상품 이름을 입력해 주세요.")
         String name,
 
         @NotNull(message = "판매 시작 시간은 선택해 주세요.")
@@ -37,7 +35,23 @@ public record RegisterGoodsRequest(
 ) {
     public RegisterGoodsServiceRequest toService() {
         return new RegisterGoodsServiceRequest(
-                name, startTime, endTime, quantity, originalPrice, discount, salePrice, goodsImagesRegisters
+                resolveName(), startTime, endTime, quantity, originalPrice, discount, salePrice, goodsImagesRegisters
         );
+    }
+
+    private String resolveName() {
+        if (name != null && !name.isBlank()) {
+            return name;
+        }
+
+        if (goodsImagesRegisters == null || goodsImagesRegisters.isEmpty()) {
+            return null;
+        }
+
+        return goodsImagesRegisters.stream()
+                .map(GoodsImagesRegister::goodsName)
+                .filter(goodsName -> goodsName != null && !goodsName.isBlank())
+                .findFirst()
+                .orElse(null);
     }
 }
