@@ -5,6 +5,9 @@ on:
     branches:
       - dev # 또는 원하는 브랜치명
 
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: 'true'
+
 jobs:
   build:
     runs-on: ubuntu-latest
