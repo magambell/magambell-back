@@ -40,6 +40,11 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class NotificationService implements NotificationUseCase {
 
+    private static final String TYPE_KEY = "type";
+    private static final String STORE_ID_KEY = "storeId";
+    private static final String ORDER_TYPE = "ORDER";
+    private static final String STORE_OPEN_TYPE = "STORE_OPEN";
+
     private static final String UNIFIED_NOTIFICATION_TITLE = "바이트픽";
     private static final String STORE_APPROVED_TITLE = "🎉 바이트픽 가입 심사 완료!";
     private static final String STORE_APPROVED_BODY = "지금 바로 바이트백 판매를 시작해보세요 ✅";
@@ -103,7 +108,7 @@ public class NotificationService implements NotificationUseCase {
         FcmTokenDTO token = notificationQueryPort.findWithAllByUserIdAndStoreIsNull(user);
         if (token != null) {
             String message = "주문이 수락됐어요. [" + pickupTime.toLocalTime() + "]에 바이트백을 픽업 해주세요!";
-            send(message, token);
+            send(message, token, Map.of(TYPE_KEY, ORDER_TYPE));
         }
     }
 
@@ -112,7 +117,7 @@ public class NotificationService implements NotificationUseCase {
         FcmTokenDTO token = notificationQueryPort.findWithAllByUserIdAndStoreIsNull(user);
         if (token != null) {
             String message = "주문이 거절됐어요.";
-            send(message, token);
+            send(message, token, Map.of(TYPE_KEY, ORDER_TYPE));
         }
     }
 
@@ -126,7 +131,7 @@ public class NotificationService implements NotificationUseCase {
         log.info("주문 완료 알림 FCM 토큰 조회 완료 - 토큰 수: {}", tokens.size());
         tokens.forEach(token -> {
             log.info("주문 완료 알림 전송 - ownerId: {}, message: 새 주문이 들어왔어요!", token.userId());
-            send("새 주문이 들어왔어요!", token);
+            send("새 주문이 들어왔어요!", token, Map.of(TYPE_KEY, ORDER_TYPE));
         });
         log.info("주문 완료 알림 전송 완료 - 총 {}명", tokens.size());
     }
@@ -150,7 +155,10 @@ public class NotificationService implements NotificationUseCase {
             String message = "[" + nickname + "]님이 기다리던 [" + storeName + "]의 바이트백 판매가 시작됐어요!";
             log.info("오픈 알림 전송 - userId: {}, message: {}", token.userId(), message);
 
-            send(message, token);
+            send(message, token, Map.of(
+                    TYPE_KEY, STORE_OPEN_TYPE,
+                    STORE_ID_KEY, String.valueOf(request.store().getId())
+            ));
         });
         log.info("오픈 알림 전송 완료 - 총 {}명", tokens.size());
     }
@@ -189,7 +197,7 @@ public class NotificationService implements NotificationUseCase {
                         .collect(Collectors.joining(", ")); // 여러 매장이라면 쉼표로
 
                 String message = "[" + storeNames + "] 에서 바이트백을 픽업해주세요!";
-                send(message, customerToken);
+                send(message, customerToken, Map.of(TYPE_KEY, ORDER_TYPE));
             }
 
             order.getOrderStoreOwner().forEach(owner -> {
@@ -203,7 +211,7 @@ public class NotificationService implements NotificationUseCase {
 
                     storesOwnedByThisOwner.forEach(storeName -> {
                         String message = "[" + storeName + "]의 픽업 가능 시간이 시작되었습니다.";
-                        send(message, ownerToken);
+                        send(message, ownerToken, Map.of(TYPE_KEY, ORDER_TYPE));
                     });
                 }
             });
@@ -242,12 +250,21 @@ public class NotificationService implements NotificationUseCase {
     }
 
     private void send(final String message, final FcmTokenDTO token) {
-        send(UNIFIED_NOTIFICATION_TITLE, message, token);
+        send(UNIFIED_NOTIFICATION_TITLE, message, token, Map.of());
     }
 
     private void send(final String title, final String message, final FcmTokenDTO token) {
+        send(title, message, token, Map.of());
+    }
+
+    private void send(final String message, final FcmTokenDTO token, final Map<String, String> data) {
+        send(UNIFIED_NOTIFICATION_TITLE, message, token, data);
+    }
+
+    private void send(final String title, final String message, final FcmTokenDTO token,
+            final Map<String, String> data) {
         try {
-            firebaseNotificationSender.send(token.token(), title, message);
+            firebaseNotificationSender.send(token.token(), title, message, data);
         } catch (FirebaseMessagingException e) {
             fcmFail(e, token);
         }
